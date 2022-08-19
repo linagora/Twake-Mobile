@@ -39,7 +39,6 @@ class DropDownButton extends StatelessWidget {
         Container(
           height: DROPDOWN_TOP_LAST_ITEM_PADDING_HEIGHT,
           width: DropDownButton.DROPDOWN_WIDTH,
-          color: Color(0x14141426),
         )
       ],
       InkWell(
@@ -48,8 +47,8 @@ class DropDownButton extends StatelessWidget {
           decoration: BoxDecoration(
               color: backgroundColor ??
                   (Get.isDarkMode
-                      ? Theme.of(context).primaryColor
-                      : Theme.of(context).cardColor),
+            ? Theme.of(context).primaryColor.withOpacity(0.8)
+            : Theme.of(context).cardColor),
               borderRadius: isTop
                   ? const BorderRadius.only(
                       topLeft: Radius.circular(10.0),

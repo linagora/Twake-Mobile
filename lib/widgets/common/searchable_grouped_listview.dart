@@ -49,7 +49,6 @@ class _SearchableChatViewState extends State<SearchableChatView> {
 
   @override
   Widget build(BuildContext context) {
-
     return StickyGroupedListView<Message, DateTime>(
       initialScrollIndex: widget.initialScrollIndex,
       elements: widget.messages,
@@ -96,7 +95,7 @@ class _SearchableChatViewState extends State<SearchableChatView> {
                 onLongPress: () {
                   Get.find<MessageAnimationCubit>().startAnimation(
                     longPressMessage: message,
-                    longPressIndex: index*2,
+                    longPressIndex: index * 2,
                     itemPositionsListener: widget.itemPositionListener!,
                   );
                 })

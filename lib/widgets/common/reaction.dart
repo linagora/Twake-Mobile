@@ -8,12 +8,8 @@ import 'package:twake/utils/emojis.dart';
 class Reaction<T extends BaseMessagesCubit> extends StatelessWidget {
   final Message message;
   final rct.Reaction reaction;
-  final bool isMyMessage;
 
-  Reaction(
-      {required this.message,
-      required this.reaction,
-      required this.isMyMessage});
+  Reaction({required this.message, required this.reaction});
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +24,7 @@ class Reaction<T extends BaseMessagesCubit> extends StatelessWidget {
             decoration: BoxDecoration(
               // waiting for accurate colors in the upcoming design
               color: Get.isDarkMode
-                  ? isMyMessage
+                  ?  message.isOwnerMessage
                       ? Theme.of(context)
                           .colorScheme
                           .primaryContainer
@@ -58,7 +54,7 @@ class Reaction<T extends BaseMessagesCubit> extends StatelessWidget {
                   Text(
                     '${reaction.count}',
                     style: Get.isDarkMode
-                        ? isMyMessage
+                        ?  message.isOwnerMessage
                             ? Theme.of(context).textTheme.headline1!.copyWith(
                                 fontWeight: FontWeight.w600, fontSize: 12)
                             : Theme.of(context).textTheme.headline1!.copyWith(
