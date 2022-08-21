@@ -117,6 +117,9 @@ class FileRepository {
         queryParameters: queryParameters,
         key: 'resources',
       );
+      // TODO: Broken files come across, they always do not have the 'name' field and other required fields, for now throw them out
+      remoteResult.removeWhere((file) => !file['metadata'].containsKey('name'));
+
       final List<MessageFile> messageFiles =
           remoteResult.map((e) => MessageFile.fromJson(e)).toList();
 
