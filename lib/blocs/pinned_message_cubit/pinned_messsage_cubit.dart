@@ -9,7 +9,6 @@ part 'pinned_messsage_state.dart';
 class PinnedMessageCubit extends Cubit<PinnedMessageState> {
   late final MessagesRepository _messageRepository;
 
-  @override
   final _socketIOEventStream =
       SynchronizationService.instance.socketIOChannelMessageStream;
 
@@ -156,7 +155,8 @@ class PinnedMessageCubit extends Cubit<PinnedMessageState> {
 
       // if it's the last pinned message emit init
       if (messages.length == 1 && isUnpin) {
-        emit(state.copyWith(newPinnedMesssageStatus: PinnedMessageStatus.init));
+        emit(
+            PinnedMessageState(pinnedMesssageStatus: PinnedMessageStatus.init));
         return true;
       }
       if (isUnpin) {
@@ -190,16 +190,20 @@ class PinnedMessageCubit extends Cubit<PinnedMessageState> {
         case ResourceAction.saved:
         case ResourceAction.updated:
           int selected;
-          final messages = await _messageRepository.fetchPinnedMesssages();
+
+          final List<Message> messages =
+              await _messageRepository.fetchPinnedMesssages();
           if (state.pinnedMesssageStatus == PinnedMessageStatus.finished) {
             selected = state.selected;
           } else {
             selected = 0;
           }
-          messages.isNotEmpty && !state.isUnpinAll
+          (messages.isNotEmpty || state.pinnedMessageList.isNotEmpty) &&
+                  !state.isUnpinAll
               ? emit(state.copyWith(
                   newPinnedMesssageStatus: PinnedMessageStatus.finished,
-                  newPinnedMessageList: messages,
+                  newPinnedMessageList:
+                      messages.isEmpty ? state.pinnedMessageList : messages,
                   newSelected: selected,
                   newIsUnpinAll: false))
               : emit(PinnedMessageState(

@@ -132,6 +132,7 @@ class _ThreadMessagesListState<T extends BaseMessagesCubit>
                   body: ScrollablePositionedList.builder(
                     initialScrollIndex:
                         unreadCounter != null ? max(0, unreadCounter - 1) : 0,
+                        itemPositionsListener: _itemPositionsListener,
                     itemCount: _messages.length,
                     itemScrollController: _jumpController,
                     physics: _physics,

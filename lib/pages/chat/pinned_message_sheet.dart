@@ -152,7 +152,8 @@ class _PinnedMessageSheetState extends State<PinnedMessageSheet> {
             Padding(
               padding: const EdgeInsets.fromLTRB(5, 5, 5, 5),
               child: Container(
-                constraints: BoxConstraints(maxWidth: Dim.widthPercent(85)),
+                constraints: BoxConstraints(
+                    maxWidth: Dim.widthPercent(85), maxHeight: 22),
                 child: Text(
                   '${message.text}',
                   style: Get.theme.textTheme.headline1,

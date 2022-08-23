@@ -17,7 +17,6 @@ import 'package:twake/widgets/message/resend_modal_sheet.dart';
 class MessageContent<T extends BaseMessagesCubit> extends StatefulWidget {
   final Message message;
   final bool isThread;
-  final bool isMyMessage;
   final bool isDirect;
   final bool isSenderHidden;
   final bool isHeadInThred;
@@ -27,7 +26,6 @@ class MessageContent<T extends BaseMessagesCubit> extends StatefulWidget {
     required this.isThread,
     required this.isHeadInThred,
     required this.isDirect,
-    required this.isMyMessage,
     required this.isSenderHidden,
     Key? key,
   }) : super(key: key);
@@ -47,12 +45,12 @@ class _MessageContentState<T extends BaseMessagesCubit>
   Widget build(BuildContext context) {
     return Expanded(
       child: Row(
-        mainAxisAlignment: widget.isMyMessage || widget.isHeadInThred
+        mainAxisAlignment: widget.message.isOwnerMessage || widget.isHeadInThred
             ? MainAxisAlignment.end
             : MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          widget.isMyMessage
+          widget.message.isOwnerMessage
               ? SizedBox.shrink()
               : widget.isSenderHidden
                   ? const SizedBox(
@@ -79,10 +77,10 @@ class _MessageContentState<T extends BaseMessagesCubit>
     return Container(
       decoration: BoxDecoration(
           color: Get.isDarkMode
-              ? widget.isMyMessage
+              ? widget.message.isOwnerMessage
                   ? Theme.of(context).colorScheme.onSurface
                   : Theme.of(context).colorScheme.secondaryContainer
-              : widget.isMyMessage
+              : widget.message.isOwnerMessage
                   ? Theme.of(context).colorScheme.onSurface
                   : Theme.of(context).cardColor,
           borderRadius: BorderRadius.all(Radius.circular(18))),
@@ -100,7 +98,7 @@ class _MessageContentState<T extends BaseMessagesCubit>
                     ? Border(
                         bottom: BorderSide(
                           color: Get.isDarkMode
-                              ? widget.isMyMessage
+                              ? widget.message.isOwnerMessage
                                   ? Theme.of(context)
                                       .colorScheme
                                       .primaryContainer
@@ -125,7 +123,7 @@ class _MessageContentState<T extends BaseMessagesCubit>
                     ]),
               ),
             ),
-            _buildReactions(widget.isMyMessage),
+            _buildReactions(),
             if (widget.message.responsesCount > 0 && !widget.isThread)
               _buildReplies(),
           ],
@@ -136,7 +134,7 @@ class _MessageContentState<T extends BaseMessagesCubit>
 
   _buildStatuses() {
     return Padding(
-      padding: widget.isMyMessage
+      padding: widget.message.isOwnerMessage
           ? EdgeInsets.only(bottom: 0)
           : EdgeInsets.only(bottom: 2),
       child: Row(
@@ -153,7 +151,7 @@ class _MessageContentState<T extends BaseMessagesCubit>
           ),
           Padding(
             padding: const EdgeInsets.only(left: 3),
-            child: _buildMessageSentStatus(widget.isMyMessage),
+            child: _buildMessageSentStatus(),
           ),
         ],
       ),
@@ -167,7 +165,7 @@ class _MessageContentState<T extends BaseMessagesCubit>
             child: Image.asset(
               imagePinned,
               color: Get.isDarkMode
-                  ? widget.isMyMessage
+                  ? widget.message.isOwnerMessage
                       ? Colors.white.withOpacity(0.7)
                       : Colors.white.withOpacity(0.3)
                   : Theme.of(context).colorScheme.secondary.withOpacity(0.8),
@@ -178,8 +176,8 @@ class _MessageContentState<T extends BaseMessagesCubit>
         : SizedBox.shrink();
   }
 
-  Widget _buildMessageSentStatus(bool _isMyMessage) {
-    return _isMyMessage == true
+  Widget _buildMessageSentStatus() {
+    return widget.message.isOwnerMessage == true
         ? widget.message.delivery == Delivery.inProgress
             ? Get.isDarkMode
                 ? Image.asset(
@@ -264,12 +262,12 @@ class _MessageContentState<T extends BaseMessagesCubit>
 
   Widget _buildTime() {
     return Text(
-        widget.message.inThread
+        widget.isThread
             ? DateFormatter.getVerboseDateTime(widget.message.createdAt)
             : DateFormatter.getVerboseTime(widget.message.createdAt),
         textAlign: TextAlign.end,
         style: Get.isDarkMode
-            ? widget.isMyMessage
+            ? widget.message.isOwnerMessage
                 ? Theme.of(context)
                     .textTheme
                     .headline1!
@@ -316,7 +314,7 @@ class _MessageContentState<T extends BaseMessagesCubit>
           Text(
               '${AppLocalizations.of(context)!.replyPlural(widget.message.responsesCount)}',
               style: Get.isDarkMode
-                  ? widget.isMyMessage
+                  ? widget.message.isOwnerMessage
                       ? Theme.of(context)
                           .textTheme
                           .headline1!
@@ -335,7 +333,7 @@ class _MessageContentState<T extends BaseMessagesCubit>
   }
 
   Widget _buildUserName() {
-    return widget.isMyMessage
+    return widget.message.isOwnerMessage
         ? SizedBox.shrink()
         : Padding(
             padding: const EdgeInsets.only(left: 12, right: 12, bottom: 2),
@@ -356,7 +354,7 @@ class _MessageContentState<T extends BaseMessagesCubit>
           );
   }
 
-  Widget _buildReactions(bool _isMyMessage) {
+  Widget _buildReactions() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 5),
       child: Wrap(
@@ -368,7 +366,6 @@ class _MessageContentState<T extends BaseMessagesCubit>
             return Reaction<T>(
               message: widget.message,
               reaction: r,
-              isMyMessage: widget.isMyMessage,
             );
           }),
         ],

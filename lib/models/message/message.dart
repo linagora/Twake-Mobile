@@ -150,7 +150,7 @@ class Message extends BaseModel {
   bool get isRead => _isRead > 0;
 
   @JsonKey(ignore: true)
-  bool get inThread => id != threadId;
+  bool get inThread => this.id != this.threadId;
 
   set isRead(bool val) => _isRead = val ? 1 : 0;
 

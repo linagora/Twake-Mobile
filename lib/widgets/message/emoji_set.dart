@@ -31,7 +31,9 @@ class _EmojiLineState extends State<EmojiLine> {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20.0),
-        color: Theme.of(context).primaryColor,
+        color: Get.isDarkMode
+            ? Theme.of(context).primaryColor.withOpacity(0.8)
+            : Theme.of(context).cardColor,
       ),
       width: Dim.widthPercent(80),
       padding: EdgeInsets.symmetric(
