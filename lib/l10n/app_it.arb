@@ -1,5 +1,5 @@
 {
-  "messageDeleted": "Il messaggio è stato eliminato",
+  "messageDeleted": "Questo messaggio è stato eliminato",
   "@messageDeleted": {},
   "internetConnection": "Nessuna connessione Internet",
   "@internetConnection": {},
@@ -197,7 +197,7 @@
   "@threadReplies": {},
   "firstMessageInChannelInfo": "Questo è il primo messaggio del canale",
   "@firstMessageInChannelInfo": {},
-  "reply": "Rispondi",
+  "reply": "Commento",
   "@reply": {},
   "newReply": "Nuova risposta…",
   "@newReply": {},
@@ -245,7 +245,7 @@
       "count": {}
     }
   },
-  "replyPlural": "{count, plural, =0{nessuna risposta} =1{1 risposta} other{{count} risposte}}",
+  "replyPlural": "{count, plural, =0{nessuna risposta} =1{1 Commento} other{{count} Commenti}}",
   "@replyPlural": {
     "description": "A plural form of 'reply' word",
     "placeholders": {
@@ -545,9 +545,9 @@
   "@leaveChannelWarning": {},
   "fileDownloadedInStorage": "Il file viene scaricato e salvato nella memoria del dispositivo",
   "@fileDownloadedInStorage": {},
-  "pinMesssage": "fissare",
+  "pinMesssage": "Fissare",
   "@pinMesssage": {},
-  "unpinMesssage": "togliere",
+  "unpinMesssage": "Togliere",
   "@unpinMesssage": {},
   "pinnedMessages": "Messaggi fissati",
   "@pinnedMessages": {},
@@ -608,5 +608,9 @@
   "loadingHeaderDuringCompanyFiles": "I file di Twake vengono caricati",
   "@loadingHeaderDuringCompanyFiles": {},
   "attach": "Attaccare",
-  "@attach": {}
+  "@attach": {},
+  "unreadMessages": "Messaggi non letti",
+  "@unreadMessages": {},
+  "noCompanyFilesHeader": "Non ci sono ancora file caricati",
+  "@noCompanyFilesHeader": {}
 }
