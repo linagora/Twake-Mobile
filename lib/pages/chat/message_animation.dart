@@ -13,6 +13,8 @@ import 'package:twake/utils/utilities.dart';
 import 'package:twake/widgets/common/animated_menu_message.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:twake/widgets/common/drop_down_bar.dart';
+import 'package:twake/widgets/common/emoji_board.dart';
+import 'package:twake/widgets/message/emoji_set.dart';
 
 class LongPressMessageAnimation<T extends BaseMessagesCubit>
     extends StatelessWidget {
@@ -27,6 +29,17 @@ class LongPressMessageAnimation<T extends BaseMessagesCubit>
     return BlocBuilder<MessageAnimationCubit, MessageAnimationState>(
       bloc: Get.find<MessageAnimationCubit>(),
       builder: ((context, state) {
+        if (state is MessageAnimationOpenEmojiBoard) {
+          return Container(
+            width: double.maxFinite,
+            height: double.maxFinite,
+            alignment: Alignment.bottomCenter,
+            child: EmojiBoard(
+                onEmojiSelected: (String emojiCode) =>
+                    _onEmojiSelected(state.longPressMessage, emojiCode)),
+          );
+        }
+
         if (state is! MessageAnimationStart) {
           return Container();
         }
@@ -55,8 +68,23 @@ class LongPressMessageAnimation<T extends BaseMessagesCubit>
             isDirect: isDirect,
           ),
           lowerWidgetHeight: LongPressMenuBar.height,
+          upperWidget: EmojiLine(
+            onEmojiSelected: (String emojiCode) {
+              _onEmojiSelected(state.longPressMessage, emojiCode);
+            },
+            message: state.longPressMessage,
+          ),
+          upperWidgetHeight: 50,
         );
       }),
+    );
+  }
+
+  _onEmojiSelected(Message message, String emojiCode) async {
+    await Get.find<T>().react(message: message, reaction: emojiCode);
+    Future.delayed(
+      Duration(milliseconds: 50),
+      FocusManager.instance.primaryFocus?.unfocus,
     );
   }
 }

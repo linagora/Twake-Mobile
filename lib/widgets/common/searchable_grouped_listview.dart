@@ -49,7 +49,6 @@ class _SearchableChatViewState extends State<SearchableChatView> {
 
   @override
   Widget build(BuildContext context) {
-
     return StickyGroupedListView<Message, DateTime>(
       initialScrollIndex: widget.initialScrollIndex,
       elements: widget.messages,
@@ -91,12 +90,12 @@ class _SearchableChatViewState extends State<SearchableChatView> {
       reverse: widget.reverse,
       indexedItemBuilder: (context, message, index) {
         return widget.itemPositionListener != null
-            ? GestureDetector(
+            ? InkWell(
                 child: widget.indexedItemBuilder(context, message, index),
                 onLongPress: () {
                   Get.find<MessageAnimationCubit>().startAnimation(
                     longPressMessage: message,
-                    longPressIndex: index*2,
+                    longPressIndex: index*2, // because separator or group separator also count as a element in list
                     itemPositionsListener: widget.itemPositionListener!,
                   );
                 })

@@ -35,3 +35,12 @@ class MessageAnimationEnd extends MessageAnimationState {
   @override
   List<Object?> get props => [];
 }
+
+class MessageAnimationOpenEmojiBoard extends MessageAnimationEnd {
+  final Message longPressMessage;
+
+  const MessageAnimationOpenEmojiBoard({required this.longPressMessage});
+
+  @override
+  List<Object?> get props => [longPressMessage];
+}

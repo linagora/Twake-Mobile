@@ -22,4 +22,8 @@ class MessageAnimationCubit extends Cubit<MessageAnimationState> {
   void endAnimation() {
     emit(MessageAnimationEnd());
   }
+
+  void openEmojiBoard(Message longPressMessage) {
+    emit(MessageAnimationOpenEmojiBoard(longPressMessage: longPressMessage));
+  }
 }
