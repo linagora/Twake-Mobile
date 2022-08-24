@@ -5,7 +5,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get/get.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
-import 'package:twake/blocs/message_animation_cubit/message_animation_cubit.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/blocs/unread_messages_cubit/unread_messages_cubit.dart';
@@ -14,6 +13,7 @@ import 'package:twake/models/channel/channel.dart';
 import 'package:twake/models/message/message.dart';
 import 'package:twake/pages/chat/jumpable_pinned_messages.dart';
 import 'package:twake/pages/chat/message_tile.dart';
+import 'package:twake/pages/chat/thread_page.dart';
 import 'package:twake/widgets/common/highlight_component.dart';
 import 'package:twake/widgets/common/unread_border.dart';
 import 'package:twake/widgets/common/unread_counter.dart';
@@ -175,7 +175,7 @@ class _ThreadMessagesListState<T extends BaseMessagesCubit>
           isThread: true,
           isDirect: widget.parentChannel.isDirect,
         ),
-        onLongPress: () => Get.find<MessageAnimationCubit>().startAnimation(
+        onLongPress: () => ThreadPage.of(context).startAnimation(
           longPressMessage: _messages[_messages.length - 1 - index],
           longPressIndex: max(0, index - 1), // because the replied message
           itemPositionsListener: _itemPositionsListener,

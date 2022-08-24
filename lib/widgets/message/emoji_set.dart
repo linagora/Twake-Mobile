@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:twake/blocs/message_animation_cubit/message_animation_cubit.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
+import 'package:twake/pages/chat/chat.dart';
 import 'package:twake/repositories/messages_repository.dart';
 
-class EmojiLine extends StatefulWidget {
+class EmojiLine extends StatelessWidget {
   final Function(String emojiCode) onEmojiSelected;
   final Message message;
 
@@ -21,11 +21,6 @@ class EmojiLine extends StatefulWidget {
 
   static final fontSize = 27.0;
 
-  @override
-  State<StatefulWidget> createState() => _EmojiLineState();
-}
-
-class _EmojiLineState extends State<EmojiLine> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -49,7 +44,7 @@ class _EmojiLineState extends State<EmojiLine> {
           ...EmojiLine.EMOJISET.map((e) => Flexible(
                 child: GestureDetector(
                   onTap: () {
-                    widget.onEmojiSelected(e);
+                    onEmojiSelected(e);
                   },
                   child: Padding(
                     padding: const EdgeInsets.only(right: 2.0),
@@ -74,7 +69,7 @@ class _EmojiLineState extends State<EmojiLine> {
                 color: Theme.of(context).colorScheme.secondary,
               ),
               onPressed: () {
-                Get.find<MessageAnimationCubit>().openEmojiBoard(widget.message);
+                Chat.of(context).openEmojiBoard(message);
               },
               iconSize: EmojiLine.fontSize + 3,
             ),

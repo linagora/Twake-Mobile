@@ -1,11 +1,10 @@
 import 'dart:ui';
 import 'package:defer_pointer/defer_pointer.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
-import 'package:twake/blocs/message_animation_cubit/message_animation_cubit.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/models/message/message.dart';
+import 'package:twake/pages/chat/chat.dart';
 import 'package:twake/pages/chat/message_tile.dart';
 
 class MenuMessageDropDown<T extends BaseMessagesCubit> extends StatefulWidget {
@@ -77,7 +76,6 @@ class _MenuMessageDropDownState<T extends BaseMessagesCubit>
   Widget build(BuildContext context) {
     Curve curveAnimation = Curves.fastOutSlowIn;
     Duration durationAnimation = const Duration(milliseconds: 300);
-
     return ValueListenableBuilder<Iterable<ItemPosition>>(
       valueListenable: widget.itemPositionsListener.itemPositions,
       builder: (context, positions, child) {
@@ -166,7 +164,7 @@ class _MenuMessageDropDownState<T extends BaseMessagesCubit>
                   children: [
                     GestureDetector(
                       onTap: () {
-                        Get.find<MessageAnimationCubit>().endAnimation();
+                        Chat.of(context).endAnimation();
                       },
                       child: BackdropFilter(
                           filter: ImageFilter.blur(
@@ -186,7 +184,7 @@ class _MenuMessageDropDownState<T extends BaseMessagesCubit>
                       top: topOfComponents,
                       child: GestureDetector(
                         onTap: () =>
-                            Get.find<MessageAnimationCubit>().endAnimation(),
+                            Chat.of(context).endAnimation(),
                         child: _buildAnimatedMessage(
                           isOwnerMessage: widget.message.isOwnerMessage,
                           curve: curveAnimation,
