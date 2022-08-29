@@ -27,17 +27,26 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 class FileTile extends StatefulWidget {
   final String fileId;
   final bool isMyMessage;
+  final bool isLimitedSize;
 
-  FileTile({required this.fileId, required this.isMyMessage})
-      : super(key: ValueKey(fileId));
+  FileTile({
+    required this.fileId,
+    required this.isMyMessage,
+    this.isLimitedSize: false,
+  }) : super(key: ValueKey(fileId));
 
   @override
   State<FileTile> createState() => _FileTileState();
 }
 
+double width = Dim.widthPercent(75);
+double height = Dim.heightPercent(70);
+
 class _FileTileState extends State<FileTile> {
   @override
   Widget build(BuildContext context) {
+    width = widget.isLimitedSize ? 75 : Dim.widthPercent(75);
+    height = widget.isLimitedSize ? 75 : Dim.heightPercent(70);
     File? cacheFile =
         Get.find<CacheInChatCubit>().findCachedFile(fileId: widget.fileId);
     return cacheFile == null
@@ -61,8 +70,8 @@ class _FileTileState extends State<FileTile> {
   _buildLoadingLayout() => ClipRRect(
         borderRadius: BorderRadius.all(Radius.circular(8)),
         child: ShimmerLoading(
-          width: Dim.widthPercent(75),
-          height: Dim.heightPercent(70),
+          width: width,
+          height: height,
           isLoading: true,
           child: Container(),
         ),
@@ -70,21 +79,23 @@ class _FileTileState extends State<FileTile> {
 
   _buildFileWidget(File file) => Container(
         margin: const EdgeInsets.only(bottom: 4.0),
-        child: Row(children: [
-          _buildFileHeader(file),
-          file.thumbnailUrl.isEmpty
-              ? Padding(
-                  padding: const EdgeInsets.only(left: 12),
-                  child: _buildFileInfo(file),
-                )
-              : SizedBox.shrink(),
-        ]),
+        child: Row(
+            mainAxisSize:
+                widget.isLimitedSize ? MainAxisSize.min : MainAxisSize.max,
+            children: [
+              _buildFileHeader(file),
+              file.thumbnailUrl.isEmpty
+                  ? Padding(
+                      padding: const EdgeInsets.only(left: 12),
+                      child: _buildFileInfo(file),
+                    )
+                  : SizedBox.shrink(),
+            ]),
       );
 
   _buildFileHeader(File file) {
     return Container(
-      constraints: BoxConstraints(
-          maxWidth: Dim.widthPercent(75), maxHeight: Dim.heightPercent(70)),
+      constraints: BoxConstraints(maxWidth: width, maxHeight: height),
       child: BlocBuilder<FileDownloadCubit, FileDownloadState>(
           bloc: Get.find<FileDownloadCubit>(),
           builder: (context, state) {
@@ -231,18 +242,18 @@ class _FileTileState extends State<FileTile> {
       child: ClipRRect(
         borderRadius: BorderRadius.all(Radius.circular(8)),
         child: Container(
-          height: Dim.heightPercent(70) * _aspectRatioCoefficient(file),
-          width: Dim.widthPercent(75), // * cWidth,
+          height: height * _aspectRatioCoefficient(file),
+          width: width, // * cWidth,
           child: CachedNetworkImage(
-            height: Dim.heightPercent(70) * _aspectRatioCoefficient(file),
-            width: Dim.widthPercent(75), // * cWidth,
+            height: height * _aspectRatioCoefficient(file),
+            width: width, // * cWidth,
             fit: BoxFit.cover,
             imageUrl: file.downloadUrl,
             progressIndicatorBuilder: (context, url, progress) {
               return ShimmerLoading(
                   isLoading: true,
-                  height: Dim.heightPercent(70) * _aspectRatioCoefficient(file),
-                  width: Dim.widthPercent(75), // * cWidth,
+                  height: height * _aspectRatioCoefficient(file),
+                  width: width, // * cWidth,
                   child: Container());
             },
           ),
