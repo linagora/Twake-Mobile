@@ -19,6 +19,7 @@ class Message extends BaseModel {
     'files',
     'pinned_info',
     'last_replies',
+    'quote_message'
   ];
 
   final String id;
@@ -53,7 +54,6 @@ class Message extends BaseModel {
   String? firstName;
   String? lastName;
   String? picture;
-
   String? draft;
 
   @JsonKey(defaultValue: 1, name: 'is_read')
@@ -64,6 +64,9 @@ class Message extends BaseModel {
 
   @JsonKey(defaultValue: const [], name: 'last_replies')
   List<Message>? _lastReplies;
+
+  @JsonKey(name: 'quote_message')
+  Message? quoteMessage;
 
   List<Message>? get lastReplies => _lastReplies;
 
@@ -141,7 +144,9 @@ class Message extends BaseModel {
 
   String get sender {
     if (this.firstName == null || this.lastName == null) {
-      return this.username!;
+      return (this.firstName == null && this.lastName == null)
+          ? ""
+          : this.username!;
     }
     return '$firstName $lastName';
   }
@@ -172,6 +177,7 @@ class Message extends BaseModel {
     this.lastName,
     this.picture,
     this.draft,
+    this.quoteMessage,
     List<Message>? lastReplies = const <Message>[],
   }) : this._lastReplies = lastReplies;
 
