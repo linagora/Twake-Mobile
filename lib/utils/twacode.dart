@@ -583,15 +583,25 @@ class TwacodeRenderer {
   List<dynamic> twacode;
   List<InlineSpan> spans = [];
   List<dynamic>? fileIds = [];
+  bool isLimitedSize;
 
   TwacodeRenderer({
     required this.twacode,
     required this.fileIds,
     required TextStyle parentStyle,
+    this.isLimitedSize: false,
     double userUniqueColor = 0.0,
   }) {
     spans = render(this.twacode, parentStyle, userUniqueColor,
         fileIds: this.fileIds);
+  }
+  RichText get message {
+    return RichText(
+      overflow: isLimitedSize ? TextOverflow.ellipsis : TextOverflow.visible,
+      text: TextSpan(
+        children: this.spans,
+      ),
+    );
   }
 
   TextStyle getStyle(
@@ -712,14 +722,6 @@ class TwacodeRenderer {
             );
     }
     return style;
-  }
-
-  RichText get message {
-    return RichText(
-      text: TextSpan(
-        children: this.spans,
-      ),
-    );
   }
 
   RichText get messageOnSwipe {
@@ -1081,33 +1083,59 @@ class TwacodeRenderer {
       }
     }
     if (fileIds != null && fileIds.isNotEmpty) {
-      final listFileTile = appendFile(fileIds, parentStyle);
-      spans.add(WidgetSpan(child: const Text("         ")));
-      spans.add(WidgetSpan(child: listFileTile));
+      if (!isLimitedSize) spans.add(WidgetSpan(child: const Text("         ")));
+      spans.add(WidgetSpan(child: appendFile(fileIds, parentStyle)));
     }
     return spans;
   }
 
   Widget appendFile(List<dynamic> fileIds, TextStyle parentStyle) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 16.0, top: 8),
-      child: Column(
-        children: fileIds.map((element) {
-          // element may be a string when loaded from local DB first time
-          // or it could be a File after editing
-          if (element is String && element.isNotEmpty) {
-            return FileTile(
-                fileId: element,
-                isMyMessage: parentStyle.color == Colors.black ? false : true);
-          } else if (element is Attachment) {
-            return FileTile(
-                fileId: element.metadata.externalId.id,
-                isMyMessage: parentStyle.color == Colors.black ? false : true);
-          } else {
-            return SizedBox.shrink();
-          }
-        }).toList(),
-      ),
+      margin: const EdgeInsets.only(bottom: 2.0, top: 2),
+      child: isLimitedSize
+          ? (fileIds.first is String && fileIds.first.isNotEmpty)
+              ? FileTile(
+                  fileId: fileIds.first,
+                  isMyMessage: parentStyle.color == Colors.black ? false : true,
+                  isLimitedSize: isLimitedSize,
+                )
+              : (fileIds.first is Attachment)
+                  ? FileTile(
+                      fileId: fileIds.first.metadata.externalId.id,
+                      isMyMessage:
+                          parentStyle.color == Colors.black ? false : true,
+                      isLimitedSize: isLimitedSize,
+                    )
+                  : (fileIds.first.containsKey("metadata"))
+                      ? FileTile(
+                          fileId: fileIds.first["metadata"]["external_id"]
+                              ["id"],
+                          isMyMessage:
+                              parentStyle.color == Colors.black ? false : true,
+                          isLimitedSize: isLimitedSize,
+                        )
+                      : SizedBox.shrink()
+          : Column(
+              children: fileIds.map((element) {
+                // element may be a string when loaded from local DB first time
+                // or it could be a File after editing
+                if (element is String && element.isNotEmpty) {
+                  return FileTile(
+                    fileId: element,
+                    isMyMessage:
+                        parentStyle.color == Colors.black ? false : true,
+                  );
+                } else if (element is Attachment) {
+                  return FileTile(
+                    fileId: element.metadata.externalId.id,
+                    isMyMessage:
+                        parentStyle.color == Colors.black ? false : true,
+                  );
+                } else {
+                  return SizedBox.shrink();
+                }
+              }).toList(),
+            ),
     );
   }
 }
