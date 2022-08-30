@@ -16,7 +16,8 @@ class SearchChatsView extends StatefulWidget {
   State<SearchChatsView> createState() => _SearchChatsViewState();
 }
 
-class _SearchChatsViewState extends State<SearchChatsView> {
+class _SearchChatsViewState extends State<SearchChatsView>
+    with AutomaticKeepAliveClientMixin<SearchChatsView> {
   @override
   void initState() {
     super.initState();
@@ -24,6 +25,8 @@ class _SearchChatsViewState extends State<SearchChatsView> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
+
     return BlocBuilder<SearchCubit, SearchState>(
       bloc: Get.find<SearchCubit>(),
       builder: (context, state) {
@@ -75,6 +78,9 @@ class _SearchChatsViewState extends State<SearchChatsView> {
       },
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
 
 class RecentSection extends StatelessWidget {

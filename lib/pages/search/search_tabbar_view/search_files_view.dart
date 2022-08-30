@@ -12,7 +12,8 @@ class SearchFilesView extends StatefulWidget {
   State<SearchFilesView> createState() => _SearchFilesViewState();
 }
 
-class _SearchFilesViewState extends State<SearchFilesView> {
+class _SearchFilesViewState extends State<SearchFilesView>
+    with AutomaticKeepAliveClientMixin<SearchFilesView> {
   @override
   void initState() {
     super.initState();
@@ -20,6 +21,8 @@ class _SearchFilesViewState extends State<SearchFilesView> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
+
     return BlocBuilder<SearchCubit, SearchState>(
       bloc: Get.find<SearchCubit>(),
       builder: (context, state) {
@@ -42,6 +45,9 @@ class _SearchFilesViewState extends State<SearchFilesView> {
       },
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
 
 class FilesSection extends StatelessWidget {

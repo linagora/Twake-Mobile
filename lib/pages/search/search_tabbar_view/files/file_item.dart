@@ -116,14 +116,17 @@ class FileItem extends StatelessWidget {
                   SizedBox(height: 10),
                   Row(
                     children: [
-                      Text(user.fullName,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: Theme.of(context)
-                              .textTheme
-                              .headline1!
-                              .copyWith(
-                                  fontSize: 13, fontWeight: FontWeight.w400)),
+                      Container(
+                        constraints: BoxConstraints(maxWidth: 120),
+                        child: Text(user.fullName,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: Theme.of(context)
+                                .textTheme
+                                .headline1!
+                                .copyWith(
+                                    fontSize: 13, fontWeight: FontWeight.w400)),
+                      ),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 4.0),
                         child:

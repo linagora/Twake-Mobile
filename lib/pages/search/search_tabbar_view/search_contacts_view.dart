@@ -11,7 +11,8 @@ class SearchContactsView extends StatefulWidget {
   State<SearchContactsView> createState() => _SearchContactsViewState();
 }
 
-class _SearchContactsViewState extends State<SearchContactsView> {
+class _SearchContactsViewState extends State<SearchContactsView>
+    with AutomaticKeepAliveClientMixin<SearchContactsView> {
   @override
   void initState() {
     super.initState();
@@ -19,6 +20,8 @@ class _SearchContactsViewState extends State<SearchContactsView> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
+
     return BlocBuilder<SearchCubit, SearchState>(
       bloc: Get.find<SearchCubit>(),
       builder: (context, state) {
@@ -47,6 +50,9 @@ class _SearchContactsViewState extends State<SearchContactsView> {
       },
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
 
 class ContactsStatusInformer extends StatelessWidget {
