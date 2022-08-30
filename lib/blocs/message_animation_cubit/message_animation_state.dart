@@ -18,11 +18,13 @@ class MessageAnimationStart extends MessageAnimationState {
   final Message longPressMessage;
   final int longPressIndex;
   final ItemPositionsListener itemPositionListener;
+  final BuildContext messagesListContext;
 
   MessageAnimationStart(
       {required this.longPressMessage,
       required this.longPressIndex,
-      required this.itemPositionListener,});
+      required this.itemPositionListener,
+      required this.messagesListContext});
 
   @override
   List<Object?> get props =>

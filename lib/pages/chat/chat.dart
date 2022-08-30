@@ -33,7 +33,6 @@ class Chat<T extends BaseChannelsCubit> extends StatefulWidget {
 }
 
 class _ChatState<T extends BaseChannelsCubit> extends State<Chat> {
-  GlobalKey _messagesListKey = new GlobalKey();
 
   late MessageAnimationCubit messageAnimationCubit;
 
@@ -144,7 +143,7 @@ class _ChatState<T extends BaseChannelsCubit> extends State<Chat> {
                         PinnedMessageSheet(),
                         Flexible(
                           child: _buildChatContent(messagesState, channel,
-                                context, _messagesListKey),
+                                context),
                         ),
                         _composeBar(messagesState, draft, channel)
                       ],
@@ -152,8 +151,7 @@ class _ChatState<T extends BaseChannelsCubit> extends State<Chat> {
                   ),
                 ),
               ),
-              LongPressMessageAnimation<ChannelMessagesCubit>(
-                  messagesListKey: _messagesListKey, isDirect: isDirect),
+              LongPressMessageAnimation<ChannelMessagesCubit>(isDirect: isDirect),
             ],
           ),
         ),
@@ -162,12 +160,12 @@ class _ChatState<T extends BaseChannelsCubit> extends State<Chat> {
   }
 
   Widget _buildChatContent(
-      messagesState, Channel channel, BuildContext context, Key? key) {
+      messagesState, Channel channel, BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         _buildLoading(messagesState),
-        MessagesGroupedList(parentChannel: channel, key: key)
+        MessagesGroupedList(parentChannel: channel)
       ],
     );
   }

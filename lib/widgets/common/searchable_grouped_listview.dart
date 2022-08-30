@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:sticky_grouped_list/sticky_grouped_list.dart';
-import 'package:twake/blocs/message_animation_cubit/message_animation_cubit.dart';
 
 import 'package:twake/models/message/message.dart';
 import 'package:twake/pages/chat/chat.dart';
@@ -89,18 +87,19 @@ class _SearchableChatViewState extends State<SearchableChatView> {
       itemScrollController: _controller,
       stickyHeaderBackgroundColor: Theme.of(context).scaffoldBackgroundColor,
       reverse: widget.reverse,
-      indexedItemBuilder: (context, message, index) {
+      indexedItemBuilder: (itemContext, message, index) {
         return widget.itemPositionListener != null
             ? InkWell(
-                child: widget.indexedItemBuilder(context, message, index),
+                child: widget.indexedItemBuilder(itemContext, message, index),
                 onLongPress: () {
-                  Chat.of(context).startAnimation(
+                  Chat.of(itemContext).startAnimation(
+                    messagesListContext: context,
                     longPressMessage: message,
                     longPressIndex: index*2, // because separator or group separator also count as a element in list
                     itemPositionsListener: widget.itemPositionListener!,
                   );
                 })
-            : widget.indexedItemBuilder(context, message, index);
+            : widget.indexedItemBuilder(itemContext, message, index);
       },
     );
   }

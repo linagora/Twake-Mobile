@@ -19,11 +19,10 @@ import 'package:twake/widgets/message/emoji_set.dart';
 
 class LongPressMessageAnimation<T extends BaseMessagesCubit>
     extends StatelessWidget {
-  final GlobalKey messagesListKey;
   final bool isDirect;
 
   LongPressMessageAnimation(
-      {required this.messagesListKey, required this.isDirect});
+      {required this.isDirect});
 
   @override
   Widget build(BuildContext context) {
@@ -52,11 +51,11 @@ class LongPressMessageAnimation<T extends BaseMessagesCubit>
         // find size of messages list
         Size? size;
         Offset? messageListTopLeftPoint;
-        RenderBox? renderBox =
-            messagesListKey.currentContext?.findRenderObject() as RenderBox;
-        if (messagesListKey.currentContext != null && renderBox.hasSize) {
-          size = renderBox.size;
-          messageListTopLeftPoint = renderBox.localToGlobal(Offset.zero);
+        RenderObject? renderObject =
+            state.messagesListContext.findRenderObject(); 
+        if (renderObject != null && (renderObject as RenderBox).hasSize) {
+          size = renderObject.size;
+          messageListTopLeftPoint = renderObject.localToGlobal(Offset.zero);
 
           return 
             MenuMessageDropDown<T>(

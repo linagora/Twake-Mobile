@@ -23,8 +23,7 @@ class ThreadMessagesList<T extends BaseMessagesCubit> extends StatefulWidget {
   final Message? pinnedMessage;
 
   const ThreadMessagesList(
-      {required this.parentChannel, this.pinnedMessage, Key? key})
-      : super(key: key);
+      {required this.parentChannel, this.pinnedMessage});
 
   @override
   _ThreadMessagesListState createState() => _ThreadMessagesListState<T>();
@@ -32,34 +31,9 @@ class ThreadMessagesList<T extends BaseMessagesCubit> extends StatefulWidget {
 
 class _ThreadMessagesListState<T extends BaseMessagesCubit>
     extends State<ThreadMessagesList> {
-  double? appBarHeight;
-  List<Widget> widgets = [];
   List<Message> _messages = <Message>[];
-  int _highlightIndex = -1;
+
   bool isJump = false;
-  ItemScrollController _jumpController = ItemScrollController();
-  ItemPositionsListener _itemPositionsListener = ItemPositionsListener.create();
-  ScrollPhysics _physics = ClampingScrollPhysics();
-
-  GlobalKey _threadKey = GlobalKey();
-
-  @override
-  void initState() {
-    super.initState();
-
-    if (Get.arguments[0] != null) {
-      // jump to selected pinned message
-      Message pinnedMessage = Get.arguments[0];
-
-      isJump = true;
-      SchedulerBinding.instance?.addPostFrameCallback((_) {
-        _highlightIndex =
-            _messages.length - 1 - _messages.indexOf(pinnedMessage);
-        // i don't know why scrollTo animation work not correctly, so i use jumpTo
-        _jumpController.jumpTo(index: _highlightIndex);
-      });
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -95,72 +69,121 @@ class _ThreadMessagesListState<T extends BaseMessagesCubit>
           ),
         ),
         Expanded(
-          child: JumpablePinnedMessages(
-            jumpToMessage: ((messages, jumpedMessage) {
-              _jumpController.jumpTo(index: _highlightIndex);
-            }),
+          child: _ScrollableMessagesList(
             messages: _messages,
             isDirect: widget.parentChannel.isDirect,
-            child: BlocBuilder<ThreadUnreadMessagesCubit, UnreadMessagesState>(
-              bloc: Get.find<ThreadUnreadMessagesCubit>(),
-              builder: (context, state) {
-                int? unreadCounter;
-                if (state is! UnreadMessagesThreadFound) {
-                  unreadCounter = null;
-                } else {
-                  unreadCounter = state.unreadCounter;
-                }
-
-                return Scaffold(
-                  floatingActionButton: UnreadCounter(
-                      counter: unreadCounter ?? 0,
-                      itemPositionsListener: _itemPositionsListener,
-                      onPressed: () {
-                        // scroll to latest message
-                        final latestMessage = _messages.reduce(
-                            (value, element) =>
-                                value.createdAt > element.createdAt
-                                    ? value
-                                    : element);
-                        _jumpController.jumpTo(
-                            index: isJump
-                                ? _messages.indexOf(latestMessage)
-                                : _messages.length -
-                                    1 -
-                                    _messages.indexOf(latestMessage));
-                      }),
-                  body: ScrollablePositionedList.builder(
-                    initialScrollIndex:
-                        unreadCounter != null ? max(0, unreadCounter - 1) : 0,
-                        itemPositionsListener: _itemPositionsListener,
-                    itemCount: _messages.length,
-                    itemScrollController: _jumpController,
-                    physics: _physics,
-                    reverse: isJump ? false : true,
-                    shrinkWrap: isJump ? false : true,
-                    itemBuilder: (context, index) {
-                      return HighlightComponent(
-                          component: unreadCounter != null &&
-                                  unreadCounter > 0 &&
-                                  index == unreadCounter - 1
-                              ? Column(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    const UnreadBorder(),
-                                    _buildIndexedMessage(context, index),
-                                  ],
-                                )
-                              : _buildIndexedMessage(context, index),
-                          highlightColor: Theme.of(context).backgroundColor,
-                          highlightWhen: _highlightIndex == index);
-                    },
-                  ),
-                );
-              },
-            ),
+            isJump: isJump,
           ),
         ),
       ],
+    );
+  }
+}
+
+class _ScrollableMessagesList extends StatefulWidget {
+  final List<Message> messages;
+  final bool isDirect;
+  final bool isJump;
+
+  _ScrollableMessagesList(
+      {required this.messages, this.isDirect = false, this.isJump = false});
+
+  @override
+  State<StatefulWidget> createState() => _ScrollableMessagesListState();
+}
+
+class _ScrollableMessagesListState extends State<_ScrollableMessagesList> {
+  ItemPositionsListener _itemPositionsListener = ItemPositionsListener.create();
+  ScrollPhysics _physics = ClampingScrollPhysics();
+  ItemScrollController _jumpController = ItemScrollController();
+
+  late List<Message> _messages;
+  late bool isJump;
+  int _highlightIndex = -1;
+
+  @override
+  void initState() {
+    _messages = widget.messages;
+    isJump = widget.isJump;
+
+    if (Get.arguments[0] != null) {
+      // jump to selected pinned message
+      Message pinnedMessage = Get.arguments[0];
+
+      isJump = true;
+      SchedulerBinding.instance?.addPostFrameCallback((_) {
+        _highlightIndex =
+            _messages.length - 1 - _messages.indexOf(pinnedMessage);
+        // i don't know why scrollTo animation work not correctly, so i use jumpTo
+        _jumpController.jumpTo(index: _highlightIndex);
+      });
+    }
+
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return JumpablePinnedMessages(
+      jumpToMessage: ((messages, jumpedMessage) {
+        _jumpController.jumpTo(index: _highlightIndex);
+      }),
+      messages: _messages,
+      isDirect: widget.isDirect,
+      child: BlocBuilder<ThreadUnreadMessagesCubit, UnreadMessagesState>(
+        bloc: Get.find<ThreadUnreadMessagesCubit>(),
+        builder: (context, state) {
+          int? unreadCounter;
+          if (state is! UnreadMessagesThreadFound) {
+            unreadCounter = null;
+          } else {
+            unreadCounter = state.unreadCounter;
+          }
+
+          return Scaffold(
+            floatingActionButton: UnreadCounter(
+                counter: unreadCounter ?? 0,
+                itemPositionsListener: _itemPositionsListener,
+                onPressed: () {
+                  // scroll to latest message
+                  final latestMessage = _messages.reduce((value, element) =>
+                      value.createdAt > element.createdAt ? value : element);
+                  _jumpController.jumpTo(
+                      index: isJump
+                          ? _messages.indexOf(latestMessage)
+                          : _messages.length -
+                              1 -
+                              _messages.indexOf(latestMessage));
+                }),
+            body: ScrollablePositionedList.builder(
+              initialScrollIndex:
+                  unreadCounter != null ? max(0, unreadCounter - 1) : 0,
+              itemPositionsListener: _itemPositionsListener,
+              itemCount: _messages.length,
+              itemScrollController: _jumpController,
+              physics: _physics,
+              reverse: isJump ? false : true,
+              shrinkWrap: isJump ? false : true,
+              itemBuilder: (itemContext, index) {
+                return HighlightComponent(
+                    component: unreadCounter != null &&
+                            unreadCounter > 0 &&
+                            index == unreadCounter - 1
+                        ? Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              const UnreadBorder(),
+                              _buildIndexedMessage(context, index),
+                            ],
+                          )
+                        : _buildIndexedMessage(context, index),
+                    highlightColor: Theme.of(itemContext).backgroundColor,
+                    highlightWhen: _highlightIndex == index);
+              },
+            ),
+          );
+        },
+      ),
     );
   }
 
@@ -173,11 +196,12 @@ class _ThreadMessagesListState<T extends BaseMessagesCubit>
           message: _messages[_messages.length - 1 - index],
           key: ValueKey(_messages[_messages.length - 1 - index].hash),
           isThread: true,
-          isDirect: widget.parentChannel.isDirect,
+          isDirect: widget.isDirect,
         ),
         onLongPress: () => ThreadPage.of(context).startAnimation(
+          messagesListContext: context,
           longPressMessage: _messages[_messages.length - 1 - index],
-          longPressIndex: max(0, index - 1), // because the replied message
+          longPressIndex: index, // because the replied message
           itemPositionsListener: _itemPositionsListener,
         ),
       );

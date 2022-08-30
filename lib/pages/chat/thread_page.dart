@@ -37,8 +37,6 @@ class _ThreadPageState<T extends BaseChannelsCubit>
 
   bool isDirect = false;
 
-  GlobalKey _threadKey = GlobalKey();
-
   late MessageAnimationCubit messageAnimationCubit;
 
   @override
@@ -175,7 +173,6 @@ class _ThreadPageState<T extends BaseChannelsCubit>
                                   children: [
                                     PinnedMessageSheet(),
                                     ThreadMessagesList<ThreadMessagesCubit>(
-                                        key: _threadKey,
                                         parentChannel: channel),
                                     ComposeBar(
                                         autofocus: autofocus ||
@@ -234,8 +231,7 @@ class _ThreadPageState<T extends BaseChannelsCubit>
                             ),
                           );
                         }),
-                    LongPressMessageAnimation<ThreadMessagesCubit>(
-                        messagesListKey: _threadKey, isDirect: isDirect),
+                    LongPressMessageAnimation<ThreadMessagesCubit>(isDirect: isDirect),
                   ]),
                 ),
               );
