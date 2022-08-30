@@ -62,14 +62,16 @@ class QuoteMessage extends StatelessWidget {
                   right: paddingRight,
                   top: paddingTop,
                   bottom: paddingBottom),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  _buildLine(context),
-                  _buildQuote(context),
-                  _buildCloseButton(context)
-                ],
+              child: IgnorePointer(
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    _buildLine(context),
+                    _buildQuote(context),
+                    _buildCloseButton(context)
+                  ],
+                ),
               ),
             ),
           );
