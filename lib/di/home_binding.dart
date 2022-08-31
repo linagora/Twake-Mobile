@@ -60,8 +60,8 @@ class HomeBinding implements Bindings {
     final directsCubit = DirectsCubit();
     Get.put(directsCubit, permanent: true);
 
-    final channelUnreadMessagesCubit =
-        ChannelUnreadMessagesCubit(channelsCubit: channelsCubit, directsCubit: directsCubit);
+    final channelUnreadMessagesCubit = ChannelUnreadMessagesCubit(
+        channelsCubit: channelsCubit, directsCubit: directsCubit);
     Get.put(channelUnreadMessagesCubit, permanent: true);
 
     final threadUnreadMessagesCubit = ThreadUnreadMessagesCubit(
