@@ -6,6 +6,7 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:logger/logger.dart';
+import 'package:twake/blocs/file_cubit/file_transition_cubit.dart';
 import 'package:twake/blocs/file_cubit/upload/file_upload_cubit.dart';
 import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/models/file/local_file.dart';
@@ -46,7 +47,8 @@ class _DisplayCameraPictureScreenState
           thumbnail: uint8List,
           size: lengthXFile,
           updatedAt: DateTime.now().millisecondsSinceEpoch);
-
+      Get.find<FileTransitionCubit>().fileLoadingMessageEmpty();
+      Get.find<FileUploadCubit>().initFileUploadingStream();
       Get.find<FileUploadCubit>().upload(
         sourceFile: localFile,
         sourceFileUploading: SourceFileUploading.InChat,
