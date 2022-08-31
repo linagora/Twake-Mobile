@@ -3,7 +3,7 @@ description: Mobile version of Twake application.
 
 # The following line prevents the package from being accidentally published to
 # pub.dev using `pub publish`. This is preferred for private packages.
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
 # The following defines the version and build number for your application.
 # A version number is three numbers separated by dots, like 1.2.43
@@ -15,7 +15,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 1.1.2
+version: 1.1.4
 
 environment:
   sdk: ">=2.15.0 <3.0.0"
@@ -56,7 +56,7 @@ dependencies:
   cached_network_image: ^3.0.0
   bubble: ^1.2.1
   flutter_swipe_action_cell: 2.1.0
-  emoji_picker_flutter: ^1.0.6
+  emoji_picker_flutter: 1.0.6
   flutter_appauth: ^2.2.0
   package_info_plus: ^1.3.0
   share: ^2.0.4
@@ -98,9 +98,9 @@ dependencies:
   hive_flutter: ^1.1.0
   # Support LocalDB for linux, windows
   sqflite_common_ffi: ^2.1.1
-  sticky_grouped_list: 
-      git: https://github.com/EvGen94/sticky_grouped_list
-  flutter_contacts: ^1.1.4
+  sticky_grouped_list:
+    git: https://github.com/EvGen94/sticky_grouped_list
+  defer_pointer: ^0.0.2
 
 dev_dependencies:
   flutter_test:
@@ -115,9 +115,9 @@ dev_dependencies:
 flutter_icons:
   android: true
   ios: true
-  image_path: 'dev_assets/logo.png'
-  adaptive_icon_background: '#004dff'
-  adaptive_icon_foreground: 'dev_assets/logo_adaptive.png'
+  image_path: "dev_assets/logo.png"
+  adaptive_icon_background: "#004dff"
+  adaptive_icon_foreground: "dev_assets/logo_adaptive.png"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -135,7 +135,7 @@ flutter:
     # animations
     - assets/animations/splash.json
     - assets/animations/messages_loading.gif
-    
+
     # images
     - assets/images/logo-white.png
     - assets/images/1024x1024.png
@@ -149,7 +149,6 @@ flutter:
     - .firebase.env
     # localization
     # - assets/translations/
-
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

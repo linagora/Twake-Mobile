@@ -11,6 +11,7 @@ import 'package:twake/blocs/gallery_cubit/gallery_cubit.dart';
 import 'package:twake/models/attachment/attachment.dart';
 import 'package:twake/models/file/file.dart';
 import 'package:twake/models/file/local_file.dart';
+import 'package:twake/models/file/message_file.dart';
 import 'package:twake/models/file/upload/file_uploading.dart';
 import 'package:twake/models/file/upload/file_uploading_option.dart';
 import 'package:twake/models/message/message.dart';
@@ -104,7 +105,8 @@ class FileUploadCubit extends Cubit<FileUploadState> {
   }
 
   Future<void> addAlreadyUploadedFile({
-    required File existsFile,
+    File? existsFile,
+    MessageFile? existsMessageFile,
   }) async {
     List<FileUploading> listFileUploading = [...state.listFileUploading];
     final newId = listFileUploading.length;
@@ -112,11 +114,12 @@ class FileUploadCubit extends Cubit<FileUploadState> {
     final existsFileUploading = FileUploading(
       id: newId,
       file: existsFile,
+      messageFile: existsMessageFile,
       uploadStatus: FileItemUploadStatus.uploaded,
     );
 
     emit(state.copyWith(
-        fileUploadStatus: FileUploadStatus.inProcessing,
+        fileUploadStatus: FileUploadStatus.finished,
         listFileUploading: listFileUploading..add(existsFileUploading)));
   }
 

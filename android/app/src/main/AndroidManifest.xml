@@ -96,6 +96,7 @@
                 <data android:scheme="https"/>
                 <data android:scheme="http" />
                 <data android:host="web.twake.app"/>
+                <data android:host="staging-web.twake.app"/>
                 <data android:host="web.qa.twake.app"/>
                 <data android:host="canary.twake.app"/>
             </intent-filter>
@@ -125,7 +126,6 @@
     </application>
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" />
     <queries>
         <intent>
             <action android:name="android.intent.action.VIEW" />

@@ -9,7 +9,6 @@ part 'pinned_messsage_state.dart';
 class PinnedMessageCubit extends Cubit<PinnedMessageState> {
   late final MessagesRepository _messageRepository;
 
-  @override
   final _socketIOEventStream =
       SynchronizationService.instance.socketIOChannelMessageStream;
 
@@ -30,8 +29,9 @@ class PinnedMessageCubit extends Cubit<PinnedMessageState> {
 
   Future<bool> unpinAllMessages() async {
     if (state.pinnedMesssageStatus == PinnedMessageStatus.finished) {
-      emit(
-          state.copyWith(newPinnedMesssageStatus: PinnedMessageStatus.loading));
+      emit(state.copyWith(
+          newPinnedMesssageStatus: PinnedMessageStatus.loading,
+          newIsUnpinAll: true));
       final messages = state.pinnedMessageList;
       bool result;
 
@@ -54,7 +54,8 @@ class PinnedMessageCubit extends Cubit<PinnedMessageState> {
       emit(state.copyWith(
           newPinnedMesssageStatus: PinnedMessageStatus.finished,
           newPinnedMessageList: messages,
-          newSelected: 0));
+          newSelected: state.selected,
+          newIsUnpinAll: state.isUnpinAll));
     } else
       return;
   }
@@ -69,16 +70,50 @@ class PinnedMessageCubit extends Cubit<PinnedMessageState> {
       emit(state.copyWith(
           newPinnedMesssageStatus: PinnedMessageStatus.selected,
           newPinnedMessageList: messages,
-          newSelected: selected));
+          newSelected: selected,
+          newIsUnpinAll: state.isUnpinAll));
 
       emit(state.copyWith(
-        newPinnedMesssageStatus: PinnedMessageStatus.finished,
-        newPinnedMessageList: messages,
-        newSelected: selected,
-      ));
+          newPinnedMesssageStatus: PinnedMessageStatus.finished,
+          newPinnedMessageList: messages,
+          newSelected: selected,
+          newIsUnpinAll: state.isUnpinAll));
       return true;
     }
     return false;
+  }
+
+  Future<List<Message>> getMessagesAroundSelectedMessage(
+      {required Message message,
+      String? threadId,
+      required bool isDirect}) async {
+    final messages = await _messageRepository.fetchBefore(
+        channelId: message.channelId,
+        beforeMessageId: message.id,
+        threadId: threadId,
+        workspaceId: isDirect ? 'direct' : null);
+    if (messages.isNotEmpty) {
+      messages.removeLast();
+    }
+    messages.addAll(await _messageRepository.fetchAfter(
+        channelId: message.channelId,
+        afterMessageId: message.id,
+        workspaceId: isDirect ? 'direct' : null));
+
+    if (messages.isEmpty) {
+      emit(MessagesAroundSelectedMessageFailed(
+          pinnedMessageList: state.pinnedMessageList,
+          pinnedMesssageStatus: PinnedMessageStatus.finished));
+      return [];
+    } else {
+      emit(MessagesAroundSelectecMessageSuccess(
+          pinnedMesssageStatus: PinnedMessageStatus.finished,
+          pinnedMessageList: state.pinnedMessageList,
+          selected: state.selected,
+          messagesAround: messages,
+          isUnpinAll: state.isUnpinAll));
+      return messages;
+    }
   }
 
   Future<bool> pinMessage({required Message message, bool? isDirect}) async {
@@ -94,7 +129,8 @@ class PinnedMessageCubit extends Cubit<PinnedMessageState> {
       emit(state.copyWith(
           newPinnedMesssageStatus: PinnedMessageStatus.finished,
           newPinnedMessageList: messages,
-          newSelected: 0));
+          newSelected: 0,
+          newIsUnpinAll: state.isUnpinAll));
 
       final newMessages =
           await _messageRepository.fetchPinnedMesssages(isDirect: isDirect);
@@ -103,7 +139,8 @@ class PinnedMessageCubit extends Cubit<PinnedMessageState> {
           newPinnedMesssageStatus: PinnedMessageStatus.finished,
           newPinnedMessageList:
               newMessages.isNotEmpty ? newMessages : state.pinnedMessageList,
-          newSelected: 0));
+          newSelected: 0,
+          newIsUnpinAll: state.isUnpinAll));
       return true;
     } else
       return false;
@@ -118,7 +155,8 @@ class PinnedMessageCubit extends Cubit<PinnedMessageState> {
 
       // if it's the last pinned message emit init
       if (messages.length == 1 && isUnpin) {
-        emit(state.copyWith(newPinnedMesssageStatus: PinnedMessageStatus.init));
+        emit(
+            PinnedMessageState(pinnedMesssageStatus: PinnedMessageStatus.init));
         return true;
       }
       if (isUnpin) {
@@ -131,12 +169,17 @@ class PinnedMessageCubit extends Cubit<PinnedMessageState> {
         emit(state.copyWith(
             newPinnedMesssageStatus: PinnedMessageStatus.finished,
             newPinnedMessageList: messages,
-            newSelected: newSelected));
+            newSelected: newSelected,
+            newIsUnpinAll: state.isUnpinAll));
         return true;
       }
       return false;
     }
     return false;
+  }
+
+  Future<void> unpinAllReset() async {
+    emit(state.copyWith(newIsUnpinAll: false));
   }
 
   Future<void> listenToPinnedMessageChanges() async {
@@ -147,18 +190,25 @@ class PinnedMessageCubit extends Cubit<PinnedMessageState> {
         case ResourceAction.saved:
         case ResourceAction.updated:
           int selected;
-          final messages = await _messageRepository.fetchPinnedMesssages();
+
+          final List<Message> messages =
+              await _messageRepository.fetchPinnedMesssages();
           if (state.pinnedMesssageStatus == PinnedMessageStatus.finished) {
             selected = state.selected;
           } else {
             selected = 0;
           }
-          if (messages.isNotEmpty) {
-            emit(state.copyWith(
-                newPinnedMesssageStatus: PinnedMessageStatus.finished,
-                newPinnedMessageList: messages,
-                newSelected: selected));
-          }
+          (messages.isNotEmpty || state.pinnedMessageList.isNotEmpty) &&
+                  !state.isUnpinAll
+              ? emit(state.copyWith(
+                  newPinnedMesssageStatus: PinnedMessageStatus.finished,
+                  newPinnedMessageList:
+                      messages.isEmpty ? state.pinnedMessageList : messages,
+                  newSelected: selected,
+                  newIsUnpinAll: false))
+              : emit(PinnedMessageState(
+                  pinnedMesssageStatus: PinnedMessageStatus.init));
+
           break;
         case ResourceAction.event:
           break;

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/account_cubit/account_cubit.dart';
-import 'package:twake/models/account/account.dart';
 import 'image_avatar.dart';
 
 class StackedUserAvatars extends StatelessWidget {

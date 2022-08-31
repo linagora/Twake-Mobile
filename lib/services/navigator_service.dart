@@ -7,6 +7,7 @@ import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/blocs/pinned_message_cubit/pinned_messsage_cubit.dart';
 import 'package:twake/blocs/workspaces_cubit/workspaces_cubit.dart';
 import 'package:twake/models/file/file.dart';
+import 'package:twake/models/file/message_file.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/models/message/message.dart';
 import 'package:twake/models/receive_sharing/receive_sharing_file.dart';
@@ -136,6 +137,7 @@ class NavigatorService {
     String? threadId,
     bool reloadThreads: true,
     Message? pinnedMessage,
+    int? userLastAccessFromChat, // when user first enter the chat
   }) async {
     if (companyId != null && companyId != Globals.instance.companyId) {
       companiesCubit.selectCompany(companyId: companyId);
@@ -198,11 +200,25 @@ class NavigatorService {
           ? RoutePaths.directMessageThread.path
           : RoutePaths.channelMessageThread.path;
 
-      Get.toNamed(path, arguments: [pinnedMessage])?.then((_) {
+      Get.toNamed(path, arguments: [pinnedMessage, userLastAccessFromChat])?.then((_) {
         channelMessagesCubit.clearSelectedThread();
         threadMessagesCubit.reset();
       });
     }
+  }
+
+  bool get isInThread {
+    return Get.currentRoute.endsWith('thread');
+  }
+
+  void pop<T>({
+    T? result,
+    bool closeOverlays = false,
+    bool canPop = true,
+    int? id,
+  }) {
+    Get.back(
+        result: result, closeOverlays: closeOverlays, canPop: canPop, id: id);
   }
 
   Future<void> navigateToChannelAfterSharedFile({
@@ -305,20 +321,22 @@ class NavigatorService {
 
   Future<void> navigateToFilePreview({
     required String channelId,
-    required File file,
+    File? file,
+    MessageFile? messageFile,
     bool? enableDownload,
     bool? isImage,
   }) async {
+    if (file == null && messageFile == null) return;
     final channel = await directsCubit.getChannel(channelId: channelId);
     if (channel.isDirect) {
       Get.toNamed(
         RoutePaths.directFilePreview.path,
-        arguments: [file, enableDownload, isImage],
+        arguments: [file == null ? messageFile : file, enableDownload, isImage],
       );
     } else {
       Get.toNamed(
         RoutePaths.channelFilePreview.path,
-        arguments: [file, enableDownload, isImage],
+        arguments: [file == null ? messageFile : file, enableDownload, isImage],
       );
     }
   }

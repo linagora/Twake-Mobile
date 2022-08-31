@@ -8,7 +8,12 @@
 .buildlog/
 .history
 .svn/
-/pubspec.lock
+# https://dart.dev/guides/libraries/private-files#pubspeclock
+# Since we are building an application,
+# all dependencies changes should be recorded in a lock file
+# Also helpful for reproducible builds
+# (it worked on my machine!)
+#/pubspec.lock
 /.env
 /.firebase.env
 
@@ -44,9 +49,10 @@ app.*.symbols
 # Obfuscation related
 app.*.map.json
 /ios/Runner/GoogleService-Info.plist
-/android/app/google-services.json
-/android/key.properties
-/android/android.jks
+/android/**/google-services.json
+/android/**/key.properties
+/android/**/android.jks
+
 
 # Weblate related
 lib/l10n/app_nb.arb

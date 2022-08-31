@@ -40,7 +40,8 @@ class Utilities {
       {required BuildContext context,
       required String message,
       String? iconPath,
-      Duration? duration}) {
+      Duration? duration,
+      IconData? iconData}) {
     Get.snackbar('', '',
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
@@ -54,11 +55,24 @@ class Utilities {
         titleText: SizedBox.shrink(),
         messageText: Container(
           margin: const EdgeInsets.only(bottom: 4),
-          child: Text(message,
-              style: Theme.of(context)
-                  .textTheme
-                  .headline1
-                  ?.copyWith(fontWeight: FontWeight.normal)),
+          child: Row(
+            children: [
+              iconData == null
+                  ? SizedBox.shrink()
+                  : Padding(
+                      padding: const EdgeInsets.only(right: 20),
+                      child: Icon(
+                        iconData,
+                        color: Theme.of(context).colorScheme.secondary,
+                      ),
+                    ),
+              Text(message,
+                  style: Theme.of(context)
+                      .textTheme
+                      .headline1!
+                      .copyWith(fontSize: 14)),
+            ],
+          ),
         ),
         boxShadows: [
           BoxShadow(
@@ -232,17 +246,11 @@ class Utilities {
     }
   }
 
-  static Future<bool> checkAndRequestCameraPermission({
+  static Future<bool> checkCameraPermission({
     Function? onGranted,
     Function? onDenied,
     Function? onPermanentlyDenied,
   }) async {
-    // Due to no need Camera permission anymore:
-    // https://pub.dev/packages/image_picker/changelog#0801
-    if (Platform.isAndroid) {
-      onGranted?.call();
-      return true;
-    }
     final status = await Permission.camera.status;
     switch (status) {
       case PermissionStatus.granted:
@@ -252,20 +260,26 @@ class Utilities {
         onPermanentlyDenied?.call();
         return false;
       default:
-        {
-          final requested = await Permission.camera.request();
-          switch (requested) {
-            case PermissionStatus.granted:
-              onGranted?.call();
-              return true;
-            case PermissionStatus.permanentlyDenied:
-              onPermanentlyDenied?.call();
-              return false;
-            default:
-              onDenied?.call();
-              return false;
-          }
-        }
+        return false;
+    }
+  }
+
+  static Future<bool> requestCameraPermission({
+    Function? onGranted,
+    Function? onDenied,
+    Function? onPermanentlyDenied,
+  }) async {
+    final requested = await Permission.camera.request();
+    switch (requested) {
+      case PermissionStatus.granted:
+        onGranted?.call();
+        return true;
+      case PermissionStatus.permanentlyDenied:
+        onPermanentlyDenied?.call();
+        return false;
+      default:
+        onDenied?.call();
+        return false;
     }
   }
 
@@ -306,6 +320,24 @@ class Utilities {
               return false;
           }
         }
+    }
+  }
+
+  static Future<bool> checkPhotoPermission({
+    Function? onGranted,
+    Function? onDenied,
+    Function? onPermanentlyDenied,
+  }) async {
+    final status = await Permission.photos.status;
+    switch (status) {
+      case PermissionStatus.granted:
+        onGranted?.call();
+        return true;
+      case PermissionStatus.permanentlyDenied:
+        onPermanentlyDenied?.call();
+        return false;
+      default:
+        return false;
     }
   }
 

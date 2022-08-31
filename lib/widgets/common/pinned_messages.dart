@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/blocs/pinned_message_cubit/pinned_messsage_cubit.dart';
 import 'package:twake/config/dimensions_config.dart';
-import 'package:twake/models/channel/channel.dart';
 import 'package:twake/pages/chat/message_tile.dart';
 import 'package:twake/utils/utilities.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -23,11 +22,16 @@ class _PinnedMessagesState extends State<PinnedMessages> {
       SearchableGroupChatController();
 
   @override
+  void initState() {
+    Get.find<PinnedMessageCubit>().unpinAllReset();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final int pinnedMessages =
         Get.find<PinnedMessageCubit>().state.pinnedMessageList.length;
 
-    final Channel channel = Get.arguments;
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -58,10 +62,6 @@ class _PinnedMessagesState extends State<PinnedMessages> {
                 )
               ],
             ),
-            Divider(
-              height: 1,
-              color: Theme.of(context).colorScheme.secondary.withOpacity(0.15),
-            ),
             BlocBuilder<PinnedMessageCubit, PinnedMessageState>(
               bloc: Get.find<PinnedMessageCubit>(),
               builder: (context, state) {
@@ -73,12 +73,8 @@ class _PinnedMessagesState extends State<PinnedMessages> {
                           indexedItemBuilder: (_, message, index) {
                             return HighlightComponent(
                               component: MessageTile<ChannelMessagesCubit>(
-                                isPinned: true,
                                 message: message,
-                                upBubbleSide: true,
-                                downBubbleSide: true,
                                 key: ValueKey(message.hash),
-                                channel: channel,
                               ),
                               highlightColor: Theme.of(context).highlightColor,
                               highlightWhen:

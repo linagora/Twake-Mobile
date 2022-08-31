@@ -6,7 +6,7 @@ import 'package:twake/blocs/gallery_cubit/gallery_cubit.dart';
 class GalleryViewTab extends StatelessWidget {
   final TabController tabController;
   final String title;
-  final Icon icon;
+  final IconData iconData;
   final int tabIndex;
   final BorderRadiusGeometry borderRadiusGeometry;
 
@@ -16,7 +16,7 @@ class GalleryViewTab extends StatelessWidget {
       required this.title,
       required this.tabIndex,
       required this.borderRadiusGeometry,
-      required this.icon})
+      required this.iconData})
       : super(key: key);
 
   @override
@@ -30,7 +30,6 @@ class GalleryViewTab extends StatelessWidget {
         child: BlocBuilder<GalleryCubit, GalleryState>(
           bloc: Get.find<GalleryCubit>(),
           builder: (context, state) {
-            int tab = state.selectedTab;
             return AnimatedContainer(
               duration: Duration(milliseconds: 200),
               height: 50,
@@ -39,18 +38,24 @@ class GalleryViewTab extends StatelessWidget {
                   border: Border.all(
                     color: Theme.of(context).colorScheme.surface,
                   ),
-                  color: //tabController.index == 0
-                      tab == tabIndex
-                          ? Theme.of(context).colorScheme.surface
-                          : Get.isDarkMode
-                              ? Theme.of(context).colorScheme.primary
-                              : Theme.of(context).primaryColor),
+                  color: state.selectedTab == tabIndex
+                      ? Theme.of(context).colorScheme.surface
+                      : Get.isDarkMode
+                          ? Theme.of(context).colorScheme.primary
+                          : Theme.of(context).primaryColor),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: icon,
+                    child: Icon(
+                      iconData,
+                      color: Get.isDarkMode
+                          ? null
+                          : state.selectedTab == tabIndex
+                              ? Colors.white
+                              : Theme.of(context).colorScheme.surface,
+                    ),
                   ),
                   Padding(
                     padding: const EdgeInsets.all(8.0),

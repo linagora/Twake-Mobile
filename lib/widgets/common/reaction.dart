@@ -8,11 +8,8 @@ import 'package:twake/utils/emojis.dart';
 class Reaction<T extends BaseMessagesCubit> extends StatelessWidget {
   final Message message;
   final rct.Reaction reaction;
-  final bool isFirstInThread;
-  Reaction(
-      {required this.message,
-      required this.reaction,
-      this.isFirstInThread = false});
+
+  Reaction({required this.message, required this.reaction});
 
   @override
   Widget build(BuildContext context) {
@@ -26,9 +23,18 @@ class Reaction<T extends BaseMessagesCubit> extends StatelessWidget {
           child: Container(
             decoration: BoxDecoration(
               // waiting for accurate colors in the upcoming design
-              color: Theme.of(context).colorScheme.background,
-              border: Border.all(
-                  color: Theme.of(context).colorScheme.background, width: 1),
+              color: Get.isDarkMode
+                  ?  message.isOwnerMessage
+                      ? Theme.of(context)
+                          .colorScheme
+                          .primaryContainer
+                          .withOpacity(0.2)
+                      : Theme.of(context)
+                          .colorScheme
+                          .primaryContainer
+                          .withOpacity(0.12)
+                  : Theme.of(context).colorScheme.surface.withOpacity(0.12),
+
               borderRadius: BorderRadius.circular(12),
             ),
             child: Padding(
@@ -38,19 +44,23 @@ class Reaction<T extends BaseMessagesCubit> extends StatelessWidget {
                   Text(
                     '${Emojis.getByName(reaction.name)}',
                     style: TextStyle(
-                        fontSize: isFirstInThread ? 20 : 15,
+                        fontSize: 21,
                         fontWeight: FontWeight.bold,
                         color: Theme.of(context).textTheme.headline3!.color),
                   ),
                   SizedBox(
-                    width: 3,
+                    width: 4,
                   ),
                   Text(
                     '${reaction.count}',
-                    style: Theme.of(context)
-                        .textTheme
-                        .headline2!
-                        .copyWith(fontWeight: FontWeight.w600, fontSize: 12),
+                    style: Get.isDarkMode
+                        ?  message.isOwnerMessage
+                            ? Theme.of(context).textTheme.headline1!.copyWith(
+                                fontWeight: FontWeight.w600, fontSize: 12)
+                            : Theme.of(context).textTheme.headline1!.copyWith(
+                                fontWeight: FontWeight.w600, fontSize: 12)
+                        : Theme.of(context).textTheme.headline4!.copyWith(
+                            fontWeight: FontWeight.w600, fontSize: 12),
                   ),
                   SizedBox(
                     width: 3,

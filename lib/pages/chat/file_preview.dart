@@ -12,6 +12,7 @@ import 'package:twake/config/image_path.dart';
 import 'package:twake/config/styles_config.dart';
 import 'package:twake/models/file/download/file_downloading.dart';
 import 'package:twake/models/file/file.dart';
+import 'package:twake/models/file/message_file.dart';
 import 'package:twake/pages/chat/file_preview_header.dart';
 import 'package:twake/utils/emojis.dart';
 import 'package:twake/utils/utilities.dart';
@@ -27,14 +28,16 @@ class FilePreview<T extends BaseChannelsCubit> extends StatefulWidget {
 
 class _FilePreviewState<T extends BaseChannelsCubit>
     extends State<FilePreview<T>> {
-  late File file;
+  File? file;
+  MessageFile? messageFile;
   late bool? enableDownload;
   late bool? isImageType;
 
   @override
   void initState() {
     super.initState();
-    file = Get.arguments[0];
+    final getFile = Get.arguments[0];
+    getFile.runtimeType == MessageFile ? messageFile = getFile : file = getFile;
     enableDownload = Get.arguments[1];
     isImageType = Get.arguments[2];
   }
@@ -53,7 +56,9 @@ class _FilePreviewState<T extends BaseChannelsCubit>
           isDirect: channel.isDirect,
           channelName: channel.name,
           avatars: channel.isDirect ? channel.avatars : const [],
-          fileName: file.metadata.name,
+          fileName: messageFile == null
+              ? file!.metadata.name
+              : messageFile!.metadata.name,
           channelIcon: Emojis.getByName(channel.icon ?? ''),
         ),
         actions: [
@@ -76,9 +81,13 @@ class _FilePreviewState<T extends BaseChannelsCubit>
                   Icons.error,
                   color: Theme.of(context).colorScheme.secondary,
                 ),
-                imageUrl: (isImageType == true)
-                    ? file.downloadUrl
-                    : file.thumbnailUrl,
+                imageUrl: messageFile == null
+                    ? (isImageType == true)
+                        ? file!.downloadUrl
+                        : file!.thumbnailUrl
+                    : (isImageType == true)
+                        ? messageFile!.downloadUrl
+                        : messageFile!.thumbnailUrl,
                 progressIndicatorBuilder: (context, url, progress) {
                   return ShimmerLoading(
                       isLoading: true,
@@ -106,15 +115,21 @@ class _FilePreviewState<T extends BaseChannelsCubit>
           FileDownloading? selectedFile;
           if (state.listFileDownloading.isNotEmpty) {
             selectedFile = state.listFileDownloading.firstWhereOrNull(
-                (fileDownloading) => fileDownloading.file.id == file.id);
+                (fileDownloading) => fileDownloading.messageFile == null
+                    ? fileDownloading.file!.id == file!.id
+                    : fileDownloading.messageFile!.metadata.externalId ==
+                        file!.id);
           }
-          return _buildDownloadIcon(file, selectedFile);
+          return _buildDownloadIcon(file, messageFile, selectedFile);
         },
         listener: (context, state) async {
           FileDownloading? selectedFile;
           if (state.listFileDownloading.isNotEmpty) {
             selectedFile = state.listFileDownloading.firstWhereOrNull(
-                (fileDownloading) => fileDownloading.file.id == file.id);
+                (fileDownloading) => fileDownloading.messageFile == null
+                    ? fileDownloading.file!.id == file!.id
+                    : fileDownloading.messageFile!.metadata.externalId ==
+                        file!.id);
           }
           if (selectedFile != null) {
             if (selectedFile.downloadStatus ==
@@ -129,29 +144,32 @@ class _FilePreviewState<T extends BaseChannelsCubit>
     );
   }
 
-  _buildDownloadIcon(File file, FileDownloading? fileDownloading) {
+  _buildDownloadIcon(
+      File? file, MessageFile? messageFile, FileDownloading? fileDownloading) {
     if (fileDownloading == null) {
-      return _initDownloadIcon(file);
+      return _initDownloadIcon(file, messageFile);
     }
     if (fileDownloading.downloadStatus ==
         FileItemDownloadStatus.downloadInProgress) {
       return _downloadInProgressIcon(fileDownloading);
     } else {
-      return _initDownloadIcon(file);
+      return _initDownloadIcon(file, messageFile);
     }
   }
 
-  _initDownloadIcon(File file) {
+  _initDownloadIcon(File? file, MessageFile? messageFile) {
     return GestureDetector(
-      onTap: () => _handleDownloadFile(file),
+      onTap: () => _handleDownloadFile(file, messageFile),
       child: Container(
-        width: 32.0,
-        height: 32.0,
+        width: 46.0,
+        height: 46.0,
         decoration: BoxDecoration(
           color: Colors.white.withOpacity(0.2),
           shape: BoxShape.circle,
         ),
-        child: Image.asset(imageDownload),
+        child: Image.asset(
+          imageDownload,
+        ),
       ),
     );
   }
@@ -160,8 +178,8 @@ class _FilePreviewState<T extends BaseChannelsCubit>
     return GestureDetector(
       onTap: () => _handleCancelDownloadFile(fileDownloading),
       child: Container(
-        width: 32.0,
-        height: 32.0,
+        width: 46.0,
+        height: 46.0,
         padding: const EdgeInsets.all(2.0),
         decoration: BoxDecoration(
           color: const Color(0xff004dff).withOpacity(0.08),
@@ -182,8 +200,9 @@ class _FilePreviewState<T extends BaseChannelsCubit>
     );
   }
 
-  _handleDownloadFile(File file) {
-    Get.find<FileDownloadCubit>().download(context: context, file: file);
+  _handleDownloadFile(File? file, MessageFile? messageFile) {
+    Get.find<FileDownloadCubit>()
+        .download(context: context, file: file, messageFile: messageFile);
   }
 
   _handleCancelDownloadFile(FileDownloading fileDownloading) {
@@ -205,12 +224,16 @@ class _FilePreviewState<T extends BaseChannelsCubit>
             return false;
           },
           child: AlertDialog(
-            backgroundColor: Colors.black.withOpacity(0.4),
+            backgroundColor: Colors.black.withOpacity(0.7),
             title: Center(
               child: Text(
                 (isImageType == true)
-                  ? AppLocalizations.of(parentContext)?.fileDownloadedInGallery ?? ''
-                  : AppLocalizations.of(parentContext)?.fileDownloadedInStorage ?? '',
+                    ? AppLocalizations.of(parentContext)
+                            ?.fileDownloadedInGallery ??
+                        ''
+                    : AppLocalizations.of(parentContext)
+                            ?.fileDownloadedInStorage ??
+                        '',
                 style: StylesConfig.commonTextStyle
                     .copyWith(color: Colors.white, fontSize: 16.0),
               ),

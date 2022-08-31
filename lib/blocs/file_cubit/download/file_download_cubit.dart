@@ -5,6 +5,7 @@ import 'package:logger/logger.dart';
 import 'package:twake/blocs/file_cubit/download/file_download_state.dart';
 import 'package:twake/models/file/download/file_downloading.dart';
 import 'package:twake/models/file/file.dart';
+import 'package:twake/models/file/message_file.dart';
 import 'package:twake/repositories/file_repository.dart';
 import 'package:twake/utils/extensions.dart';
 import 'package:twake/utils/utilities.dart';
@@ -19,65 +20,73 @@ class FileDownloadCubit extends Cubit<FileDownloadState> {
     _repository = repository;
   }
 
-  void download({required BuildContext context, required File file}) async {
-
+  void download(
+      {required BuildContext context,
+      File? file,
+      MessageFile? messageFile}) async {
     // make sure storage permission is granted before downloading
     final isGranted = await Utilities.checkAndRequestStoragePermission(
         permissionType: PermissionStorageType.WriteExternalStorage,
-        onPermanentlyDenied: () => Utilities.showOpenSettingsDialog(context: context)
-    );
-    if(!isGranted)
-      return;
+        onPermanentlyDenied: () =>
+            Utilities.showOpenSettingsDialog(context: context));
+    if (!isGranted) return;
 
     List<FileDownloading> listFileDownloading = [...state.listFileDownloading];
 
     // add new file downloading to state
     final newFileDownloading = FileDownloading(
       file: file,
+      messageFile: messageFile,
       downloadStatus: FileItemDownloadStatus.downloadInProgress,
     );
-    emit(state.copyWith(listFileDownloading: listFileDownloading..add(newFileDownloading)));
-
+    emit(state.copyWith(
+        listFileDownloading: listFileDownloading..add(newFileDownloading)));
     // start downloading file
     try {
-      final result = await _repository.downloadFile(fileDownloading: newFileDownloading);
+      final result =
+          await _repository.downloadFile(fileDownloading: newFileDownloading);
       final taskId = result.item1;
       final savedPath = result.item2;
-      if (state.listFileDownloading.isEmpty)
-        return;
-      if(taskId == null) {
-        handleDownloadFailed(file: file);
+      if (state.listFileDownloading.isEmpty) return;
+      if (taskId == null) {
+        handleDownloadFailed(file: file, messageFile: messageFile);
         return;
       }
       final updatedStateList = state.listFileDownloading.map((fileDownloading) {
-        return fileDownloading.file.id == file.id
-            ? fileDownloading.copyWith(downloadTaskId: taskId, savedPath: savedPath)
+        return fileDownloading.file!.id == file!.id
+            ? fileDownloading.copyWith(
+                downloadTaskId: taskId, savedPath: savedPath)
             : fileDownloading;
       }).toList();
-      emit(state.copyWith(listFileDownloading: updatedStateList));
+      emit(state.copyWith(
+          listFileDownloading: updatedStateList as List<FileDownloading>?));
     } catch (e) {
       Logger().e('Error occurred during file downloading:\n$e');
-      handleDownloadFailed(file: file);
+      handleDownloadFailed(file: file, messageFile: messageFile);
     }
   }
 
   // Update failed status by [file] or [taskId]
-  void handleDownloadFailed({File? file, String? taskId}) {
-    if(state.listFileDownloading.isEmpty)
-      return;
-    if(file != null) {
-      final updatedStateList = state.listFileDownloading.map((fileDownloading) {
-        return fileDownloading.file.id == file.id
-            ? fileDownloading.copyWith(downloadStatus: FileItemDownloadStatus.downloadFailed)
+  void handleDownloadFailed(
+      {File? file, MessageFile? messageFile, String? taskId}) {
+    if (state.listFileDownloading.isEmpty) return;
+    if (file != null || messageFile != null) {
+      final List<FileDownloading>? updatedStateList =
+          state.listFileDownloading.map((fileDownloading) {
+        return fileDownloading.file!.id == file!.id
+            ? fileDownloading.copyWith(
+                downloadStatus: FileItemDownloadStatus.downloadFailed)
             : fileDownloading;
       }).toList();
+
       emit(state.copyWith(listFileDownloading: updatedStateList));
       return;
     }
-    if(taskId != null) {
+    if (taskId != null) {
       final updatedStateList = state.listFileDownloading.map((fileDownloading) {
         return fileDownloading.downloadTaskId == taskId
-            ? fileDownloading.copyWith(downloadStatus: FileItemDownloadStatus.downloadFailed)
+            ? fileDownloading.copyWith(
+                downloadStatus: FileItemDownloadStatus.downloadFailed)
             : fileDownloading;
       }).toList();
       emit(state.copyWith(listFileDownloading: updatedStateList));
@@ -85,15 +94,12 @@ class FileDownloadCubit extends Cubit<FileDownloadState> {
     }
   }
 
-  void handleAfterDownloaded({
-    required String taskId,
-    required BuildContext context
-  }) async {
-    if (state.listFileDownloading.isEmpty)
-      return;
+  void handleAfterDownloaded(
+      {required String taskId, required BuildContext context}) async {
+    if (state.listFileDownloading.isEmpty) return;
     FileDownloading? fileDownloaded;
     final updatedStateList = state.listFileDownloading.map((fileDownloading) {
-      if(fileDownloading.downloadTaskId == taskId) {
+      if (fileDownloading.downloadTaskId == taskId) {
         fileDownloaded = fileDownloading;
         return fileDownloading.copyWith(
             downloadStatus: FileItemDownloadStatus.downloadSuccessful);
@@ -104,37 +110,45 @@ class FileDownloadCubit extends Cubit<FileDownloadState> {
 
     // save to gallery if this is media
     final isPhotoGranted = await Utilities.checkAndRequestPhotoPermission(
-        onPermanentlyDenied: () => Utilities.showOpenSettingsDialog(context: context)
-    );
-    if(!isPhotoGranted)
-      return;
-    if(fileDownloaded != null && fileDownloaded!.savedPath!= null) {
-      if (fileDownloaded!.file.metadata.mime.isImageMimeType) {
-        await GallerySaver.saveImage(fileDownloaded!.savedPath!);
-      } else if (fileDownloaded!.file.metadata.mime.isVideoMimeType) {
-        await GallerySaver.saveVideo(fileDownloaded!.savedPath!);
+        onPermanentlyDenied: () =>
+            Utilities.showOpenSettingsDialog(context: context));
+    if (!isPhotoGranted) return;
+    if (fileDownloaded != null && fileDownloaded!.savedPath != null) {
+      if (fileDownloaded!.file != null) {
+        if (fileDownloaded!.file!.metadata.mime.isImageMimeType) {
+          await GallerySaver.saveImage(fileDownloaded!.savedPath!);
+        } else if (fileDownloaded!.file!.metadata.mime.isVideoMimeType) {
+          await GallerySaver.saveVideo(fileDownloaded!.savedPath!);
+        }
+      } else {
+        if (fileDownloaded!.messageFile!.metadata.mime.isImageMimeType) {
+          await GallerySaver.saveImage(fileDownloaded!.savedPath!);
+        } else if (fileDownloaded!.messageFile!.metadata.mime.isVideoMimeType) {
+          await GallerySaver.saveVideo(fileDownloaded!.savedPath!);
+        }
       }
     }
   }
 
-  void addToDownloadStateAfterUploaded({required File file, required String localPath}) {
+  void addToDownloadStateAfterUploaded(
+      {required File file, required String localPath}) {
     List<FileDownloading> listFileDownloading = [...state.listFileDownloading];
 
     // add new file downloading to state
     final newFileDownloading = FileDownloading(
-      file: file,
-      downloadStatus: FileItemDownloadStatus.downloadSuccessful,
-      savedPath: localPath
-    );
-    emit(state.copyWith(listFileDownloading: listFileDownloading..add(newFileDownloading)));
+        file: file,
+        downloadStatus: FileItemDownloadStatus.downloadSuccessful,
+        savedPath: localPath);
+    emit(state.copyWith(
+        listFileDownloading: listFileDownloading..add(newFileDownloading)));
   }
 
   void cancelDownloadingFile({required String downloadTaskId}) {
     _repository.cancelDownloadingFile(downloadTaskId: downloadTaskId);
-    if (state.listFileDownloading.isEmpty)
-      return;
+    if (state.listFileDownloading.isEmpty) return;
     final updatedStateList = [...state.listFileDownloading];
-    updatedStateList.removeWhere((file) => file.downloadTaskId == downloadTaskId);
+    updatedStateList
+        .removeWhere((file) => file.downloadTaskId == downloadTaskId);
     emit(state.copyWith(listFileDownloading: updatedStateList));
   }
 
@@ -143,11 +157,10 @@ class FileDownloadCubit extends Cubit<FileDownloadState> {
   }
 
   void removeDownloadingFile({required String downloadTaskId}) {
-    if (state.listFileDownloading.isEmpty)
-      return;
+    if (state.listFileDownloading.isEmpty) return;
     final updatedStateList = [...state.listFileDownloading];
-    updatedStateList.removeWhere((file) => file.downloadTaskId == downloadTaskId);
+    updatedStateList
+        .removeWhere((file) => file.downloadTaskId == downloadTaskId);
     emit(state.copyWith(listFileDownloading: updatedStateList));
   }
-
 }

@@ -26,12 +26,23 @@ class PicturesListView extends StatefulWidget {
 }
 
 class _PicturesListViewState extends State<PicturesListView>
-    with AutomaticKeepAliveClientMixin<PicturesListView> {
+    with
+        AutomaticKeepAliveClientMixin<PicturesListView>,
+        WidgetsBindingObserver {
   CameraController? _cameraController;
+  bool _cameraControllerInitInitialize = false;
 
   @override
   void initState() {
     super.initState();
+
+    widget.scrollController.addListener(() {
+      if (widget.scrollController.positions.last.atEdge) {
+        if (widget.scrollController.positions.last.pixels != 0) {
+          Get.find<GalleryCubit>().getGalleryAssets(isGettingNewAssets: true);
+        }
+      }
+    });
 
     Get.find<GalleryCubit>().tabChange(0);
 
@@ -39,10 +50,27 @@ class _PicturesListViewState extends State<PicturesListView>
     if (state.cameraStateStatus == CameraStateStatus.found ||
         state.cameraStateStatus == CameraStateStatus.done) {
       _cameraController = CameraController(
-        state.availableCameras.first,
-        ResolutionPreset.high,
-      );
+          state.availableCameras.first, ResolutionPreset.high,
+          enableAudio: false);
+      _cameraControllerInitInitialize = true;
       _initCamera();
+    }
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    // it is necessary otherwise the controller falls off
+    if (state == AppLifecycleState.inactive) {
+      _cameraController!.dispose();
+    } else if (state == AppLifecycleState.resumed) {
+      final cameraCubitState = Get.find<CameraCubit>().state;
+      if (cameraCubitState.cameraStateStatus == CameraStateStatus.found ||
+          cameraCubitState.cameraStateStatus == CameraStateStatus.done) {
+        _cameraController = CameraController(
+            cameraCubitState.availableCameras.first, ResolutionPreset.high,
+            enableAudio: false);
+        _cameraController!.initialize();
+      }
     }
   }
 
@@ -60,9 +88,8 @@ class _PicturesListViewState extends State<PicturesListView>
 
   void _prepareCamera(CameraState state) {
     _cameraController = CameraController(
-      state.availableCameras.first,
-      ResolutionPreset.high,
-    );
+        state.availableCameras.first, ResolutionPreset.high,
+        enableAudio: false);
     _initCamera();
   }
 
@@ -85,6 +112,7 @@ class _PicturesListViewState extends State<PicturesListView>
               if (state.galleryStateStatus == GalleryStateStatus.done) {
                 return _galleryDone(
                     assetsList: state.assetsList,
+                    isAddingDummyAssets: state.isAddingDummyAssets,
                     cameraController: _cameraController,
                     context: context);
               } else if (state.galleryStateStatus ==
@@ -94,6 +122,7 @@ class _PicturesListViewState extends State<PicturesListView>
                   GalleryStateStatus.newSelect) {
                 return _galleryDone(
                     assetsList: state.assetsList,
+                    isAddingDummyAssets: state.isAddingDummyAssets,
                     cameraController: _cameraController,
                     context: context);
               } else {
@@ -109,6 +138,7 @@ class _PicturesListViewState extends State<PicturesListView>
   Widget _galleryDone(
       {required List<Uint8List> assetsList,
       required BuildContext context,
+      required bool isAddingDummyAssets,
       CameraController? cameraController}) {
     return GridView.builder(
       key: PageStorageKey<String>('galleryDone'),
@@ -119,32 +149,45 @@ class _PicturesListViewState extends State<PicturesListView>
       ),
       shrinkWrap: true,
       physics: ScrollPhysics(),
-      itemCount: assetsList.length + 1,
+      itemCount: isAddingDummyAssets == false
+          ? assetsList.length + 1
+          : assetsList.length + 1 + assetsIterationStep,
       itemBuilder: (_, index) {
         return index == 0
             ? _cameraStream(context, cameraController)
-            : BlocBuilder<GalleryCubit, GalleryState>(
-                bloc: Get.find<GalleryCubit>(),
-                buildWhen: (_, currentState) =>
-                    currentState.galleryStateStatus !=
-                    GalleryStateStatus.newSelect,
-                builder: (context, state) {
-                  if (state.galleryStateStatus == GalleryStateStatus.done ||
-                      state.galleryStateStatus ==
-                          GalleryStateStatus.newSelect) {
-                    return _assetThumbnail(
-                        state.assetsList[index - 1], index - 1, context);
-                  } else {
-                    return Center(
-                      child: Container(
-                        height: 50,
-                        width: 50,
-                        child: CircularProgressIndicator(),
+            : index < (assetsList.length + 1)
+                ? BlocBuilder<GalleryCubit, GalleryState>(
+                    bloc: Get.find<GalleryCubit>(),
+                    buildWhen: (_, currentState) =>
+                        currentState.galleryStateStatus !=
+                        GalleryStateStatus.newSelect,
+                    builder: (context, state) {
+                      if (state.galleryStateStatus == GalleryStateStatus.done ||
+                          state.galleryStateStatus ==
+                              GalleryStateStatus.newSelect) {
+                        return _assetThumbnail(
+                            state.assetsList[index - 1], index - 1, context);
+                      } else {
+                        return Center(
+                          child: Container(
+                            height: 50,
+                            width: 50,
+                            child: CircularProgressIndicator(
+                                color: Theme.of(context).colorScheme.secondary),
+                          ),
+                        );
+                      }
+                    },
+                  )
+                : Center(
+                    child: Container(
+                      height: 50,
+                      width: 50,
+                      child: CircularProgressIndicator(
+                        color: Theme.of(context).colorScheme.secondary,
                       ),
-                    );
-                  }
-                },
-              );
+                    ),
+                  );
       },
     );
   }
@@ -201,7 +244,8 @@ class _PicturesListViewState extends State<PicturesListView>
                 child: Container(
                   height: 50,
                   width: 50,
-                  child: CircularProgressIndicator(),
+                  child: CircularProgressIndicator(
+                      color: Theme.of(context).colorScheme.secondary),
                 ),
               );
       },
@@ -217,73 +261,89 @@ class _PicturesListViewState extends State<PicturesListView>
         child: Container(
           height: 50,
           width: 50,
-          child: CircularProgressIndicator(),
+          child: CircularProgressIndicator(
+            color: Theme.of(context).colorScheme.secondary,
+          ),
         ),
       );
     }
 
-    return _controller == null || !_controller.value.isInitialized
-        ? Container(
-            child: Center(
-              child: Padding(
-                padding: const EdgeInsets.all(4.0),
-                child: Text(
-                  "The camera is not available",
-                  style: Theme.of(context).textTheme.headline1,
+    return BlocListener<CameraCubit, CameraState>(
+      bloc: Get.find<CameraCubit>(),
+      listener: (context, state) {
+        if (state.cameraStateStatus == CameraStateStatus.found &&
+            !_cameraControllerInitInitialize) {
+          _prepareCamera(state);
+        }
+      },
+      child: _controller == null || !_controller.value.isInitialized
+          ? Container(
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    'The camera is not available',
+                    style: Theme.of(context)
+                        .textTheme
+                        .headline1!
+                        .copyWith(fontSize: 14),
+                  ),
                 ),
               ),
-            ),
-          )
-        : GestureDetector(
-            onTap: () {
-              push(RoutePaths.cameraView.path, arguments: _controller);
-            },
-            child: Padding(
-              padding: const EdgeInsets.all(2.0),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: Container(
-                  child: BlocBuilder<CameraCubit, CameraState>(
-                    bloc: Get.find<CameraCubit>(),
-                    builder: (context, state) {
-                      if (state.cameraStateStatus == CameraStateStatus.done) {
-                        return Stack(
-                          fit: StackFit.expand,
-                          children: [
-                            CameraPreview(_controller),
-                            Icon(
-                              Icons.camera_alt_outlined,
-                              size: 40,
-                            )
-                          ],
-                        );
-                      } else if (state.cameraStateStatus ==
-                          CameraStateStatus.loading) {
-                        return Center(
-                          child: Container(
-                            height: 50,
-                            width: 50,
-                            child: CircularProgressIndicator(),
-                          ),
-                        );
-                      } else
-                        return Container(
-                          child: Center(
-                            child: Padding(
-                              padding: const EdgeInsets.all(4.0),
-                              child: Text(
-                                'The camera is not available',
-                                style: Theme.of(context).textTheme.headline1,
+            )
+          : GestureDetector(
+              onTap: () {
+                push(RoutePaths.cameraView.path, arguments: _controller);
+              },
+              child: Padding(
+                padding: const EdgeInsets.all(2.0),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: Container(
+                    child: BlocBuilder<CameraCubit, CameraState>(
+                      bloc: Get.find<CameraCubit>(),
+                      builder: (context, state) {
+                        if (state.cameraStateStatus == CameraStateStatus.done) {
+                          return Stack(
+                            fit: StackFit.expand,
+                            children: [
+                              CameraPreview(_controller),
+                              Icon(
+                                Icons.camera_alt_outlined,
+                                size: 40,
+                              )
+                            ],
+                          );
+                        } else if (state.cameraStateStatus ==
+                            CameraStateStatus.loading) {
+                          return Center(
+                            child: Container(
+                              height: 50,
+                              width: 50,
+                              child: CircularProgressIndicator(
+                                  color:
+                                      Theme.of(context).colorScheme.secondary),
+                            ),
+                          );
+                        } else
+                          return Container(
+                            child: Center(
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  'The camera is not available',
+                                  style: Theme.of(context).textTheme.headline1,
+                                ),
                               ),
                             ),
-                          ),
-                        );
-                    },
+                          );
+                      },
+                    ),
                   ),
                 ),
               ),
             ),
-          );
+    );
   }
 
   Widget _assetThumbnail(Uint8List data, int index, BuildContext context) {
@@ -317,29 +377,55 @@ class _PicturesListViewState extends State<PicturesListView>
                         currentState.galleryStateStatus ==
                         GalleryStateStatus.newSelect,
                     builder: (context, state) {
-                      return state.selectedFilesIndex.contains(index)
-                          ? Stack(
-                              children: [
-                                Icon(
-                                  Icons.check_circle,
-                                  size: 26,
-                                  color: Get.isDarkMode
-                                      ? Theme.of(context)
-                                          .colorScheme
-                                          .primaryContainer
-                                      : Theme.of(context).primaryColor,
-                                ),
-                              ],
-                            )
-                          : Icon(
-                              Icons.circle_outlined,
-                              size: 26,
-                              color: Get.isDarkMode
-                                  ? Theme.of(context)
-                                      .colorScheme
-                                      .primaryContainer
-                                  : Theme.of(context).primaryColor,
-                            );
+                      return Stack(
+                        children: [
+                          state.selectedFilesIndex.contains(index)
+                              ? Positioned(
+                                  right: 5,
+                                  bottom: 5,
+                                  child: Container(
+                                    height: 22,
+                                    width: 22,
+                                    decoration: BoxDecoration(
+                                      color:
+                                          Theme.of(context).colorScheme.surface,
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: Center(
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(
+                                            left: 1, top: 1),
+                                        child: Text(
+                                            "${state.selectedFilesIndex.indexOf(index) + 1}",
+                                            style: Get.isDarkMode
+                                                ? Theme.of(context)
+                                                    .textTheme
+                                                    .headline1!
+                                                    .copyWith(
+                                                        fontSize: 14,
+                                                        fontWeight:
+                                                            FontWeight.w500)
+                                                : Theme.of(context)
+                                                    .textTheme
+                                                    .bodyText1!
+                                                    .copyWith(
+                                                        fontSize: 14,
+                                                        fontWeight:
+                                                            FontWeight.w500)),
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              : SizedBox.shrink(),
+                          Icon(
+                            Icons.circle_outlined,
+                            size: 30,
+                            color: Get.isDarkMode
+                                ? Theme.of(context).colorScheme.primaryContainer
+                                : Theme.of(context).primaryColor,
+                          ),
+                        ],
+                      );
                     },
                   ),
                 ),

@@ -72,3 +72,30 @@ class MessagesBeforeLoadInProgress extends MessagesLoadSuccess {
     Message? parentMessage,
   }) : super(messages: messages, hash: hash);
 }
+
+class MessagesAroundPinnedLoadSuccess extends MessagesLoadSuccess {
+  final Message pinnedMessage;
+
+  MessagesAroundPinnedLoadSuccess(
+      {required List<Message> messages,
+      required int hash,
+      required bool endOfHistory,
+      required this.pinnedMessage})
+      : super(messages: messages, hash: hash);
+
+    @override
+  List<Object?> get props => [pinnedMessage];
+}
+
+class MessageLatestSuccess extends MessagesLoadSuccess {
+  final Message latestMessage;
+
+  MessageLatestSuccess(
+      {required List<Message> messages,
+      required int hash,
+      required this.latestMessage})
+      : super(messages: messages, hash: hash);
+
+  @override
+  List<Object?> get props => [latestMessage];
+}

@@ -22,6 +22,7 @@ class MessagesRepository {
 
   MessagesRepository();
 
+  //fetch both local and remote messages
   Stream<List<Message>> fetch({
     String? companyId,
     String? workspaceId,
@@ -34,7 +35,6 @@ class MessagesRepository {
       threadId: threadId,
       withExistedFiles: withExistedFiles,
     );
-    yield messages;
 
     if (!Globals.instance.isNetworkConnected) return;
 
@@ -47,10 +47,12 @@ class MessagesRepository {
       withExistedFiles: withExistedFiles,
     );
 
-    if (remoteMessages.isEmpty) return;
-
-    remoteMessages.sort((m1, m2) => m1.createdAt.compareTo(m2.createdAt));
-
+    if (remoteMessages.isNotEmpty) {
+      // add old messages to remoteMessages, so that old message which have old response count will be replaced by new message
+      remoteMessages.addAll(
+          messages.where((element) => !remoteMessages.contains(element)));
+      remoteMessages.sort((m1, m2) => m1.createdAt.compareTo(m2.createdAt));
+    }
     yield remoteMessages;
   }
 
@@ -109,7 +111,7 @@ class MessagesRepository {
     }
     if (threadId == null) {
       remoteResult = await _api.get(
-        endpoint: sprintf(Endpoint.threads, [
+        endpoint: sprintf(Endpoint.threadsChannel, [
           companyId ?? Globals.instance.companyId,
           workspaceId ?? Globals.instance.workspaceId,
           channelId
@@ -152,36 +154,54 @@ class MessagesRepository {
     );
   }
 
-  Future<List<Message>> fetchBefore({
+  Future<List<Message>> fetchAroundMessage({
+    String? workspaceId,
     required String channelId,
     String? threadId,
-    required String beforeMessageId,
+    required String messageId,
+    required String direction,
+    int? limit,
   }) async {
-    List<dynamic> remoteResult;
+    List<dynamic> remoteResult = [];
     final queryParameters = {
       'include_users': 1,
-      'page_token': beforeMessageId,
-      'direction': 'history',
+      'page_token': messageId,
+      'direction': direction,
+      'limit': limit ?? 20,
     };
     if (threadId == null) {
-      remoteResult = await _api.get(
-        endpoint: sprintf(Endpoint.threads, [
-          Globals.instance.companyId,
-          Globals.instance.workspaceId,
-          channelId
-        ]),
-        queryParameters: queryParameters,
-        key: 'resources',
-      );
+      try {
+        remoteResult = await _api.get(
+          endpoint: sprintf(Endpoint.threadsChannel, [
+            Globals.instance.companyId,
+            workspaceId ?? Globals.instance.workspaceId,
+            channelId
+          ]),
+          queryParameters: queryParameters,
+          key: 'resources',
+        );
+      } catch (e) {
+        Logger().e('Error occured during fetchAroundMessage:\n$e');
+        return [];
+      }
     } else {
-      remoteResult = await _api.get(
-        endpoint: sprintf(
-          Endpoint.threadMessages,
-          [Globals.instance.companyId, threadId],
-        ),
-        queryParameters: queryParameters,
-        key: 'resources',
-      );
+      try {
+        remoteResult = await _api.get(
+          endpoint: sprintf(
+            Endpoint.threadMessages,
+            [
+              Globals.instance.companyId,
+              workspaceId ?? Globals.instance.workspaceId,
+              threadId
+            ],
+          ),
+          queryParameters: queryParameters,
+          key: 'resources',
+        );
+      } catch (e) {
+        Logger().e('Error occured during fetchAroundMessage:\n$e');
+        return [];
+      }
     }
 
     var remoteMessages = remoteResult
@@ -199,7 +219,33 @@ class MessagesRepository {
 
     await _storage.multiInsert(table: Table.message, data: remoteMessages);
 
-    return await fetchLocal(channelId: channelId, threadId: threadId);
+    return remoteMessages.toList();
+  }
+
+  Future<List<Message>> fetchBefore({
+    String? workspaceId,
+    required String channelId,
+    String? threadId,
+    required String beforeMessageId,
+  }) {
+    return fetchAroundMessage(
+        channelId: channelId,
+        messageId: beforeMessageId,
+        direction: 'history',
+        workspaceId: workspaceId);
+  }
+
+  Future<List<Message>> fetchAfter({
+    String? workspaceId,
+    required String channelId,
+    String? threadId,
+    required String afterMessageId,
+  }) {
+    return fetchAroundMessage(
+        channelId: channelId,
+        messageId: afterMessageId,
+        direction: 'future',
+        workspaceId: workspaceId);
   }
 
   Stream<Message> send({
@@ -241,6 +287,7 @@ class MessagesRepository {
       lastName: currentUser.lastName,
       picture: currentUser.picture,
       reactions: [],
+      lastReplies: [],
     );
 
     message.delivery = Delivery.inProgress;
@@ -466,7 +513,7 @@ class MessagesRepository {
     Iterable<Message> remoteMessages = [];
     try {
       remoteResult = await _api.get(
-        endpoint: sprintf(Endpoint.threads, [
+        endpoint: sprintf(Endpoint.threadsChannel, [
           Globals.instance.companyId,
           isDirect == null
               ? Globals.instance.workspaceId

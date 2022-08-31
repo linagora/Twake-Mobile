@@ -5,13 +5,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get/get.dart';
+import 'package:twake/blocs/account_cubit/account_cubit.dart';
 import 'package:twake/blocs/company_files_cubit/company_file_cubit.dart';
+import 'package:twake/blocs/file_cubit/file_transition_cubit.dart';
 import 'package:twake/blocs/file_cubit/upload/file_upload_cubit.dart';
 import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/config/image_path.dart';
-import 'package:twake/models/channel/channel_file.dart';
 import 'package:twake/models/file/file.dart';
 import 'package:twake/models/file/local_file.dart';
+import 'package:twake/models/file/message_file.dart';
 import 'package:twake/utils/constants.dart';
 import 'package:twake/utils/extensions.dart';
 import 'package:twake/utils/utilities.dart';
@@ -73,6 +75,8 @@ class _FilesListViewState extends State<FilesListView>
         sourceFile: localFile,
         sourceFileUploading: SourceFileUploading.InChat,
       );
+      Get.find<FileUploadCubit>().initFileUploadingStream();
+      Get.find<FileTransitionCubit>().fileLoadingMessageEmpty();
     }
 
     Get.back();
@@ -118,7 +122,10 @@ class _FilesListViewState extends State<FilesListView>
                         padding: const EdgeInsets.symmetric(horizontal: 8.0),
                         child: Text(
                           AppLocalizations.of(context)!.addLocalStorageFile,
-                          style: Theme.of(context).textTheme.headline4,
+                          style: Theme.of(context)
+                              .textTheme
+                              .headline4!
+                              .copyWith(fontSize: 15),
                         ),
                       ),
                     ],
@@ -147,7 +154,7 @@ class _FilesListViewState extends State<FilesListView>
                       final files = _searchText.isEmpty
                           ? state.files
                           : state.files.where((file) {
-                              return file.fileName
+                              return file.metadata.name
                                   .toLowerCase()
                                   .contains(_searchText);
                             }).toList();
@@ -187,19 +194,30 @@ class _FilesListViewState extends State<FilesListView>
     );
   }
 
-  _handleSelectFile(File file) {
-    Get.find<FileUploadCubit>().addAlreadyUploadedFile(
-      existsFile: file,
-    );
-
+  void _handleSelectFile(dynamic file) {
+    file.runtimeType == MessageFile
+        ? Get.find<FileUploadCubit>().addAlreadyUploadedFile(
+            existsMessageFile: (file as MessageFile),
+          )
+        : Get.find<FileUploadCubit>().addAlreadyUploadedFile(
+            existsFile: (file as File),
+          );
+    Get.find<FileTransitionCubit>().noMessageTwakeFile();
     Get.back();
   }
 
-  _buildChannelFileItem(ChannelFile channelFile) {
+  _buildChannelFileItem(MessageFile messageFile) {
+    String fullName = '';
+    final accountCubitState = Get.find<AccountCubit>().state;
+    if (accountCubitState is AccountLoadSuccess) {
+      fullName = accountCubitState.account.fullName;
+    }
     return FileChannelTile(
-      fileId: channelFile.fileId,
-      senderName: channelFile.senderName,
+      fileId: messageFile.id,
+      senderName:
+          messageFile.user == null ? fullName : messageFile.user!.fullName,
       onTap: (file) => _handleSelectFile(file),
+      messageFile: messageFile,
     );
   }
 

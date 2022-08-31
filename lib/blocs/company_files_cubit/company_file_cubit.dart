@@ -1,8 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:logger/logger.dart';
 import 'package:twake/blocs/account_cubit/account_cubit.dart';
-import 'package:twake/models/channel/channel_file.dart';
+import 'package:twake/models/file/message_file.dart';
 import 'package:twake/repositories/file_repository.dart';
 
 part 'company_file_state.dart';
@@ -25,7 +24,6 @@ class CompanyFileCubit extends Cubit<CompanyFileState> {
     if (accountState is AccountLoadSuccess) {
       userName = accountState.account.fullName;
     }
-
     final files =
         await _repository.fetchUserFilesFromCompany(userName: userName);
     files != null

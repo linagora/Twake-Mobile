@@ -9,19 +9,21 @@ import 'package:twake/blocs/companies_cubit/companies_cubit.dart';
 import 'package:twake/blocs/company_files_cubit/company_file_cubit.dart';
 import 'package:twake/blocs/file_cubit/download/file_download_cubit.dart';
 import 'package:twake/blocs/file_cubit/file_cubit.dart';
-import 'package:twake/blocs/file_cubit/file_upload_transition_cubit.dart';
+import 'package:twake/blocs/file_cubit/file_transition_cubit.dart';
 import 'package:twake/blocs/file_cubit/upload/file_upload_cubit.dart';
 import 'package:twake/blocs/gallery_cubit/gallery_cubit.dart';
 import 'package:twake/blocs/language_cubit/language_cubit.dart';
 import 'package:twake/blocs/magic_link_cubit/invitation_cubit/invitation_cubit.dart';
 import 'package:twake/blocs/magic_link_cubit/joining_cubit/joining_cubit.dart';
 import 'package:twake/blocs/mentions_cubit/mentions_cubit.dart';
+import 'package:twake/blocs/message_animation_cubit/message_animation_cubit.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/blocs/pinned_message_cubit/pinned_messsage_cubit.dart';
 import 'package:twake/blocs/receive_file_cubit/receive_file_cubit.dart';
 import 'package:twake/blocs/registration_cubit/registration_cubit.dart';
 import 'package:twake/blocs/search_cubit/search_cubit.dart';
 import 'package:twake/blocs/theme_cubit/theme_cubit.dart';
+import 'package:twake/blocs/unread_messages_cubit/unread_messages_cubit.dart';
 import 'package:twake/blocs/workspaces_cubit/workspaces_cubit.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/services/navigator_service.dart';
@@ -58,10 +60,23 @@ class HomeBinding implements Bindings {
     final directsCubit = DirectsCubit();
     Get.put(directsCubit, permanent: true);
 
-    final channelMessagesCubit = ChannelMessagesCubit();
+    final channelUnreadMessagesCubit =
+        ChannelUnreadMessagesCubit(channelsCubit: channelsCubit, directsCubit: directsCubit);
+    Get.put(channelUnreadMessagesCubit, permanent: true);
+
+    final threadUnreadMessagesCubit = ThreadUnreadMessagesCubit(
+        channelUnreadMessagesCubit: channelUnreadMessagesCubit,
+        channelsCubit: channelsCubit);
+    Get.put(threadUnreadMessagesCubit, permanent: true);
+
+    final channelMessagesCubit = ChannelMessagesCubit(
+        channelsCubit: channelsCubit,
+        directsCubit: directsCubit,
+        unreadMessagesCubit: channelUnreadMessagesCubit);
     Get.put(channelMessagesCubit, permanent: true);
 
-    final threadMessagesCubit = ThreadMessagesCubit();
+    final threadMessagesCubit =
+        ThreadMessagesCubit(unreadMessageCubit: threadUnreadMessagesCubit);
     Get.put(threadMessagesCubit, permanent: true);
 
     final pinnedMessagesCubit = PinnedMessageCubit();
@@ -109,8 +124,11 @@ class HomeBinding implements Bindings {
     final companyFileCubit = CompanyFileCubit(accountCubit: accountCubit);
     Get.put(companyFileCubit, permanent: true);
 
-    final fileUploadTransitionCubit = FileUploadTransitionCubit();
+    final fileUploadTransitionCubit = FileTransitionCubit();
     Get.put(fileUploadTransitionCubit, permanent: true);
+
+    final messageAnimationCubit = MessageAnimationCubit();
+    Get.put(messageAnimationCubit, permanent: true);
 
     final searchCubit = SearchCubit.initWithRepository();
     Get.put(searchCubit, permanent: true);

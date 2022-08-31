@@ -36,8 +36,10 @@ class Endpoint {
   static const channelMembers =
       '/internal/services/channels/v1/companies/%s/workspaces/%s/channels/%s/members';
   // API Endpoint for working with threads in a channel
-  static const threads =
+  static const threadsChannel =
       '/internal/services/messages/v1/companies/%s/workspaces/%s/channels/%s/feed';
+  static const threadsDirect =
+      '/internal/services/messages/v1/companies/%s/workspaces/direct/channels/%s/feed';
   // API Endpoint for working with messages inside threads
   static const threadMessages =
       '/internal/services/messages/v1/companies/%s/threads/%s/messages';
@@ -101,7 +103,7 @@ class Endpoint {
 
   // Supported hosts
   static const prodHost = 'web.twake.app';
-  static const qaHost = 'web.qa.twake.app';
+  static const qaHost = 'staging-web.twake.app';
   static const canaryHost = 'canary.twake.app';
   static const supportedHosts = const [prodHost, qaHost, canaryHost];
   static bool inSupportedHosts(String host) {

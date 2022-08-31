@@ -149,6 +149,7 @@ class _HomeWidgetState extends State<HomeWidget> with WidgetsBindingObserver {
       body: SafeArea(
         child: DefaultTabController(
           length: 2,
+          animationDuration: Duration(milliseconds: 600),
           child: Container(
             margin: const EdgeInsets.only(top: 10),
             child: Column(

@@ -18,7 +18,7 @@ class CameraCubit extends Cubit<CameraState> {
   }
 
   void getCamera() async {
-    final bool isGranted = await Utilities.checkAndRequestCameraPermission();
+    final bool isGranted = await Utilities.checkCameraPermission();
     if (isGranted == false) {
       emit(CameraState(
         cameraStateStatus: CameraStateStatus.failed,

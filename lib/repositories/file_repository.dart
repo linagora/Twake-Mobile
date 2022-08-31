@@ -7,9 +7,9 @@ import 'package:http_parser/http_parser.dart';
 import 'package:mime/mime.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:tuple/tuple.dart';
-import 'package:twake/models/channel/channel_file.dart';
 import 'package:twake/models/file/download/file_downloading.dart';
 import 'package:twake/models/file/file.dart';
+import 'package:twake/models/file/message_file.dart';
 import 'package:twake/models/file/upload/file_uploading_option.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/services/service_bundle.dart';
@@ -79,12 +79,18 @@ class FileRepository {
       externalStorageDirPath =
           (await getApplicationDocumentsDirectory()).absolute.path;
     }
-    final fileDestinationPath =
-        '$externalStorageDirPath/${fileDownloading.file.metadata.name}';
+
+    final fileDestinationPath = fileDownloading.file == null
+        ? '$externalStorageDirPath/${fileDownloading.messageFile!.metadata.name}'
+        : '$externalStorageDirPath/${fileDownloading.file!.metadata.name}';
     final taskId = await _fileDownloadManager.downloadFile(
-        downloadUrl: fileDownloading.file.downloadUrl,
+        downloadUrl: fileDownloading.file == null
+            ? fileDownloading.messageFile!.downloadUrl
+            : fileDownloading.file!.downloadUrl,
         savedDir: externalStorageDirPath,
-        fileName: fileDownloading.file.metadata.name);
+        fileName: fileDownloading.file == null
+            ? fileDownloading.messageFile!.metadata.name
+            : fileDownloading.file!.metadata.name);
     return Tuple2(taskId, fileDestinationPath);
   }
 
@@ -97,7 +103,7 @@ class FileRepository {
         downloadTaskId: downloadTaskId);
   }
 
-  Future<List<ChannelFile>?> fetchUserFilesFromCompany({
+  Future<List<MessageFile>?> fetchUserFilesFromCompany({
     required String userName,
     String? companyId,
   }) async {
@@ -111,16 +117,13 @@ class FileRepository {
         queryParameters: queryParameters,
         key: 'resources',
       );
+      // TODO: Broken files come across, they always do not have the 'name' field and other required fields, for now throw them out
+      remoteResult.removeWhere((file) => !file['metadata'].containsKey('name'));
 
-      final List<ChannelFile> files = remoteResult
-          .map((entry) => ChannelFile(
-              fileId: entry['id'],
-              senderName: userName,
-              fileName: entry['metadata']['name'],
-              createdAt: entry['created_at']))
-          .toList();
+      final List<MessageFile> messageFiles =
+          remoteResult.map((e) => MessageFile.fromJson(e)).toList();
 
-      return files;
+      return messageFiles;
     } catch (e) {
       Logger().e('Error occurred while fetching company files:\n$e');
       return null;

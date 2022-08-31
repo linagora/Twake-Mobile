@@ -1,8 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get.dart';
-import 'package:twake/blocs/file_cubit/upload/file_upload_cubit.dart';
+import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/blocs/messages_cubit/messages_state.dart';
-import 'package:twake/models/file/file.dart';
+import 'package:twake/blocs/unread_messages_cubit/unread_messages_cubit.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/models/message/reaction.dart';
 import 'package:twake/repositories/messages_repository.dart';
@@ -14,18 +13,46 @@ export 'messages_state.dart';
 abstract class BaseMessagesCubit extends Cubit<MessagesState> {
   late final MessagesRepository _repository;
 
-  final _socketIOEventStream = SocketIOService.instance.resourceStream;
+  late BaseChannelsCubit _baseChannelsCubit;
+  late final BaseChannelsCubit _channelsCubit;
+  late final BaseChannelsCubit _directsCubit;
+  late final BaseUnreadMessagesCubit _unreadMessagesCubit;
+
+  final _socketIOResourceStream = SocketIOService.instance.resourceStream;
+  final _socketIOReconnectionStream =
+      SocketIOService.instance.socketIOReconnectionStream;
 
   int _sendInProgress = 0;
+  bool? isDirect;
 
-  BaseMessagesCubit({MessagesRepository? repository})
+  BaseMessagesCubit(
+      {MessagesRepository? repository,
+      BaseChannelsCubit? channelCubit,
+      BaseChannelsCubit? directsCubit,
+      BaseUnreadMessagesCubit? unreadMessagesCubit})
       : super(MessagesInitial()) {
     if (repository == null) {
       repository = MessagesRepository();
     }
     _repository = repository;
 
+    if (channelCubit == null) {
+      channelCubit = ChannelsCubit();
+    }
+    _channelsCubit = channelCubit;
+
+    if(directsCubit == null) {
+      directsCubit = DirectsCubit();
+    }
+    _directsCubit = directsCubit;
+
+    if (unreadMessagesCubit == null) {
+      unreadMessagesCubit = ChannelUnreadMessagesCubit();
+    }
+    _unreadMessagesCubit = unreadMessagesCubit;
+
     listenToMessageChanges();
+    listenToReconnectionChange();
   }
 
   Future<void> fetch({
@@ -34,6 +61,13 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
     isDirect: false,
     bool empty: false,
   }) async {
+    this.isDirect = isDirect;
+    if(isDirect) {
+      _baseChannelsCubit = _directsCubit;
+    }else {
+      _baseChannelsCubit = _channelsCubit;
+    }
+
     if (empty) {
       emit(NoMessagesFound());
       return;
@@ -63,16 +97,20 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
         messages: list,
         hash: list.fold(0, (acc, m) => acc + m.hash),
       ));
+      _unreadMessagesCubit.fetchUnreadMessages(messages: list, isDirect: isDirect);
+
+      if (lastList.isEmpty && threadId == null) {
+        emit(NoMessagesFound());
+      }
     }
 
-    if (lastList.isEmpty && threadId == null) {
-      emit(NoMessagesFound());
-    }
+    _baseChannelsCubit.markChannelRead(channelId: channelId);
   }
 
   Future<void> fetchBefore({
     required String channelId,
     String? threadId,
+    required bool isDirect,
   }) async {
     if (this.state is! MessagesLoadSuccess) return;
     if ((this.state as MessagesLoadSuccess).endOfHistory) return;
@@ -84,30 +122,90 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
       hash: state.hash,
     ));
 
-    final prevLen = state.messages.length;
+    final oldestMessage = state.messages.last;
 
-    final messages = await _repository.fetchBefore(
+    //last message will be first message
+    var messages = await _repository.fetchBefore(
       channelId: channelId,
       threadId: threadId,
-      beforeMessageId: state.messages.first.id,
+      beforeMessageId: oldestMessage.id,
+      workspaceId: isDirect ? 'direct' : null,
     );
+    messages.remove(oldestMessage);
+
     // if user switched channel before the fetchBefore method is complete, abort
     // and just ignore the result
     if (channelId != Globals.instance.channelId) return;
-    final endOfHistory = prevLen == messages.length;
+    final endOfHistory = messages.length <= 1;
 
-    if (endOfHistory) {
-      // insert the dummy message for the endOfHistory widget
-      messages.insert(0, dummy(messages.first.createdAt - 1));
-    }
+    // if (endOfHistory) {
+    //   // insert the dummy message for the endOfHistory widget
+    //   messages.insert(0, dummy(oldestMessage.createdAt - 1));
+    // }
+    state.messages.addAll(messages);
 
     final newState = MessagesLoadSuccess(
-      messages: messages,
+      messages: state.messages,
       hash: messages.fold(0, (acc, m) => acc + m.hash),
       endOfHistory: endOfHistory,
     );
 
     emit(newState);
+  }
+
+  Future<void> fetchAfter({
+    required String channelId,
+    String? threadId,
+    required bool isDirect,
+  }) async {
+    if (this.state is! MessagesLoadSuccess) return;
+    final state = this.state as MessagesLoadSuccess;
+    final lock = Globals.instance.lock;
+
+    // wait for previous fetch finish before continue
+    if (!lock.locked) {
+      await lock.synchronized(() async {
+        emit(MessagesBeforeLoadInProgress(
+          messages: state.messages,
+          hash: state.hash,
+        ));
+
+        final lastestMessage = state.messages.first;
+        //first message will be lastest message
+        final messages = await _repository.fetchAfter(
+          channelId: channelId,
+          threadId: threadId,
+          afterMessageId: lastestMessage.id,
+          workspaceId: isDirect ? 'direct' : null,
+        );
+
+        if (messages.isEmpty) {
+          return;
+        }
+        if (channelId != Globals.instance.channelId) return;
+
+        state.messages.addAll(messages
+            .where((element) => element.createdAt > lastestMessage.createdAt));
+        final newState = MessagesLoadSuccess(
+          messages: state.messages,
+          hash: messages.fold(0, (acc, m) => acc + m.hash),
+          endOfHistory: false,
+        );
+
+        emit(newState);
+      });
+    }
+  }
+
+  void fetchMessagesAroundPinned(
+      {required List<Message> messages, required Message pinnedMessage}) {
+    if (messages.isNotEmpty) {
+      emit(MessagesAroundPinnedLoadSuccess(
+          messages: messages,
+          pinnedMessage: pinnedMessage,
+          hash: messages.fold(0, (acc, m) => acc + m.hash),
+          endOfHistory: false));
+    }
   }
 
   Future<void> resend({required Message message, bool isDirect: false}) async {
@@ -144,6 +242,8 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
         hash: hash + message.hash,
         endOfHistory: endOfHistory,
       ));
+
+      _baseChannelsCubit.markChannelRead(channelId: message.channelId);
     }
 
     _sendInProgress -= 1;
@@ -183,6 +283,7 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
   }) async {
     final prepared = TwacodeParser(originalStr ?? '').message;
     final fakeId = DateTime.now().millisecondsSinceEpoch.toString();
+    Message message;
 
     _sendInProgress += 1;
 
@@ -199,7 +300,7 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
     final state = this.state as MessagesLoadSuccess;
     emit(MessageSendInProgress(messages: state.messages, hash: state.hash));
 
-    await for (final message in sendStream) {
+    await for (message in sendStream) {
       // user might have changed screen, so make sure we are still in
       // messages view screen, and the state is MessagesLoadSuccess
       if (this.state is! MessagesLoadSuccess) return;
@@ -218,11 +319,16 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
         messages[index] = message;
       }
 
-      emit(MessagesLoadSuccess(
+      _unreadMessagesCubit.listenOwnerMessage();
+
+      emit(MessageLatestSuccess(
         messages: messages,
         hash: hash + message.hash,
-        endOfHistory: endOfHistory,
+        latestMessage: messages.last,
       ));
+
+      //after message is send successfully mark channel as read
+      _baseChannelsCubit.markChannelRead(channelId: message.channelId);
     }
 
     _sendInProgress -= 1;
@@ -399,7 +505,7 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
   }
 
   Future<void> listenToMessageChanges() async {
-    await for (final change in _socketIOEventStream) {
+    await for (final change in _socketIOResourceStream) {
       switch (change.action) {
         case ResourceAction.deleted:
           _repository.removeMessageLocal(messageId: change.resource['id']);
@@ -426,6 +532,10 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
           if (state is MessagesLoadSuccess) {
             final messages = (state as MessagesLoadSuccess).messages;
             final hash = (state as MessagesLoadSuccess).hash;
+
+            // update channel read
+            _baseChannelsCubit.markChannelRead(channelId: message.channelId);
+            
             // message is already present
             if (messages.any((m) => m.id == message.id)) {
               final index = messages.indexWhere((m) => m.id == message.id);
@@ -437,12 +547,15 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
                 hash: hash + 1, // we only need to update hash in someway
               ));
             } else {
+              // update unread messages
+              _unreadMessagesCubit.listenNotOwnerMessage();
               // new message has been created
               messages.add(message);
               messages.sort((m1, m2) => m1.createdAt.compareTo(m2.createdAt));
-              final newState = MessagesLoadSuccess(
+              final newState = MessageLatestSuccess(
                 messages: messages,
                 hash: hash + message.hash,
+                latestMessage: message,
               );
               emit(newState);
             }
@@ -454,6 +567,51 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
     }
   }
 
+  Future<void> listenToReconnectionChange() async {
+    // track last message when network down
+    await for (final connect in _socketIOReconnectionStream) {
+      // if user have not entered any chat, ignore connect
+      if (isDirect == null) {
+        continue;
+      }
+      if (state is MessagesLoadSuccess) {
+        final currentState = state as MessagesLoadSuccess;
+        if (connect) {
+          List<Message>? messages;
+          do {
+            if (currentState.messages.isNotEmpty) {
+              Message latestMessage = currentState.messages.reduce(
+                  (value, element) =>
+                      value.createdAt > element.createdAt ? value : element);
+              messages = await _repository.fetchAfter(
+                  channelId: latestMessage.channelId,
+                  afterMessageId: latestMessage.id,
+                  workspaceId:
+                      isDirect! ? 'direct' : Globals.instance.workspaceId);
+                      
+              if(messages.isEmpty){
+                continue;
+              }
+              Message newLatestMessage = messages.reduce((value, element) =>
+                  value.createdAt > element.createdAt ? value : element);
+              if (newLatestMessage == latestMessage) {
+                continue;
+              }
+              
+              // remove lastest messages in current state because it's also in api
+              currentState.messages.remove(latestMessage);
+              currentState.messages.addAll(messages);
+              emit(MessagesLoadSuccess(
+                  messages: currentState.messages,
+                  hash:
+                      currentState.messages.fold(0, (acc, m) => acc + m.hash)));
+            }
+          } while (messages != null);
+        }
+      }
+    }
+  }
+
   void reset() {
     emit(MessagesInitial());
   }
@@ -461,11 +619,19 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
 
 class ChannelMessagesCubit extends BaseMessagesCubit {
   @override
-  final _socketIOEventStream =
+  final _socketIOResourceStream =
       SynchronizationService.instance.socketIOChannelMessageStream;
 
-  ChannelMessagesCubit({MessagesRepository? repository})
-      : super(repository: repository) {
+  ChannelMessagesCubit(
+      {MessagesRepository? repository,
+      BaseChannelsCubit? channelsCubit,
+      BaseChannelsCubit? directsCubit,
+      ChannelUnreadMessagesCubit? unreadMessagesCubit})
+      : super(
+            repository: repository,
+            channelCubit: channelsCubit,
+            directsCubit: directsCubit,
+            unreadMessagesCubit: unreadMessagesCubit) {
     listenToThreadChanges();
   }
 
@@ -513,10 +679,13 @@ class ChannelMessagesCubit extends BaseMessagesCubit {
 
             messages[i] = message;
 
-            final newState = MessagesLoadSuccess(
+            // mark message as read
+            _baseChannelsCubit.markChannelRead(channelId: message.channelId);
+            final newState = MessageLatestSuccess(
               messages: messages,
               hash:
                   hash + message.hash, // just update the hash to force rerender
+              latestMessage: message,
             );
 
             emit(newState);
@@ -530,11 +699,15 @@ class ChannelMessagesCubit extends BaseMessagesCubit {
 }
 
 class ThreadMessagesCubit extends BaseMessagesCubit {
-  ThreadMessagesCubit({MessagesRepository? repository})
-      : super(repository: repository);
+  ThreadMessagesCubit(
+      {MessagesRepository? repository,
+      ThreadUnreadMessagesCubit? unreadMessageCubit})
+      : super(
+            repository: repository,
+            unreadMessagesCubit: unreadMessageCubit);
 
   @override
-  final _socketIOEventStream = SynchronizationService
+  final _socketIOResourceStream = SynchronizationService
       .instance.socketIOThreadMessageStream
       .where((e) => e.resource['thread_id'] == Globals.instance.threadId);
 }

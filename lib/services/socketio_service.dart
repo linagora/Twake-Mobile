@@ -1,12 +1,7 @@
 import 'dart:async';
-
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:twake/models/globals/globals.dart';
-import 'package:twake/models/socketio/socketio_event.dart';
-import 'package:twake/models/socketio/socketio_resource.dart';
-
 import 'service_bundle.dart';
-
 export 'package:twake/models/socketio/socketio_event.dart';
 export 'package:twake/models/socketio/socketio_resource.dart';
 

@@ -2,6 +2,7 @@ import 'package:hive/hive.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:twake/data/local/type_constants.dart';
 import 'package:twake/models/base_model/base_model.dart';
+import 'package:twake/models/globals/globals.dart';
 import 'package:twake/models/message/pinned_info.dart';
 import 'package:twake/utils/api_data_transformer.dart';
 import 'package:twake/utils/json.dart' as jsn;
@@ -16,11 +17,14 @@ class Message extends BaseModel {
     'blocks',
     'reactions',
     'files',
-    'pinned_info'
+    'pinned_info',
+    'last_replies',
   ];
 
   final String id;
   final String threadId;
+
+  @JsonKey(defaultValue: '')
   final String channelId;
   final String userId;
 
@@ -58,6 +62,23 @@ class Message extends BaseModel {
   @JsonKey(defaultValue: Delivery.delivered)
   Delivery delivery;
 
+  @JsonKey(defaultValue: const [], name: 'last_replies')
+  List<Message>? _lastReplies;
+
+  List<Message>? get lastReplies => _lastReplies;
+
+  Message? get lastReply => _lastReplies != null && _lastReplies!.isNotEmpty
+      ? _lastReplies![_lastReplies!.length - 1]
+      : null;
+  List<Message>? get last3Replies {
+    if (_lastReplies != null && _lastReplies!.isNotEmpty) {
+      return _lastReplies!
+          .getRange(responsesCount < 3 ? 1 : 0, _lastReplies!.length)
+          .toList();
+    }
+    return null;
+  }
+
   int get hash {
     return this.id.hashCode +
         this.text.hashCode +
@@ -68,6 +89,11 @@ class Message extends BaseModel {
             : 0) +
         this.delivery.hashCode +
         this._isRead +
+        (this._lastReplies != null
+            ? this
+                ._lastReplies!
+                .fold(0, (prevReply, reply) => reply.hashCode + prevReply)
+            : 0) +
         this.reactions.fold(0, (acc, r) => r.count + acc) as int;
   }
 
@@ -82,7 +108,12 @@ class Message extends BaseModel {
             : 0) +
         this.delivery.hashCode +
         this._isRead +
-        this.reactions.fold(0, (acc, r) => r.count + acc) as int;
+        this.reactions.fold(0, (acc, r) => r.count + acc) +
+        (this._lastReplies != null
+            ? this
+                ._lastReplies!
+                .fold(0, (prevReply, reply) => reply.hashCode + prevReply)
+            : 0) as int;
   }
 
   @override
@@ -93,7 +124,6 @@ class Message extends BaseModel {
         threadId == other.threadId &&
         other.channelId == channelId &&
         other.userId == userId &&
-        other.responsesCount == responsesCount &&
         other.subtype == subtype &&
         other.text == text &&
         other.createdAt == createdAt &&
@@ -120,7 +150,7 @@ class Message extends BaseModel {
   bool get isRead => _isRead > 0;
 
   @JsonKey(ignore: true)
-  bool get inThread => id != threadId;
+  bool get inThread => this.id != this.threadId;
 
   set isRead(bool val) => _isRead = val ? 1 : 0;
 
@@ -142,7 +172,10 @@ class Message extends BaseModel {
     this.lastName,
     this.picture,
     this.draft,
-  });
+    List<Message>? lastReplies = const <Message>[],
+  }) : this._lastReplies = lastReplies;
+
+  bool get isOwnerMessage => this.userId == Globals.instance.userId;
 
   factory Message.fromJson(
     Map<String, dynamic> json, {
@@ -156,6 +189,8 @@ class Message extends BaseModel {
     if (jsonify) {
       json = jsn.jsonify(json: json, keys: COMPOSITE_FIELDS);
     }
+    //we need to add transform for last_replies filed when we run it from _$MessageFromJson(json);  lastReplies: (json['last_replies']).map((e) => Message.fromJson
+    if (!json.containsKey("last_replies")) transform = true;
     if (transform) {
       json = ApiDataTransformer.message(json: json, channelId: channelId);
     }

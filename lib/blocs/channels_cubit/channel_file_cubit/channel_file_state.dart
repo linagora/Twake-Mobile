@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/models/channel/channel_file.dart';
 
 enum ChannelFileStatus { init, loading, finished }

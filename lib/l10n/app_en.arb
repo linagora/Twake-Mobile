@@ -1,5 +1,5 @@
 {   
-    "messageDeleted": "The message has been deleted",
+    "messageDeleted": "This message has been deleted",
     "internetConnection": "No internet connection",
     "signin": "Sign in",
     "signup": "Sign up",
@@ -110,8 +110,8 @@
     "view": "View",
     "threadReplies": "Threaded replies",
     "firstMessageInChannelInfo": "This is the first message of the channel",
-    "reply": "Reply",
-    "newReply": "New reply...",
+    "reply": "Comment",
+    "newReply": "Aa",
     "replyTo": "Reply to",
     "edit": "Edit",
     "save": "Save",
@@ -138,7 +138,7 @@
             }
         }
     },
-    "replyPlural": "{count, plural, =0{no replies} =1{1 reply} other{{count} replies}}",
+    "replyPlural": "{count, plural, =0{no replies} =1{1 Comment} other{{count} Comments}}",
     "@replyPlural": {
         "description": "A plural form of 'reply' word",
         "placeholders": {
@@ -349,8 +349,8 @@
     },
     "leaveChannelWarning": "Are you sure you want to leave this channel?",
     "fileDownloadedInStorage": "File is downloaded and saved in device Storage",
-    "pinMesssage": "pin",
-    "unpinMesssage": "unpin",
+    "pinMesssage": "Pin",
+    "unpinMesssage": "Unpin",
     "pinnedMessages": "Pinned messages",
     "unpinAllMessages":"Unpin all messages",
     "somethingWentWrong":"Sorry, something went wrong",
@@ -386,6 +386,8 @@
     "galleryImagesUnavailable": "Photo gallery images are unavailable. Please, allow gallery access in system settings to send images and videos",
     "goToSettings": "Go to settings",
     "attach": "Attach",
+    "noCompanyFilesHeader": "There are no uploaded files yet",
+    "unreadMessages": "Unread messages",
     "noCompanyFilesHeader": "There are no uploaded files yet",
     "searchChatsRecentHeader": "Recent channels and contacts",
     "searchChatsHeader": "Channels",

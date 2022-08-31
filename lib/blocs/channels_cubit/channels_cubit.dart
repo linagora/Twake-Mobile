@@ -4,9 +4,7 @@ import 'package:twake/models/account/account.dart';
 import 'package:twake/models/channel/channel.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/repositories/channels_repository.dart';
-import 'package:twake/services/navigator_service.dart';
 import 'package:twake/services/service_bundle.dart';
-
 export 'package:twake/models/channel/channel.dart';
 export 'package:twake/blocs/channels_cubit/channels_state.dart';
 
@@ -18,6 +16,8 @@ abstract class BaseChannelsCubit extends Cubit<ChannelsState> {
   final _socketIOMembershipStream = SocketIOService.instance.resourceStream;
 
   final isDirect;
+
+  Channel? selectedChannel;
 
   BaseChannelsCubit({
     required ChannelsRepository repository,
@@ -248,13 +248,13 @@ abstract class BaseChannelsCubit extends Cubit<ChannelsState> {
     final channels = (state as ChannelsLoadedSuccess).channels;
     final hash = (state as ChannelsLoadedSuccess).hash;
 
-    final selected = channels.firstWhere((c) => c.id == channelId);
+    selectedChannel = channels.firstWhere((c) => c.id == channelId);
 
     Globals.instance.channelIdSet = channelId;
 
     emit(ChannelsLoadedSuccess(
       channels: channels,
-      selected: selected,
+      selected: selectedChannel,
       hash: hash,
     ));
 
@@ -264,8 +264,15 @@ abstract class BaseChannelsCubit extends Cubit<ChannelsState> {
     );
     SynchronizationService.instance
         .cancelNotificationsForChannel(channelId: channelId);
+    if(selectedChannel != null) {
+      _repository.markChannel(channel: selectedChannel!, read: true);
+    }
+  }
 
-    _repository.markChannel(channel: selected, read: true);
+  void markChannelRead({required String channelId}){
+    if(selectedChannel != null) {
+      _repository.markChannel(channel: selectedChannel!, read: true);
+    }
   }
 
   void clearSelection() {
