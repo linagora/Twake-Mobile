@@ -41,7 +41,7 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
     }
     _channelsCubit = channelCubit;
 
-    if(directsCubit == null) {
+    if (directsCubit == null) {
       directsCubit = DirectsCubit();
     }
     _directsCubit = directsCubit;
@@ -62,9 +62,9 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
     bool empty: false,
   }) async {
     this.isDirect = isDirect;
-    if(isDirect) {
+    if (isDirect) {
       _baseChannelsCubit = _directsCubit;
-    }else {
+    } else {
       _baseChannelsCubit = _channelsCubit;
     }
 
@@ -97,7 +97,8 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
         messages: list,
         hash: list.fold(0, (acc, m) => acc + m.hash),
       ));
-      _unreadMessagesCubit.fetchUnreadMessages(messages: list, isDirect: isDirect);
+      _unreadMessagesCubit.fetchUnreadMessages(
+          messages: list, isDirect: isDirect);
 
       if (lastList.isEmpty && threadId == null) {
         emit(NoMessagesFound());
@@ -275,12 +276,12 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
     await for (final message in sendStream) {}
   }
 
-  Future<void> send({
-    String? originalStr,
-    List<dynamic> attachments: const [],
-    String? threadId,
-    bool isDirect: false,
-  }) async {
+  Future<void> send(
+      {String? originalStr,
+      List<dynamic> attachments: const [],
+      String? threadId,
+      bool isDirect: false,
+      Message? quoteMessage}) async {
     final prepared = TwacodeParser(originalStr ?? '').message;
     final fakeId = DateTime.now().millisecondsSinceEpoch.toString();
     Message message;
@@ -295,7 +296,7 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
         threadId: threadId ?? fakeId,
         isDirect: isDirect,
         now: DateTime.now().millisecondsSinceEpoch,
-        files: attachments);
+        files: attachments,quoteMessage: quoteMessage);
 
     final state = this.state as MessagesLoadSuccess;
     emit(MessageSendInProgress(messages: state.messages, hash: state.hash));
@@ -535,7 +536,7 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
 
             // update channel read
             _baseChannelsCubit.markChannelRead(channelId: message.channelId);
-            
+
             // message is already present
             if (messages.any((m) => m.id == message.id)) {
               final index = messages.indexWhere((m) => m.id == message.id);
@@ -588,8 +589,8 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
                   afterMessageId: latestMessage.id,
                   workspaceId:
                       isDirect! ? 'direct' : Globals.instance.workspaceId);
-                      
-              if(messages.isEmpty){
+
+              if (messages.isEmpty) {
                 continue;
               }
               Message newLatestMessage = messages.reduce((value, element) =>
@@ -597,7 +598,7 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
               if (newLatestMessage == latestMessage) {
                 continue;
               }
-              
+
               // remove lastest messages in current state because it's also in api
               currentState.messages.remove(latestMessage);
               currentState.messages.addAll(messages);
@@ -702,9 +703,7 @@ class ThreadMessagesCubit extends BaseMessagesCubit {
   ThreadMessagesCubit(
       {MessagesRepository? repository,
       ThreadUnreadMessagesCubit? unreadMessageCubit})
-      : super(
-            repository: repository,
-            unreadMessagesCubit: unreadMessageCubit);
+      : super(repository: repository, unreadMessagesCubit: unreadMessageCubit);
 
   @override
   final _socketIOResourceStream = SynchronizationService

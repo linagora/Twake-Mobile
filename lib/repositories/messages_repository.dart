@@ -252,13 +252,14 @@ class MessagesRepository {
     required String id,
     required String channelId,
     required List<dynamic> prepared,
-    List<dynamic> files: const [],
-    String? originalStr,
     required String threadId,
-    bool isDirect: false,
     required int now,
+    List<dynamic> files: const [],
+    Message? quoteMessage,
+    String? originalStr,
     String? companyId,
     String? workspaceId,
+    bool isDirect: false,
   }) async* {
     final result = await _storage.first(
       table: Table.account,
@@ -288,6 +289,7 @@ class MessagesRepository {
       picture: currentUser.picture,
       reactions: [],
       lastReplies: [],
+      quoteMessage: quoteMessage,
     );
 
     message.delivery = Delivery.inProgress;
