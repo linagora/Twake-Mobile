@@ -30,6 +30,14 @@ class SearchFile {
   SearchFile(this.message, this.user, this.file);
 }
 
+class SearchMedia {
+  final Message message;
+  final Account user;
+  final File file;
+
+  SearchMedia(this.message, this.user, this.file);
+}
+
 class SearchRepository {
   final _api = ApiService.instance;
 
@@ -209,6 +217,55 @@ class SearchRepository {
       return SearchRepositoryRequest(result: result, hasError: false);
     } catch (e) {
       Logger().e('Error occurred while fetching files:\n$e');
+
+      return SearchRepositoryRequest(result: [], hasError: true);
+    }
+  }
+
+  Future<SearchRepositoryRequest<List<SearchMedia>>> fetchMedia({
+    required String searchTerm,
+  }) async {
+    final queryParameters = <String, dynamic>{
+      'limit': 25,
+      'is_file': true,
+      'q': searchTerm,
+    };
+
+    try {
+      final queryResult = await _api.get(
+        endpoint: sprintf(Endpoint.searchMedia, [
+          Globals.instance.companyId,
+        ]),
+        queryParameters: queryParameters,
+        key: 'resources',
+      ) as List<dynamic>;
+
+      final result = queryResult
+          .where((entry) => entry['metadata']['name'] != null)
+          .map((entry) => SearchMedia(
+              Message.fromJson(
+                entry['message'],
+                jsonify: true,
+                transform: true,
+                channelId: '',
+              ),
+              Account.fromJson(json: entry['user'], transform: true),
+              File.fromJson({
+                ...entry,
+                'user_id': entry['user']['id'],
+                'company_id': entry['cache']['company_id'],
+                'thumbnails': entry['metadata']['thumbnails'],
+                'upload_data': {
+                  'size': entry['metadata']['size'],
+                  'chunks': 1,
+                },
+                'updated_at': entry['created_at']
+              })))
+          .toList();
+
+      return SearchRepositoryRequest(result: result, hasError: false);
+    } catch (e) {
+      Logger().e('Error occurred while fetching media:\n$e');
 
       return SearchRepositoryRequest(result: [], hasError: true);
     }

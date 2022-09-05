@@ -28,6 +28,7 @@ class SearchCubit extends Cubit<SearchState> {
     fetchChatsBySearchTerm();
     fetchMessagesBySearchTerm();
     fetchFilesBySearchTerm();
+    fetchMediaBySearchTerm();
   }
 
   void getAllContacts() async {
@@ -126,6 +127,21 @@ class SearchCubit extends Cubit<SearchState> {
 
     emit(state.copyWith(
         filesStateStatus: FilesStateStatus.done, files: request.result));
+  }
+
+  void fetchMediaBySearchTerm() async {
+    emit(state.copyWith(mediaStateStatus: MediaStateStatus.loading));
+
+    final request =
+        await _searchRepository.fetchMedia(searchTerm: state.searchTerm);
+
+    if (request.hasError) {
+      emit(state.copyWith(mediaStateStatus: MediaStateStatus.failed));
+      return;
+    }
+
+    emit(state.copyWith(
+        mediaStateStatus: MediaStateStatus.done, medias: request.result));
   }
 
   void setTextEditingController(TextEditingController controller) {

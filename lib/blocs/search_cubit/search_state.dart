@@ -8,6 +8,7 @@ enum ContactsStateStatus { init, loading, done, failed, noPermission }
 enum ChatsStateStatus { init, loading, done, failed }
 enum MessagesStateStatus { init, loading, done, failed }
 enum FilesStateStatus { init, loading, done, failed }
+enum MediaStateStatus { init, loading, done, failed }
 
 class SearchState extends Equatable {
   final String searchTerm;
@@ -17,6 +18,7 @@ class SearchState extends Equatable {
   final ChatsStateStatus chatsStateStatus;
   final MessagesStateStatus messagesStateStatus;
   final FilesStateStatus filesStateStatus;
+  final MediaStateStatus mediaStateStatus;
 
   final List<AppContact> contacts;
   final List<Account> users;
@@ -24,6 +26,7 @@ class SearchState extends Equatable {
   final List<Channel> chats;
   final List<SearchMessage> messages;
   final List<SearchFile> files;
+  final List<SearchMedia> medias;
 
   const SearchState(
       {required this.searchTerm,
@@ -33,9 +36,11 @@ class SearchState extends Equatable {
       required this.chatsStateStatus,
       required this.messagesStateStatus,
       required this.filesStateStatus,
+      required this.mediaStateStatus,
       required this.chats,
       required this.messages,
       required this.files,
+      required this.medias,
       required this.contacts});
 
   factory SearchState.initial() {
@@ -47,9 +52,11 @@ class SearchState extends Equatable {
         messages: [],
         recentChats: [],
         files: [],
+        medias: [],
         chatsStateStatus: ChatsStateStatus.init,
         messagesStateStatus: MessagesStateStatus.init,
         filesStateStatus: FilesStateStatus.init,
+        mediaStateStatus: MediaStateStatus.init,
         contacts: []);
   }
 
@@ -64,7 +71,9 @@ class SearchState extends Equatable {
     final ChatsStateStatus? chatsStateStatus,
     final MessagesStateStatus? messagesStateStatus,
     final FilesStateStatus? filesStateStatus,
+    final MediaStateStatus? mediaStateStatus,
     final List<SearchFile>? files,
+    final List<SearchMedia>? medias,
   }) {
     return SearchState(
       searchTerm: searchTerm ?? this.searchTerm,
@@ -76,8 +85,10 @@ class SearchState extends Equatable {
       chatsStateStatus: chatsStateStatus ?? this.chatsStateStatus,
       messagesStateStatus: messagesStateStatus ?? this.messagesStateStatus,
       filesStateStatus: filesStateStatus ?? this.filesStateStatus,
+      mediaStateStatus: mediaStateStatus ?? this.mediaStateStatus,
       messages: messages ?? this.messages,
       files: files ?? this.files,
+      medias: medias ?? this.medias,
     );
   }
 
@@ -104,6 +115,8 @@ class SearchState extends Equatable {
         messagesStateStatus,
         messages,
         filesStateStatus,
+        mediaStateStatus,
         files,
+        medias,
       ];
 }
