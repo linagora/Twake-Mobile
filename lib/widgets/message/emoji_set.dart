@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:twake/blocs/message_animation_cubit/message_animation_cubit.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
+import 'package:twake/pages/chat/chat.dart';
+import 'package:twake/repositories/messages_repository.dart';
 
 class EmojiLine extends StatelessWidget {
-  final Function? onEmojiSelected;
-  final Function? showEmojiBoard;
+  final Function(String emojiCode) onEmojiSelected;
+  final Message message;
 
-  EmojiLine({this.onEmojiSelected, this.showEmojiBoard});
+  EmojiLine({required this.message, required this.onEmojiSelected});
 
   static const EMOJISET = [
     '😅',
@@ -17,9 +20,10 @@ class EmojiLine extends StatelessWidget {
     '👋',
   ];
 
+  static final fontSize = 27.0;
+
   @override
   Widget build(BuildContext context) {
-    final fontSize = 27.0;
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20.0),
@@ -38,17 +42,17 @@ class EmojiLine extends StatelessWidget {
         // mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          ...EMOJISET.map((e) => Flexible(
+          ...EmojiLine.EMOJISET.map((e) => Flexible(
                 child: GestureDetector(
                   onTap: () {
-                    onEmojiSelected!(e);
+                    onEmojiSelected(e);
                   },
                   child: Padding(
                     padding: const EdgeInsets.only(right: 2.0),
                     child: FittedBox(
                       child: Text(
                         e,
-                        style: TextStyle(fontSize: fontSize),
+                        style: TextStyle(fontSize: EmojiLine.fontSize),
                       ),
                     ),
                   ),
@@ -65,8 +69,10 @@ class EmojiLine extends StatelessWidget {
                 Icons.more_horiz,
                 color: Theme.of(context).colorScheme.secondary,
               ),
-              onPressed: showEmojiBoard as void Function()?,
-              iconSize: fontSize + 3,
+              onPressed: () {
+                Get.find<MessageAnimationCubit>().openEmojiBoard(message);
+              },
+              iconSize: EmojiLine.fontSize + 3,
             ),
           ),
         ],

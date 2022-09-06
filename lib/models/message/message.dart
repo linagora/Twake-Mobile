@@ -183,6 +183,8 @@ class Message extends BaseModel {
 
   bool get isOwnerMessage => this.userId == Globals.instance.userId;
 
+  bool get isDeleted => this.subtype == MessageSubtype.deleted;
+
   factory Message.fromJson(
     Map<String, dynamic> json, {
     bool jsonify: true,

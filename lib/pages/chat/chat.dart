@@ -5,6 +5,7 @@ import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/blocs/companies_cubit/companies_cubit.dart';
 import 'package:twake/blocs/file_cubit/upload/file_upload_cubit.dart';
 import 'package:twake/blocs/file_cubit/upload/file_upload_state.dart';
+import 'package:twake/blocs/message_animation_cubit/message_animation_cubit.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/blocs/pinned_message_cubit/pinned_messsage_cubit.dart';
 import 'package:twake/blocs/quote_message_cubit/quote_message_cubit.dart';
@@ -21,15 +22,8 @@ import 'package:twake/widgets/message/compose_bar.dart';
 import 'package:twake/pages/chat/messages_grouped_list.dart';
 import 'chat_header.dart';
 
-class Chat<T extends BaseChannelsCubit> extends StatefulWidget {
-  @override
-  State<StatefulWidget> createState() => _ChatState<T>();
-}
-
-class _ChatState<T extends BaseChannelsCubit> extends State<Chat> {
-  GlobalKey _messagesListKey = new GlobalKey();
-
-  @override
+class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
+   @override
   Widget build(BuildContext context) {
     final draft =
         (Get.find<T>().state as ChannelsLoadedSuccess).selected!.draft;
@@ -43,6 +37,7 @@ class _ChatState<T extends BaseChannelsCubit> extends State<Chat> {
               .clearFileUploadingState(needToCancelInProcessingFile: true);
           return false;
         }
+        Get.find<MessageAnimationCubit>().resetAnimation();
         return true;
       },
       child: Scaffold(
@@ -126,7 +121,7 @@ class _ChatState<T extends BaseChannelsCubit> extends State<Chat> {
                     children: [
                       PinnedMessageSheet(),
                       _buildChatContent(
-                          messagesState, channel, context, _messagesListKey),
+                          messagesState, channel, context),
                       _buildQuoteMessage(),
                       _composeBar(messagesState, draft, channel)
                     ],
@@ -135,7 +130,7 @@ class _ChatState<T extends BaseChannelsCubit> extends State<Chat> {
               ),
             ),
             LongPressMessageAnimation<ChannelMessagesCubit>(
-                messagesListKey: _messagesListKey, isDirect: channel.isDirect),
+                isDirect: channel.isDirect),
           ],
         ),
       ),
@@ -143,13 +138,34 @@ class _ChatState<T extends BaseChannelsCubit> extends State<Chat> {
   }
 
   Widget _buildChatContent(
-      messagesState, Channel channel, BuildContext context, Key? key) {
+      messagesState, Channel channel, BuildContext context) {
     return Flexible(
         child: Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         _buildLoading(messagesState),
-        MessagesGroupedList(parentChannel: channel, key: key)
+        MessagesGroupedList(parentChannel: channel)
+      ],
+    ));
+  }
+
+  Widget _buildQuoteMessage() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        BlocBuilder<QuoteMessageCubit, QuoteMessageState>(
+          bloc: Get.find<QuoteMessageCubit>(),
+          builder: (context, state) {
+            return state.quoteMessageStatus == QuoteMessageStatus.quoteDone
+                ? QuoteMessage(
+                    message: state.quoteMessage.first,
+                    showCloseButton: true,
+                    isExpanded: true,
+                    paddingLeft: 55,
+                    paddingTop: 10)
+                : SizedBox.shrink();
+          },
+        ),
       ],
     ));
   }
