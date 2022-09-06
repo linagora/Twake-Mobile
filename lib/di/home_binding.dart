@@ -19,6 +19,7 @@ import 'package:twake/blocs/mentions_cubit/mentions_cubit.dart';
 import 'package:twake/blocs/message_animation_cubit/message_animation_cubit.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/blocs/pinned_message_cubit/pinned_messsage_cubit.dart';
+import 'package:twake/blocs/quote_message_cubit/quote_message_cubit.dart';
 import 'package:twake/blocs/receive_file_cubit/receive_file_cubit.dart';
 import 'package:twake/blocs/registration_cubit/registration_cubit.dart';
 import 'package:twake/blocs/theme_cubit/theme_cubit.dart';
@@ -59,8 +60,8 @@ class HomeBinding implements Bindings {
     final directsCubit = DirectsCubit();
     Get.put(directsCubit, permanent: true);
 
-    final channelUnreadMessagesCubit =
-        ChannelUnreadMessagesCubit(channelsCubit: channelsCubit, directsCubit: directsCubit);
+    final channelUnreadMessagesCubit = ChannelUnreadMessagesCubit(
+        channelsCubit: channelsCubit, directsCubit: directsCubit);
     Get.put(channelUnreadMessagesCubit, permanent: true);
 
     final threadUnreadMessagesCubit = ThreadUnreadMessagesCubit(
@@ -129,7 +130,9 @@ class HomeBinding implements Bindings {
     final messageAnimationCubit = MessageAnimationCubit();
     Get.put(messageAnimationCubit, permanent: true);
 
-    
+    final quoteMessageCubitCubit = QuoteMessageCubit();
+    Get.put(quoteMessageCubitCubit, permanent: true);
+
     Future.delayed(Duration(seconds: 5), () {
       if (Globals.instance.token != null) authenticationCubit.registerDevice();
     });
