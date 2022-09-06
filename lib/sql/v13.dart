@@ -1,0 +1,6 @@
+const String ALTER_MESSAGE_ADD_QUOTE_MESSAGE = '''
+ALTER TABLE message ADD COLUMN quote_message TEXT;
+''';
+
+const DB_V13 = 13;
+const MIGRATION_13 = [ALTER_MESSAGE_ADD_QUOTE_MESSAGE];

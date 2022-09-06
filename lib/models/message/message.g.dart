@@ -120,6 +120,9 @@ Message _$MessageFromJson(Map<String, dynamic> json) => Message(
       lastName: json['last_name'] as String?,
       picture: json['picture'] as String?,
       draft: json['draft'] as String?,
+      quoteMessage: json['quote_message'] == null
+          ? null
+          : Message.fromJson(json['quote_message'] as Map<String, dynamic>),
       lastReplies: (json['last_replies'] as List<dynamic>?)
               ?.map((e) => Message.fromJson(e as Map<String, dynamic>))
               .toList() ??
@@ -150,6 +153,7 @@ Map<String, dynamic> _$MessageToJson(Message instance) => <String, dynamic>{
       'picture': instance.picture,
       'draft': instance.draft,
       'delivery': _$DeliveryEnumMap[instance.delivery],
+      'quote_message': instance.quoteMessage?.toJson(),
       'last_replies': instance.lastReplies?.map((e) => e.toJson()).toList(),
     };
 

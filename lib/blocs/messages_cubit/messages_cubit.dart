@@ -282,12 +282,12 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
     await for (final message in sendStream) {}
   }
 
-  Future<void> send({
-    String? originalStr,
-    List<dynamic> attachments: const [],
-    String? threadId,
-    bool isDirect: false,
-  }) async {
+  Future<void> send(
+      {String? originalStr,
+      List<dynamic> attachments: const [],
+      String? threadId,
+      bool isDirect: false,
+      Message? quoteMessage}) async {
     final prepared = TwacodeParser(originalStr ?? '').message;
     final fakeId = DateTime.now().millisecondsSinceEpoch.toString();
     Message message;
@@ -302,7 +302,7 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
         threadId: threadId ?? fakeId,
         isDirect: isDirect,
         now: DateTime.now().millisecondsSinceEpoch,
-        files: attachments);
+        files: attachments,quoteMessage: quoteMessage);
 
     final state = this.state as MessagesLoadSuccess;
     emit(MessageSendInProgress(messages: state.messages, hash: state.hash, endOfHistory: state.endOfHistory));

@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/blocs/pinned_message_cubit/pinned_messsage_cubit.dart';
+import 'package:twake/blocs/quote_message_cubit/quote_message_cubit.dart';
 import 'package:twake/models/message/message.dart';
 import 'package:twake/services/navigator_service.dart';
 
@@ -23,7 +24,6 @@ class JumpablePinnedMessages extends StatefulWidget {
 }
 
 class _JumpablePinnedMessagesState extends State<JumpablePinnedMessages> {
-
   @override
   Widget build(BuildContext context) {
     return BlocListener<PinnedMessageCubit, PinnedMessageState>(
@@ -65,6 +65,17 @@ class _JumpablePinnedMessagesState extends State<JumpablePinnedMessages> {
             );
           }
         },
-        child: widget.child);
+        child: BlocListener<QuoteMessageCubit, QuoteMessageState>(
+          bloc: Get.find<QuoteMessageCubit>(),
+          listenWhen: (_, state) =>
+              state.quoteMessageStatus == QuoteMessageStatus.jumpToQuote,
+          listener: (context, state) {
+            final Message? message = widget.messages
+                .firstWhereOrNull((m) => m.id == state.quoteMessage.first.id);
+            if (message != null) widget.jumpToMessage(widget.messages, message);
+            Get.find<QuoteMessageCubit>().init();
+          },
+          child: widget.child,
+        ));
   }
 }

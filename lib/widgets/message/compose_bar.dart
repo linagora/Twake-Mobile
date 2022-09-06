@@ -351,7 +351,7 @@ class _TextInputState extends State<TextInput> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.only(top: 11.0, bottom: 11.0),
+      padding: EdgeInsets.only(bottom: 11.0),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -371,8 +371,8 @@ class _TextInputState extends State<TextInput> {
   _buildAttachment() {
     return IconButton(
       constraints: BoxConstraints(
-        minHeight: 24.0,
-        minWidth: 24.0,
+        maxHeight: 24.0,
+        maxWidth: 24.0,
       ),
       padding: EdgeInsets.zero,
       icon: Image.asset(imageAddFile),
@@ -385,10 +385,8 @@ class _TextInputState extends State<TextInput> {
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.secondaryContainer,
-        borderRadius: BorderRadius.circular(30.0),
-        border: Border.all(
-          color: Theme.of(context).colorScheme.secondaryContainer,
-        ),
+        borderRadius: BorderRadius.circular(20.0),
+      
       ),
       child: Stack(
         alignment: Alignment.centerRight,
@@ -397,7 +395,7 @@ class _TextInputState extends State<TextInput> {
           GestureDetector(
             onTap: widget.toggleEmojiBoard as void Function()?,
             child: Padding(
-              padding: const EdgeInsets.all(4.0),
+              padding: const EdgeInsets.only(right: 4,left: 4,bottom: 4),
               child: Image.asset(imageEmojiIcon, width: 24, height: 24),
             ),
           )
@@ -474,10 +472,10 @@ class _TextInputState extends State<TextInput> {
               }
             : null,
         child: Padding(
-          padding: const EdgeInsets.all(9.0),
+          padding: const EdgeInsets.all(8.0),
           child: SizedBox(
-            height: 38,
-            width: 38,
+            height: 36,
+            width: 36,
             child: widget.canSend
                 ? Get.isDarkMode
                     ? Image.asset(

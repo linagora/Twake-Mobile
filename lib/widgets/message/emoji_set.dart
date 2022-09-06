@@ -27,7 +27,7 @@ class EmojiLine extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20.0),
         color: Get.isDarkMode
-            ? Theme.of(context).primaryColor.withOpacity(0.8)
+            ? Theme.of(context).primaryColor.withOpacity(0.7)
             : Theme.of(context).cardColor,
       ),
       width: Dim.widthPercent(80),

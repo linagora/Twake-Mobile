@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
+import 'package:twake/blocs/quote_message_cubit/quote_message_cubit.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/models/message/message.dart';
 import 'package:twake/pages/chat/empty_chat_container.dart';
@@ -148,6 +149,7 @@ class _ChatViewState extends State<_ChatView> {
                     height: 25,
                     child: Image.asset(
                       'assets/images/reply.png',
+                      color: Theme.of(context).colorScheme.surface,
                     ),
                   ),
                   SizedBox(
@@ -156,11 +158,13 @@ class _ChatViewState extends State<_ChatView> {
                 ],
               ),
               onTap: (CompletionHandler handler) async {
-                await NavigatorService.instance.navigate(
-                  channelId: message.channelId,
-                  threadId: message.id,
-                  reloadThreads: false,
-                );
+                widget.parentChannel.isDirect
+                    ? Get.find<QuoteMessageCubit>().addQuoteMessage(message)
+                    : await NavigatorService.instance.navigate(
+                        channelId: message.channelId,
+                        threadId: message.id,
+                        reloadThreads: false,
+                      );
                 _swipeActionController.closeAllOpenCell();
               },
               color: Colors.transparent),

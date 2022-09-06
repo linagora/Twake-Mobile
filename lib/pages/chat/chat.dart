@@ -8,12 +8,14 @@ import 'package:twake/blocs/file_cubit/upload/file_upload_state.dart';
 import 'package:twake/blocs/message_animation_cubit/message_animation_cubit.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/blocs/pinned_message_cubit/pinned_messsage_cubit.dart';
+import 'package:twake/blocs/quote_message_cubit/quote_message_cubit.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/models/file/file.dart';
 import 'package:twake/models/file/message_file.dart';
 import 'package:twake/pages/chat/inherited_message_animation.dart';
 import 'package:twake/pages/chat/message_animation.dart';
 import 'package:twake/pages/chat/pinned_message_sheet.dart';
+import 'package:twake/pages/chat/quote_message.dart';
 import 'package:twake/routing/app_router.dart';
 import 'package:twake/services/navigator_service.dart';
 import 'package:twake/utils/emojis.dart';
@@ -45,7 +47,6 @@ class _ChatState<T extends BaseChannelsCubit> extends State<Chat> {
 
   @override
   Widget build(BuildContext context) {
-    bool isDirect = false;
     final draft =
         (Get.find<T>().state as ChannelsLoadedSuccess).selected!.draft;
     final channel = (Get.find<T>().state as ChannelsLoadedSuccess).selected!;
@@ -163,11 +164,33 @@ class _ChatState<T extends BaseChannelsCubit> extends State<Chat> {
 
   Widget _buildChatContent(
       messagesState, Channel channel, BuildContext context, Key? key) {
-    return Column(
+    return Flexible(
+        child: Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         _buildLoading(messagesState),
         MessagesGroupedList(parentChannel: channel, key: key)
+      ],
+    ));
+  }
+
+  Widget _buildQuoteMessage() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        BlocBuilder<QuoteMessageCubit, QuoteMessageState>(
+          bloc: Get.find<QuoteMessageCubit>(),
+          builder: (context, state) {
+            return state.quoteMessageStatus == QuoteMessageStatus.quoteDone
+                ? QuoteMessage(
+                    message: state.quoteMessage.first,
+                    showCloseButton: true,
+                    isExpanded: true,
+                    paddingLeft: 55,
+                    paddingTop: 10)
+                : SizedBox.shrink();
+          },
+        ),
       ],
     );
   }
@@ -209,11 +232,20 @@ class _ChatState<T extends BaseChannelsCubit> extends State<Chat> {
               editedText: content,
               newAttachments: attachments);
         } else {
-          Get.find<ChannelMessagesCubit>().send(
-            originalStr: content,
-            attachments: attachments,
-            isDirect: channel.isDirect,
-          );
+          final quoteMessageCubit = Get.find<QuoteMessageCubit>().state;
+
+          quoteMessageCubit.quoteMessageStatus == QuoteMessageStatus.quoteDone
+              ? Get.find<ChannelMessagesCubit>().send(
+                  originalStr: content,
+                  attachments: attachments,
+                  isDirect: channel.isDirect,
+                  quoteMessage: quoteMessageCubit.quoteMessage.first)
+              : Get.find<ChannelMessagesCubit>().send(
+                  originalStr: content,
+                  attachments: attachments,
+                  isDirect: channel.isDirect,
+                );
+          Get.find<QuoteMessageCubit>().init();
         }
         // reset channels draft
         Get.find<T>().saveDraft(draft: null);
