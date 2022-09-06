@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
+import 'package:twake/blocs/quote_message_cubit/quote_message_cubit.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/models/message/message.dart';
 import 'package:twake/pages/chat/empty_chat_container.dart';
@@ -11,7 +12,6 @@ import 'package:twake/pages/chat/jumpable_pinned_messages.dart';
 import 'package:twake/pages/chat/message_tile.dart';
 import 'package:twake/pages/chat/unread_messages_widget.dart';
 import 'package:twake/services/navigator_service.dart';
-import 'package:twake/utils/bubble_side.dart';
 import 'package:flutter_swipe_action_cell/flutter_swipe_action_cell.dart';
 import 'package:twake/widgets/common/channel_first_message.dart';
 import 'package:twake/widgets/common/highlight_component.dart';
@@ -19,7 +19,10 @@ import 'package:twake/widgets/common/searchable_grouped_listview.dart';
 
 class MessagesGroupedList extends StatefulWidget {
   final Channel parentChannel;
-  const MessagesGroupedList({required this.parentChannel});
+  const MessagesGroupedList({
+    required this.parentChannel,
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _MessagesGroupedListState();
@@ -114,9 +117,10 @@ class _ChatViewState extends State<_ChatView> {
               startMessage: _startMessage,
               itemPositionsListener: _itemPositionsListener,
               jumpController: _jumpController,
-              indexedItemBuilder: (context, Message message, int index) {
-                return _buildSwipeActionCell(
-                    state.messages, message, index, state.endOfHistory);
+              indexedItemBuilder:
+                  (context, Message message, int index, bool isSenderHidden) {
+                return _buildSwipeActionCell(state.messages, message, index,
+                    state.endOfHistory, isSenderHidden);
               },
             ),
             messages: state.messages,
@@ -128,9 +132,8 @@ class _ChatViewState extends State<_ChatView> {
     );
   }
 
-  Widget _buildSwipeActionCell(
-      List<Message> messages, Message message, int index, bool endOfHistory) {
-    final List<bool> bubbleSides = bubbleSide(messages, index, true);
+  Widget _buildSwipeActionCell(List<Message> messages, Message message,
+      int index, bool endOfHistory, bool isSenderHidden) {
     return SwipeActionCell(
         controller: _swipeActionController,
         key: ObjectKey(messages[index]),
@@ -146,6 +149,7 @@ class _ChatViewState extends State<_ChatView> {
                     height: 25,
                     child: Image.asset(
                       'assets/images/reply.png',
+                      color: Theme.of(context).colorScheme.surface,
                     ),
                   ),
                   SizedBox(
@@ -154,13 +158,13 @@ class _ChatViewState extends State<_ChatView> {
                 ],
               ),
               onTap: (CompletionHandler handler) async {
-                Get.find<ThreadMessagesCubit>().reset();
-
-                await NavigatorService.instance.navigate(
-                  channelId: message.channelId,
-                  threadId: message.id,
-                  reloadThreads: false,
-                );
+                widget.parentChannel.isDirect
+                    ? Get.find<QuoteMessageCubit>().addQuoteMessage(message)
+                    : await NavigatorService.instance.navigate(
+                        channelId: message.channelId,
+                        threadId: message.id,
+                        reloadThreads: false,
+                      );
                 _swipeActionController.closeAllOpenCell();
               },
               color: Colors.transparent),
@@ -172,10 +176,9 @@ class _ChatViewState extends State<_ChatView> {
                   channel: widget.parentChannel, icon: message.picture ?? "")
               : MessageTile<ChannelMessagesCubit>(
                   message: message,
-                  upBubbleSide: bubbleSides[0],
-                  downBubbleSide: bubbleSides[1],
+                  isDirect: widget.parentChannel.isDirect,
                   key: ValueKey(message.hash),
-                  channel: widget.parentChannel,
+                  isSenderHidden: isSenderHidden,
                 ),
           highlightWhen: _jumpController.highlightMessage != null &&
               _jumpController.highlightMessage == message &&

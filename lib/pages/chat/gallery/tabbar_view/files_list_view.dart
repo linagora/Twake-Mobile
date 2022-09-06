@@ -7,6 +7,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/account_cubit/account_cubit.dart';
 import 'package:twake/blocs/company_files_cubit/company_file_cubit.dart';
+import 'package:twake/blocs/file_cubit/file_transition_cubit.dart';
 import 'package:twake/blocs/file_cubit/upload/file_upload_cubit.dart';
 import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/config/image_path.dart';
@@ -74,6 +75,8 @@ class _FilesListViewState extends State<FilesListView>
         sourceFile: localFile,
         sourceFileUploading: SourceFileUploading.InChat,
       );
+      Get.find<FileUploadCubit>().initFileUploadingStream();
+      Get.find<FileTransitionCubit>().fileLoadingMessageEmpty();
     }
 
     Get.back();
@@ -119,7 +122,10 @@ class _FilesListViewState extends State<FilesListView>
                         padding: const EdgeInsets.symmetric(horizontal: 8.0),
                         child: Text(
                           AppLocalizations.of(context)!.addLocalStorageFile,
-                          style: Theme.of(context).textTheme.headline4,
+                          style: Theme.of(context)
+                              .textTheme
+                              .headline4!
+                              .copyWith(fontSize: 15),
                         ),
                       ),
                     ],
@@ -196,7 +202,7 @@ class _FilesListViewState extends State<FilesListView>
         : Get.find<FileUploadCubit>().addAlreadyUploadedFile(
             existsFile: (file as File),
           );
-
+    Get.find<FileTransitionCubit>().noMessageTwakeFile();
     Get.back();
   }
 

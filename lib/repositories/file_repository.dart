@@ -81,16 +81,16 @@ class FileRepository {
     }
 
     final fileDestinationPath = fileDownloading.file == null
-        ? '$externalStorageDirPath/${fileDownloading.file!.metadata.name}'
-        : '$externalStorageDirPath/${fileDownloading.messageFile!.metadata.name}';
+        ? '$externalStorageDirPath/${fileDownloading.messageFile!.metadata.name}'
+        : '$externalStorageDirPath/${fileDownloading.file!.metadata.name}';
     final taskId = await _fileDownloadManager.downloadFile(
         downloadUrl: fileDownloading.file == null
-            ? fileDownloading.file!.downloadUrl
-            : fileDownloading.messageFile!.downloadUrl,
+            ? fileDownloading.messageFile!.downloadUrl
+            : fileDownloading.file!.downloadUrl,
         savedDir: externalStorageDirPath,
         fileName: fileDownloading.file == null
             ? fileDownloading.messageFile!.metadata.name
-            : fileDownloading.messageFile!.metadata.name);
+            : fileDownloading.file!.metadata.name);
     return Tuple2(taskId, fileDestinationPath);
   }
 
@@ -117,6 +117,9 @@ class FileRepository {
         queryParameters: queryParameters,
         key: 'resources',
       );
+      // TODO: Broken files come across, they always do not have the 'name' field and other required fields, for now throw them out
+      remoteResult.removeWhere((file) => !file['metadata'].containsKey('name'));
+
       final List<MessageFile> messageFiles =
           remoteResult.map((e) => MessageFile.fromJson(e)).toList();
 

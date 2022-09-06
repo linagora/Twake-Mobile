@@ -1,14 +1,15 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:filesize/filesize.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:logger/logger.dart';
+import 'package:filesize/filesize.dart';
 import 'package:open_file/open_file.dart';
 import 'package:twake/blocs/cache_in_chat_cubit/cache_in_chat_cubit.dart';
 import 'package:twake/blocs/file_cubit/download/file_download_cubit.dart';
 import 'package:twake/blocs/file_cubit/download/file_download_state.dart';
 import 'package:twake/blocs/file_cubit/file_cubit.dart';
+import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/config/image_path.dart';
 import 'package:twake/models/file/download/file_downloading.dart';
 import 'package:twake/models/file/file.dart';
@@ -19,8 +20,6 @@ import 'package:twake/widgets/common/shimmer_loading.dart';
 import 'package:twake/utils/extensions.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-const _fileTileHeight = 76.0;
-
 /// Note [1]:
 /// This is decided by User Story.
 /// When it's image, user can only download from Preview page, so there is no download icon.
@@ -28,9 +27,13 @@ const _fileTileHeight = 76.0;
 class FileTile extends StatefulWidget {
   final String fileId;
   final bool isMyMessage;
+  final bool isLimitedSize;
 
-  FileTile({required this.fileId, required this.isMyMessage})
-      : super(key: ValueKey(fileId));
+  FileTile({
+    required this.fileId,
+    required this.isMyMessage,
+    this.isLimitedSize: false,
+  }) : super(key: ValueKey(fileId));
 
   @override
   State<FileTile> createState() => _FileTileState();
@@ -39,6 +42,9 @@ class FileTile extends StatefulWidget {
 class _FileTileState extends State<FileTile> {
   @override
   Widget build(BuildContext context) {
+    final double width = widget.isLimitedSize ? 75 : Dim.widthPercent(75);
+    final double height = widget.isLimitedSize ? 75 : Dim.heightPercent(70);
+
     File? cacheFile =
         Get.find<CacheInChatCubit>().findCachedFile(fileId: widget.fileId);
     return cacheFile == null
@@ -47,43 +53,47 @@ class _FileTileState extends State<FileTile> {
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.done) {
                 if (snapshot.data == null) {
-                  return _buildLoadingLayout();
+                  return _buildLoadingLayout(width, height);
                 }
                 final file = (snapshot.data as File);
                 Get.find<CacheInChatCubit>().cacheFile(file: file);
-                return _buildFileWidget(file);
+                return _buildFileWidget(file, width, height);
               }
-              return _buildLoadingLayout();
+              return _buildLoadingLayout(width, height);
             },
           )
-        : _buildFileWidget(cacheFile);
+        : _buildFileWidget(cacheFile, width, height);
   }
 
-  _buildLoadingLayout() => ClipRRect(
+  _buildLoadingLayout(double width, double height) => ClipRRect(
         borderRadius: BorderRadius.all(Radius.circular(8)),
         child: ShimmerLoading(
-          width: double.maxFinite,
-          height: _fileTileHeight,
+          width: width,
+          height: height,
           isLoading: true,
           child: Container(),
         ),
       );
 
-  _buildFileWidget(File file) => Container(
+  _buildFileWidget(File file, double width, double height) => Container(
         margin: const EdgeInsets.only(bottom: 4.0),
-        child: Row(children: [
-          _buildFileHeader(file),
-          SizedBox(width: 12.0),
-          Flexible(
-            child: _buildFileInfo(file),
-          ),
-        ]),
+        child: Row(
+            mainAxisSize:
+                widget.isLimitedSize ? MainAxisSize.min : MainAxisSize.max,
+            children: [
+              _buildFileHeader(file, width, height),
+              file.thumbnailUrl.isEmpty
+                  ? Padding(
+                      padding: const EdgeInsets.only(left: 12),
+                      child: _buildFileInfo(file),
+                    )
+                  : SizedBox.shrink(),
+            ]),
       );
 
-  _buildFileHeader(File file) {
-    return SizedBox(
-      width: _fileTileHeight,
-      height: _fileTileHeight,
+  _buildFileHeader(File file, double width, double height) {
+    return Container(
+      constraints: BoxConstraints(maxWidth: width, maxHeight: height),
       child: BlocBuilder<FileDownloadCubit, FileDownloadState>(
           bloc: Get.find<FileDownloadCubit>(),
           builder: (context, state) {
@@ -98,7 +108,7 @@ class _FileTileState extends State<FileTile> {
             return Stack(
               alignment: Alignment.center,
               children: [
-                _buildThumbnail(file, selectedFile),
+                _buildThumbnail(file, selectedFile, width, height),
                 _buildDownloadIcon(file, selectedFile)
               ],
             );
@@ -106,7 +116,8 @@ class _FileTileState extends State<FileTile> {
     );
   }
 
-  _buildThumbnail(File file, FileDownloading? fileDownloading) {
+  _buildThumbnail(File file, FileDownloading? fileDownloading, double width,
+      double height) {
     return GestureDetector(
       onTap: () {
         /// Read [1] for the detail
@@ -131,10 +142,39 @@ class _FileTileState extends State<FileTile> {
         }
       },
       child: file.thumbnailUrl.isNotEmpty
-          ? _buildFilePreview(file.thumbnailUrl)
+          ? _buildFilePreview(file, width, height)
           : _buildFileTypeIcon(file),
     );
   }
+
+  _buildFileInfo(File file) => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            constraints: BoxConstraints(maxWidth: Dim.widthPercent(50)),
+            child: RichText(
+                text: TextSpan(
+                    text: file.metadata.name,
+                    style: TextStyle(
+                        fontSize: 16.0,
+                        color:
+                            widget.isMyMessage ? Colors.white : Colors.black)),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 2),
+          ),
+          Text(
+            filesize(file.uploadData.size),
+            textAlign: TextAlign.start,
+            style: TextStyle(
+                fontSize: 11.0,
+                fontWeight: FontWeight.w400,
+                fontStyle: FontStyle.italic,
+                color: widget.isMyMessage
+                    ? Color.fromRGBO(255, 255, 255, 0.58)
+                    : Color.fromRGBO(0, 0, 0, 0.58)),
+          ),
+        ],
+      );
 
   _buildDownloadIcon(File file, FileDownloading? fileDownloading) {
     /// Read [1] for the detail
@@ -195,60 +235,76 @@ class _FileTileState extends State<FileTile> {
     );
   }
 
-  _buildFilePreview(String thumbUrl) => ClipRRect(
+  _buildFilePreview(File file, double width, double height) {
+    return Padding(
+      padding: const EdgeInsets.all(2.0),
+      child: ClipRRect(
         borderRadius: BorderRadius.all(Radius.circular(8)),
         child: Container(
-          height: 300,
+          height: height * _aspectRatioCoefficient(file),
+          width: width, // * cWidth,
           child: CachedNetworkImage(
-            width: double.maxFinite,
-            height: double.maxFinite,
+            height: height * _aspectRatioCoefficient(file),
+            width: width, // * cWidth,
             fit: BoxFit.cover,
-            imageUrl: thumbUrl,
+            imageUrl: file.downloadUrl,
             progressIndicatorBuilder: (context, url, progress) {
               return ShimmerLoading(
                   isLoading: true,
-                  width: double.maxFinite,
-                  height: double.maxFinite,
+                  height: height * _aspectRatioCoefficient(file),
+                  width: width, // * cWidth,
                   child: Container());
             },
           ),
         ),
-      );
-
-  _buildFileTypeIcon(File file) {
-    final extension = file.metadata.name.fileExtension;
-    return Image.asset(
-      extension.imageAssetByFileExtension,
-      width: 32.0,
-      height: 32.0,
-      color: widget.isMyMessage ? null : Colors.grey,
+      ),
     );
   }
 
-  _buildFileInfo(File file) => Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          RichText(
-              text: TextSpan(
-                  text: file.metadata.name,
-                  style: TextStyle(
-                      fontSize: 16.0,
-                      color: widget.isMyMessage ? Colors.white : Colors.black)),
-              overflow: TextOverflow.ellipsis,
-              maxLines: 2),
-          Text(
-            filesize(file.uploadData.size),
-            textAlign: TextAlign.start,
-            style: TextStyle(
-                fontSize: 11.0,
-                fontWeight: FontWeight.w400,
-                fontStyle: FontStyle.italic,
-                color: widget.isMyMessage
-                    ? Color.fromRGBO(255, 255, 255, 0.58)
-                    : Color.fromRGBO(0, 0, 0, 0.58)),
-          ),
-        ],
-      );
+  _buildFileTypeIcon(File file) {
+    final extension = file.metadata.name.fileExtension;
+    return Container(
+      width: 75,
+      height: 75,
+      decoration: BoxDecoration(
+        color: Get.isDarkMode
+            ? widget.isMyMessage
+                ? Theme.of(context).colorScheme.onSurface.withOpacity(0.3)
+                : Theme.of(context)
+                    .colorScheme
+                    .secondaryContainer
+                    .withOpacity(0.3)
+            : widget.isMyMessage
+                ? Theme.of(context).colorScheme.onSurface.withOpacity(0.3)
+                : Theme.of(context).iconTheme.color!.withOpacity(0.3),
+        borderRadius: BorderRadius.all(Radius.circular(18)),
+        border: Border.all(
+          color: Get.isDarkMode
+              ? Theme.of(context)
+                  .colorScheme
+                  .secondaryContainer
+                  .withOpacity(0.5)
+              : Theme.of(context).colorScheme.surface.withOpacity(0.3),
+        ),
+      ),
+      child: Image.asset(
+        extension.imageAssetByFileExtension,
+        width: 32.0,
+        height: 32.0,
+        color: widget.isMyMessage ? null : Colors.grey,
+      ),
+    );
+  }
+
+  num _aspectRatioCoefficient(File file) {
+    final num aspectRatio = file.thumbnails.isNotEmpty
+        ? file.thumbnails.first.width / file.thumbnails.first.height
+        : 1;
+    final num coefficientHeight = aspectRatio > 1 ? 1 / aspectRatio : 1;
+    // coefficientWidth that is not neeede for now
+    // final coefficientWidth= aspectRatio < 1 ? aspectRatio : 1;
+    return coefficientHeight;
+  }
 
   // Open file either by [taskId] or [savedPath]
   _handleOpenFile({String? taskId, String? savedPath}) async {

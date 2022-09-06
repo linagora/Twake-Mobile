@@ -377,29 +377,55 @@ class _PicturesListViewState extends State<PicturesListView>
                         currentState.galleryStateStatus ==
                         GalleryStateStatus.newSelect,
                     builder: (context, state) {
-                      return state.selectedFilesIndex.contains(index)
-                          ? Stack(
-                              children: [
-                                Icon(
-                                  Icons.check_circle,
-                                  size: 26,
-                                  color: Get.isDarkMode
-                                      ? Theme.of(context)
-                                          .colorScheme
-                                          .primaryContainer
-                                      : Theme.of(context).primaryColor,
-                                ),
-                              ],
-                            )
-                          : Icon(
-                              Icons.circle_outlined,
-                              size: 26,
-                              color: Get.isDarkMode
-                                  ? Theme.of(context)
-                                      .colorScheme
-                                      .primaryContainer
-                                  : Theme.of(context).primaryColor,
-                            );
+                      return Stack(
+                        children: [
+                          state.selectedFilesIndex.contains(index)
+                              ? Positioned(
+                                  right: 5,
+                                  bottom: 5,
+                                  child: Container(
+                                    height: 22,
+                                    width: 22,
+                                    decoration: BoxDecoration(
+                                      color:
+                                          Theme.of(context).colorScheme.surface,
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: Center(
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(
+                                            left: 1, top: 1),
+                                        child: Text(
+                                            "${state.selectedFilesIndex.indexOf(index) + 1}",
+                                            style: Get.isDarkMode
+                                                ? Theme.of(context)
+                                                    .textTheme
+                                                    .headline1!
+                                                    .copyWith(
+                                                        fontSize: 14,
+                                                        fontWeight:
+                                                            FontWeight.w500)
+                                                : Theme.of(context)
+                                                    .textTheme
+                                                    .bodyText1!
+                                                    .copyWith(
+                                                        fontSize: 14,
+                                                        fontWeight:
+                                                            FontWeight.w500)),
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              : SizedBox.shrink(),
+                          Icon(
+                            Icons.circle_outlined,
+                            size: 30,
+                            color: Get.isDarkMode
+                                ? Theme.of(context).colorScheme.primaryContainer
+                                : Theme.of(context).primaryColor,
+                          ),
+                        ],
+                      );
                     },
                   ),
                 ),

@@ -19,6 +19,7 @@ class Message extends BaseModel {
     'files',
     'pinned_info',
     'last_replies',
+    'quote_message'
   ];
 
   final String id;
@@ -53,7 +54,6 @@ class Message extends BaseModel {
   String? firstName;
   String? lastName;
   String? picture;
-
   String? draft;
 
   @JsonKey(defaultValue: 1, name: 'is_read')
@@ -65,11 +65,22 @@ class Message extends BaseModel {
   @JsonKey(defaultValue: const [], name: 'last_replies')
   List<Message>? _lastReplies;
 
+  @JsonKey(name: 'quote_message')
+  Message? quoteMessage;
+
   List<Message>? get lastReplies => _lastReplies;
 
   Message? get lastReply => _lastReplies != null && _lastReplies!.isNotEmpty
       ? _lastReplies![_lastReplies!.length - 1]
       : null;
+  List<Message>? get last3Replies {
+    if (_lastReplies != null && _lastReplies!.isNotEmpty) {
+      return _lastReplies!
+          .getRange(responsesCount < 3 ? 1 : 0, _lastReplies!.length)
+          .toList();
+    }
+    return null;
+  }
 
   int get hash {
     return this.id.hashCode +
@@ -133,7 +144,9 @@ class Message extends BaseModel {
 
   String get sender {
     if (this.firstName == null || this.lastName == null) {
-      return this.username!;
+      return (this.firstName == null && this.lastName == null)
+          ? ""
+          : this.username!;
     }
     return '$firstName $lastName';
   }
@@ -142,7 +155,7 @@ class Message extends BaseModel {
   bool get isRead => _isRead > 0;
 
   @JsonKey(ignore: true)
-  bool get inThread => id != threadId;
+  bool get inThread => this.id != this.threadId;
 
   set isRead(bool val) => _isRead = val ? 1 : 0;
 
@@ -164,6 +177,7 @@ class Message extends BaseModel {
     this.lastName,
     this.picture,
     this.draft,
+    this.quoteMessage,
     List<Message>? lastReplies = const <Message>[],
   }) : this._lastReplies = lastReplies;
 
@@ -181,6 +195,8 @@ class Message extends BaseModel {
     if (jsonify) {
       json = jsn.jsonify(json: json, keys: COMPOSITE_FIELDS);
     }
+    //we need to add transform for last_replies filed when we run it from _$MessageFromJson(json);  lastReplies: (json['last_replies']).map((e) => Message.fromJson
+    if (!json.containsKey("last_replies")) transform = true;
     if (transform) {
       json = ApiDataTransformer.message(json: json, channelId: channelId);
     }

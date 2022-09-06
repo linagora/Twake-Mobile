@@ -3,25 +3,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get/get.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:logger/logger.dart';
 import 'package:twake/blocs/camera_cubit/camera_cubit.dart';
-import 'package:twake/blocs/file_cubit/file_upload_transition_cubit.dart';
+import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
+import 'package:twake/blocs/file_cubit/file_transition_cubit.dart';
 import 'package:twake/blocs/file_cubit/upload/file_upload_cubit.dart';
 import 'package:twake/blocs/file_cubit/upload/file_upload_state.dart';
 import 'package:twake/blocs/gallery_cubit/gallery_cubit.dart';
 import 'package:twake/blocs/mentions_cubit/mentions_cubit.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
-import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/config/image_path.dart';
 import 'package:twake/models/file/file.dart';
-import 'package:twake/models/file/local_file.dart';
+import 'package:twake/models/file/message_file.dart';
 import 'package:twake/models/file/upload/file_uploading.dart';
+import 'package:twake/models/globals/globals.dart';
 import 'package:twake/pages/chat/gallery/gallery_view.dart';
 import 'package:twake/utils/constants.dart';
 import 'package:twake/utils/extensions.dart';
 import 'package:twake/utils/utilities.dart';
 import 'package:twake/widgets/common/twake_alert_dialog.dart';
+import 'package:twake/widgets/sheets/mention_sheet.dart';
 
 class ComposeBar extends StatefulWidget {
   final bool autofocus;
@@ -42,11 +42,10 @@ class ComposeBar extends StatefulWidget {
 
 class _ComposeBar extends State<ComposeBar> {
   final _userMentionRegex = RegExp(r'(^|\s)@[A-Za-z0-9._-]+$');
-  var _emojiVisible = false;
-  var _mentionsVisible = false;
-  var _forceLooseFocus = false;
-  var _canSend = false;
-  var _canSendFiles = false;
+  bool _emojiVisible = false;
+  bool _forceLooseFocus = false;
+  bool _canSend = false;
+  bool _canSendFiles = false;
 
   final _focusNode = FocusNode();
   final _controller = TextEditingController();
@@ -74,19 +73,12 @@ class _ComposeBar extends State<ComposeBar> {
     _controller.addListener(() {
       if (_controller.selection.base.offset < 0) return;
 
-      var text = _controller.text;
+      String text = _controller.text;
       text = text.substring(0, _controller.selection.base.offset);
       if (_userMentionRegex.hasMatch(text)) {
         Get.find<MentionsCubit>().fetch(
           searchTerm: text.split('@').last.trimRight(),
         );
-        Future.delayed(const Duration(milliseconds: 100), () {
-          mentionsVisible();
-        });
-      } else {
-        setState(() {
-          _mentionsVisible = false;
-        });
       }
       // Update for cache handlers
       widget.onTextUpdated(text, context);
@@ -98,92 +90,92 @@ class _ComposeBar extends State<ComposeBar> {
 
     Get.find<ChannelMessagesCubit>().stream.listen((state) {
       final uploadState = Get.find<FileUploadCubit>().state;
-      final transitionState = Get.find<FileUploadTransitionCubit>().state;
-      List<dynamic> attachments = const [];
-      final hasUploadingFilesInStack = uploadState.listFileUploading.any(
-          (element) => element.uploadStatus == FileItemUploadStatus.uploading);
-      if (!hasUploadingFilesInStack &&
-          transitionState.fileUploadTransitionStatus ==
-              FileUploadTransitionStatus.finished) {
-        Get.find<FileUploadCubit>().closeListUploadingStream();
-        Get.find<FileUploadCubit>()
-            .clearFileUploadingState(needToCancelInProcessingFile: true);
-        Get.find<GalleryCubit>().galleryInit();
-      }
-      if (uploadState.listFileUploading.isNotEmpty &&
-          transitionState.fileUploadTransitionStatus !=
-              FileUploadTransitionStatus.finished) {
-        attachments = uploadState.listFileUploading
-            .where((fileUploading) => fileUploading.file != null)
-            .map((e) => e.file!.toAttachment())
-            .toList();
-        if (state is MessagesLoadSuccess) {
-          Get.find<FileUploadTransitionCubit>()
-              .uploadingMessageSent([state.messages.last]);
-        }
-      }
-      if (state is MessageEditInProgress &&
-          transitionState.fileUploadTransitionStatus ==
-              FileUploadTransitionStatus.uploadingMessageSent) {
-        Get.find<ChannelMessagesCubit>().edit(
-            message: state.message,
-            editedText: state.message.text,
-            newAttachments: attachments);
+      final transitionState = Get.find<FileTransitionCubit>().state;
 
-        Get.find<FileUploadTransitionCubit>().uploadingFinished();
+      if (state is MessagesLoadSuccess &&
+          transitionState.fileTransitionStatus ==
+              FileTransitionStatus.messageInprogressFileLoading) {
+        Get.find<FileTransitionCubit>().messageSentFileLoading(state.messages);
+      }
+
+      if (state is MessageEditInProgress &&
+          transitionState.fileTransitionStatus ==
+              FileTransitionStatus.messageSentFileLoading) {
+        // attacing the file to the message when it is well uploaded
+        List<dynamic> attachments = uploadState.listFileUploading
+            .where((fileUploading) => (fileUploading.file != null ||
+                fileUploading.messageFile != null))
+            .map((e) => e.messageFile != null
+                ? e.messageFile!.toAttachment()
+                : e.file!.toAttachment())
+            .toList();
+        Globals.instance.threadId == null
+            ? Get.find<ChannelMessagesCubit>().edit(
+                message: transitionState.messages.first,
+                editedText: transitionState.messages.first.text,
+                newAttachments: attachments)
+            : Get.find<ThreadMessagesCubit>().edit(
+                message: transitionState.messages.first,
+                editedText: transitionState.messages.first.text,
+                newAttachments: attachments);
+
+        // start clearing
         Get.find<FileUploadCubit>().closeListUploadingStream();
-        Get.find<FileUploadCubit>()
-            .clearFileUploadingState(needToCancelInProcessingFile: true);
-        Get.find<GalleryCubit>().galleryInit();
+        Get.find<FileUploadCubit>().clearFileUploadingState();
+        Get.find<FileTransitionCubit>().fileTransitionFinished();
       }
     });
 
     Get.find<FileUploadCubit>().stream.listen((state) {
-      final hasFilesInStackUploaded = state.listFileUploading.every(
+      final transitionCubitState = Get.find<FileTransitionCubit>().state;
+      final hasUploadedFileInStack = state.listFileUploading.every(
           (element) => element.uploadStatus == FileItemUploadStatus.uploaded);
+      sendFile() {
+        final Channel? channel =
+            (Get.find<ChannelsCubit>().state as ChannelsLoadedSuccess).selected;
+        List<dynamic> attachments = state.listFileUploading
+            .where((fileUploading) => (fileUploading.file != null ||
+                fileUploading.messageFile != null))
+            .map((e) => e.messageFile != null
+                ? e.messageFile!.toAttachment()
+                : e.file!.toAttachment())
+            .toList();
+        Globals.instance.threadId == null
+            ? Get.find<ChannelMessagesCubit>().send(
+                originalStr: "",
+                attachments: attachments,
+                isDirect: channel == null ? true : channel.isDirect,
+              )
+            : Get.find<ThreadMessagesCubit>().send(
+                originalStr: "",
+                attachments: attachments,
+                isDirect: channel == null ? true : channel.isDirect,
+              );
+        // start clearing
+        Get.find<FileUploadCubit>().closeListUploadingStream();
+        Get.find<FileUploadCubit>().clearFileUploadingState();
+        Get.find<FileTransitionCubit>().fileTransitionFinished();
+      }
 
-      if (hasFilesInStackUploaded)
-        Get.find<FileUploadTransitionCubit>().uploadingDone();
+      if (hasUploadedFileInStack &&
+          transitionCubitState.fileTransitionStatus ==
+              FileTransitionStatus.messageSentFileLoading) {
+        // When the file is uploaded => edit message and attach the file
+        Get.find<FileTransitionCubit>().startMessageEditting();
+      }
 
-      if (state.listFileUploading.isNotEmpty) {
-        final hasUploadedFileInStack = state.listFileUploading.any(
-            (element) => element.uploadStatus == FileItemUploadStatus.uploaded);
-        final hasUploadingFileInStack = state.listFileUploading.any((element) =>
-            element.uploadStatus == FileItemUploadStatus.uploading);
-
-        if (!mounted) return;
-        if (hasUploadedFileInStack && !hasUploadingFileInStack) {
-          setState(() {
-            _canSendFiles = true;
-            _canSend = true;
-          });
-        } else {
-          setState(() {
-            _canSendFiles = true;
-            _canSend = true;
-          });
-        }
-      } else {
-        if (!mounted) return;
-        setState(() {
-          if (_controller.text.isReallyEmpty) {
-            _canSend = false;
-          } else {
-            _canSend = true;
-          }
-        });
+      if (hasUploadedFileInStack &&
+          transitionCubitState.fileTransitionStatus ==
+              FileTransitionStatus.messageEmptyFileLoading) {
+        // if file sent without a text, wait till it is well loaded and send an empty message with a file
+        sendFile();
+      }
+      if (transitionCubitState.fileTransitionStatus ==
+          FileTransitionStatus.noMessageTwakeFile) {
+        // Twake File from Gallery
+        sendFile();
       }
     });
-  }
-
-  // TODO get rid of _mentionsVisible since can use states of new MentionsCubit
-  void mentionsVisible() async {
-    final MentionState mentionsState = Get.find<MentionsCubit>().state;
-    if (mentionsState is MentionsLoadSuccess) {
-      setState(() {
-        _mentionsVisible = true;
-      });
-    }
   }
 
   @override
@@ -225,7 +217,7 @@ class _ComposeBar extends State<ComposeBar> {
   }
 
   void mentionReplace(String username) async {
-    var text = _controller.text;
+    String text = _controller.text;
     text = text.substring(0, _controller.selection.base.offset);
     _controller.text = _controller.text.replaceRange(
       text.lastIndexOf('@'),
@@ -262,116 +254,7 @@ class _ComposeBar extends State<ComposeBar> {
         onWillPop: onBackPress,
         child: Column(
           children: [
-            _mentionsVisible
-                ? BlocBuilder<MentionsCubit, MentionState>(
-                    bloc: Get.find<MentionsCubit>(),
-                    builder: (context, state) {
-                      if (state is MentionsLoadSuccess) {
-                        final List<Widget> _listW = [];
-                        _listW.add(Divider(thickness: 1));
-                        for (int i = 0; i < state.accounts.length; i++) {
-                          _listW.add(
-                            InkWell(
-                              child: Container(
-                                alignment: Alignment.center,
-                                height: 40.0,
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    SizedBox(width: 15),
-                                    ClipRRect(
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(30)),
-                                      child: CircleAvatar(
-                                        child: state.accounts[i].picture! == ""
-                                            ? CircleAvatar(
-                                                child: Icon(Icons.person,
-                                                    color: Theme.of(context)
-                                                        .colorScheme
-                                                        .secondary),
-                                                backgroundColor:
-                                                    Theme.of(context)
-                                                        .colorScheme
-                                                        .secondaryContainer,
-                                              )
-                                            : Image.network(
-                                                state.accounts[i].picture!,
-                                                fit: BoxFit.contain,
-                                                loadingBuilder:
-                                                    (context, child, progress) {
-                                                  if (progress == null) {
-                                                    return child;
-                                                  }
-
-                                                  return CircleAvatar(
-                                                    child: Icon(Icons.person,
-                                                        color: Theme.of(context)
-                                                            .colorScheme
-                                                            .secondary),
-                                                    backgroundColor:
-                                                        Theme.of(context)
-                                                            .colorScheme
-                                                            .secondaryContainer,
-                                                  );
-                                                },
-                                              ),
-                                      ),
-                                    ),
-                                    SizedBox(width: 15),
-                                    Expanded(
-                                      child: Text(
-                                        '${state.accounts[i].fullName} ',
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .headline1!
-                                            .copyWith(
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.w300),
-                                      ),
-                                    ),
-                                    SizedBox(width: 15),
-                                  ],
-                                ),
-                              ),
-                              onTap: () {
-                                Get.find<MentionsCubit>().reset();
-
-                                mentionReplace(state.accounts[i].username);
-                                setState(
-                                  () {
-                                    _mentionsVisible = false;
-                                  },
-                                );
-                              },
-                            ),
-                          );
-                          if (i < state.accounts.length - 1) {
-                            _listW.add(Divider(thickness: 1));
-                          }
-                          _listW.add(const SizedBox(height: 6));
-                        }
-                        return ConstrainedBox(
-                          constraints: BoxConstraints(
-                            maxHeight: Dim.heightPercent(30),
-                          ),
-                          child: SingleChildScrollView(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: _listW,
-                            ),
-                          ),
-                        );
-                      } else if (state is MentionsInitial) {
-                        return Container();
-                        //Text("Empty");
-                      }
-                      return Container();
-                    },
-                  )
-                : Container(),
+            MentionSheet(onTapMention: mentionReplace),
             TextInput(
               controller: _controller,
               scrollController: _scrollController,
@@ -465,27 +348,17 @@ class TextInput extends StatefulWidget {
 }
 
 class _TextInputState extends State<TextInput> {
-  final _imagePicker = ImagePicker();
-
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.only(top: 11.0, bottom: 11.0),
-      decoration: BoxDecoration(
-        border: Border(
-            top: BorderSide(
-                color: Get.isDarkMode
-                    ? Theme.of(context).scaffoldBackgroundColor
-                    : Theme.of(context).colorScheme.secondaryContainer,
-                width: 1.5)),
-        color: Theme.of(context).scaffoldBackgroundColor,
-      ),
+      padding: EdgeInsets.only(bottom: 11.0),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          SizedBox(width: 14.0),
-          _buildAttachment(),
-          SizedBox(width: 14.0),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 14),
+            child: _buildAttachment(),
+          ),
           Expanded(
             child: _buildMessageContent(),
           ),
@@ -498,11 +371,11 @@ class _TextInputState extends State<TextInput> {
   _buildAttachment() {
     return IconButton(
       constraints: BoxConstraints(
-        minHeight: 24.0,
-        minWidth: 24.0,
+        maxHeight: 24.0,
+        maxWidth: 24.0,
       ),
       padding: EdgeInsets.zero,
-      icon: Image.asset(imageAttachmentNew),
+      icon: Image.asset(imageAddFile),
       onPressed: () => _handleOpenGallery(),
       color: Theme.of(context).colorScheme.surface,
     );
@@ -512,10 +385,8 @@ class _TextInputState extends State<TextInput> {
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.secondaryContainer,
-        borderRadius: BorderRadius.circular(16.0),
-        border: Border.all(
-          color: Theme.of(context).colorScheme.secondaryContainer,
-        ),
+        borderRadius: BorderRadius.circular(20.0),
+      
       ),
       child: Stack(
         alignment: Alignment.centerRight,
@@ -524,9 +395,9 @@ class _TextInputState extends State<TextInput> {
           GestureDetector(
             onTap: widget.toggleEmojiBoard as void Function()?,
             child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Image.asset(imageEmoji, width: 24, height: 24),
-            ), //Image.asset('assets/images/attach.png'),
+              padding: const EdgeInsets.only(right: 4,left: 4,bottom: 4),
+              child: Image.asset(imageEmojiIcon, width: 24, height: 24),
+            ),
           )
         ],
       ),
@@ -534,87 +405,96 @@ class _TextInputState extends State<TextInput> {
   }
 
   _buildMessageTextField() {
-    return //MediaQuery.of(context).platformBrightness == Brightness.dark
-        ClipRRect(
+    return ClipRRect(
       borderRadius: BorderRadius.circular(17),
       child: _buildTextField(),
     );
-    // :
-    // _buildTextField();
   }
 
   _buildTextField() {
-    return TextField(
-      style: Theme.of(context)
-          .textTheme
-          .headline1!
-          .copyWith(fontSize: 17, fontWeight: FontWeight.w400),
-      maxLines: 4,
-      minLines: 1,
-      textCapitalization: TextCapitalization.sentences,
-      autofocus: widget.autofocus!,
-      focusNode: widget.focusNode,
-      scrollController: widget.scrollController,
-      controller: widget.controller,
-      keyboardAppearance: Theme.of(context).colorScheme.brightness,
-      decoration: InputDecoration(
-        filled: true,
-        fillColor: Theme.of(context).colorScheme.secondaryContainer,
-        contentPadding: const EdgeInsets.fromLTRB(12.0, 9.0, 32.0, 9.0),
-        hintText: AppLocalizations.of(context)!.newReply,
-        hintStyle: Theme.of(context)
+    return SizedBox(
+      height: widget.controller!.text.isNotEmpty ? null : 38,
+      child: TextField(
+        style: Theme.of(context)
             .textTheme
-            .headline2!
-            .copyWith(fontSize: 13, fontWeight: FontWeight.w500),
-        border: OutlineInputBorder(
-          borderSide: BorderSide(
-            style: BorderStyle.none,
+            .headline1!
+            .copyWith(fontSize: 17, fontWeight: FontWeight.w400),
+        maxLines: 4,
+        minLines: 1,
+        textCapitalization: TextCapitalization.sentences,
+        autofocus: widget.autofocus!,
+        focusNode: widget.focusNode,
+        scrollController: widget.scrollController,
+        controller: widget.controller,
+        keyboardAppearance: Theme.of(context).colorScheme.brightness,
+        decoration: InputDecoration(
+          filled: true,
+          fillColor: Theme.of(context).colorScheme.secondaryContainer,
+          contentPadding:
+              const EdgeInsets.only(left: 12, right: 25, top: 4, bottom: 4),
+          hintText: AppLocalizations.of(context)!.newReply,
+          hintStyle: Theme.of(context)
+              .textTheme
+              .headline2!
+              .copyWith(fontSize: 17, fontWeight: FontWeight.w500),
+          border: OutlineInputBorder(
+            borderSide: BorderSide(
+              style: BorderStyle.none,
+            ),
           ),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(
-            style: BorderStyle.none,
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+              style: BorderStyle.none,
+            ),
           ),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(
-            style: BorderStyle.none,
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+              style: BorderStyle.none,
+            ),
           ),
+          floatingLabelBehavior: FloatingLabelBehavior.always,
         ),
-        floatingLabelBehavior: FloatingLabelBehavior.always,
       ),
     );
   }
 
   _buildSendButton() {
     return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onTap: widget.canSend
-          ? () async {
-              widget.onMessageSend(
-                await Get.find<MentionsCubit>()
-                    .completeMentions(widget.controller!.text),
-                context,
-              );
-              widget.controller!.clear();
-            }
-          : null,
-      child: widget.canSend
-          ? Container(
-              padding: EdgeInsets.fromLTRB(17.0, 6.0, 18.0, 6.0),
-              child: Image.asset(
-                'assets/images/send_blue.png',
-                color: Theme.of(context).colorScheme.surface,
-              ),
-            )
-          : Container(
-              padding: EdgeInsets.fromLTRB(17.0, 6.0, 18.0, 6.0),
-              child: Image.asset(
-                'assets/images/send.png',
-                color: Get.isDarkMode ? Colors.grey : Colors.black,
-              ),
-            ),
-    );
+        behavior: HitTestBehavior.opaque,
+        onTap: widget.canSend
+            ? () async {
+                widget.onMessageSend(
+                  await Get.find<MentionsCubit>()
+                      .completeMentions(widget.controller!.text),
+                  context,
+                );
+                widget.controller!.clear();
+              }
+            : null,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: SizedBox(
+            height: 36,
+            width: 36,
+            child: widget.canSend
+                ? Get.isDarkMode
+                    ? Image.asset(
+                        imageSendBlue,
+                        color: Theme.of(context).colorScheme.onSurface,
+                      )
+                    : Image.asset(
+                        imageSendBlue,
+                      )
+                : Get.isDarkMode
+                    ? Image.asset(
+                        imageSend,
+                        color: Theme.of(context).colorScheme.secondaryContainer,
+                      )
+                    : Image.asset(
+                        imageSend,
+                      ),
+          ),
+        ));
   }
 
   _handleOpenGallery() async {
@@ -637,7 +517,7 @@ class _TextInputState extends State<TextInput> {
     }
 
     Get.find<GalleryCubit>().getGalleryAssets();
-    Get.find<FileUploadTransitionCubit>().uploadingMessageNotSent();
+    Get.find<FileTransitionCubit>().fileTransitionInit();
 
     showModalBottomSheet(
         context: context,
@@ -649,31 +529,12 @@ class _TextInputState extends State<TextInput> {
           ),
         ),
         builder: (context) {
-          return GalleryView();
+          return Padding(
+            padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom),
+            child: GalleryView(),
+          );
         });
-  }
-
-  void _handleTakePicture() async {
-    try {
-      final isGranted = await Utilities.requestCameraPermission(
-          onPermanentlyDenied: () =>
-              Utilities.showOpenSettingsDialog(context: context));
-      if (!isGranted) return;
-      XFile? pickedFile =
-          await _imagePicker.pickImage(source: ImageSource.camera);
-      if (!mounted) return;
-      if (pickedFile != null) {
-        LocalFile localFile = await pickedFile.toLocalFile();
-        localFile = localFile.copyWith(
-            updatedAt: DateTime.now().millisecondsSinceEpoch);
-        Get.find<FileUploadCubit>().upload(
-          sourceFile: localFile,
-          sourceFileUploading: SourceFileUploading.InChat,
-        );
-      }
-    } catch (e) {
-      Logger().e('Error occurred during taking picture:\n$e');
-    }
   }
 
   void displayLimitationAlertDialog() {
