@@ -26,22 +26,21 @@ class MessagesGroupedList extends StatefulWidget {
 }
 
 class _MessagesGroupedListState extends State<MessagesGroupedList> {
-  bool isTop = false;
 
   @override
   Widget build(BuildContext context) {
-    return NotificationListener<ScrollNotification>(
+    return NotificationListener<ScrollEndNotification>(
         onNotification: (scrollInfo) {
           // when user scroll out of viewport
           if (scrollInfo.metrics.atEdge) {
-            isTop = scrollInfo.metrics.pixels == 0;
-            if (isTop) {
-              Get.find<ChannelMessagesCubit>().fetchBefore(
+            final isBottom = scrollInfo.metrics.pixels == 0;
+            if (isBottom) {
+              Get.find<ChannelMessagesCubit>().fetchAfter(
                 channelId: Globals.instance.channelId!,
                 isDirect: widget.parentChannel.isDirect,
               );
             } else {
-              Get.find<ChannelMessagesCubit>().fetchAfter(
+              Get.find<ChannelMessagesCubit>().fetchBefore(
                 channelId: Globals.instance.channelId!,
                 isDirect: widget.parentChannel.isDirect,
               );
