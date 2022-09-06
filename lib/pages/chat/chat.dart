@@ -167,6 +167,27 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
           },
         ),
       ],
+    ));
+  }
+
+  Widget _buildQuoteMessage() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        BlocBuilder<QuoteMessageCubit, QuoteMessageState>(
+          bloc: Get.find<QuoteMessageCubit>(),
+          builder: (context, state) {
+            return state.quoteMessageStatus == QuoteMessageStatus.quoteDone
+                ? QuoteMessage(
+                    message: state.quoteMessage.first,
+                    showCloseButton: true,
+                    isExpanded: true,
+                    paddingLeft: 55,
+                    paddingTop: 10)
+                : SizedBox.shrink();
+          },
+        ),
+      ],
     );
   }
 
