@@ -1,7 +1,9 @@
 import 'dart:ui';
 import 'package:defer_pointer/defer_pointer.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+import 'package:twake/blocs/message_animation_cubit/message_animation_cubit.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/models/message/message.dart';
 import 'package:twake/pages/chat/chat.dart';
@@ -164,7 +166,7 @@ class _MenuMessageDropDownState<T extends BaseMessagesCubit>
                   children: [
                     GestureDetector(
                       onTap: () {
-                        Chat.of(context).endAnimation();
+                        Get.find<MessageAnimationCubit>().endAnimation();
                       },
                       child: BackdropFilter(
                           filter: ImageFilter.blur(
@@ -184,7 +186,7 @@ class _MenuMessageDropDownState<T extends BaseMessagesCubit>
                       top: topOfComponents,
                       child: GestureDetector(
                         onTap: () =>
-                            Chat.of(context).endAnimation(),
+                            Get.find<MessageAnimationCubit>().endAnimation(),
                         child: _buildAnimatedMessage(
                           isOwnerMessage: widget.message.isOwnerMessage,
                           curve: curveAnimation,

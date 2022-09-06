@@ -2,7 +2,10 @@
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:get/get.dart';
 import 'package:twake/pages/chat/chat.dart';
+
+import '../../blocs/message_animation_cubit/message_animation_cubit.dart';
 
 class EmojiBoard extends StatelessWidget {
   final void Function(String) onEmojiSelected;
@@ -16,7 +19,7 @@ class EmojiBoard extends StatelessWidget {
       child: EmojiPicker(
         onEmojiSelected: (cat, emoji) {
           onEmojiSelected(emoji.emoji);
-          Chat.of(context).endAnimation();
+          Get.find<MessageAnimationCubit>().endAnimation();
         },
         config: Config(
           columns: 7,

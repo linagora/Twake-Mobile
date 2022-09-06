@@ -28,11 +28,11 @@ class LongPressMessageAnimation<T extends BaseMessagesCubit>
   Widget build(BuildContext context) {
     // don't use get.put in home_binding because when you leave the chat, messageAnimationCubit should be back to initialState
     return BlocBuilder<MessageAnimationCubit, MessageAnimationState>(
-      bloc: Chat.of(context),
+      bloc: Get.find<MessageAnimationCubit>(),
       builder: ((context, state) {
         if (state is MessageAnimationOpenEmojiBoard) {
           return InkWell(
-            onTapDown: (_) => Chat.of(context).endAnimation(),
+            onTapDown: (_) => Get.find<MessageAnimationCubit>().endAnimation(),
             child: Container(
               width: double.maxFinite,
               height: double.maxFinite,
@@ -132,7 +132,7 @@ class LongPressMenuBar<T extends BaseMessagesCubit> extends StatelessWidget {
             imagePath: imageComment,
             isTop: true,
             onClick: () async {
-              Chat.of(context).endAnimation();
+              Get.find<MessageAnimationCubit>().endAnimation();
 
               await NavigatorService.instance.navigate(
                 channelId: message.channelId,
@@ -147,7 +147,7 @@ class LongPressMenuBar<T extends BaseMessagesCubit> extends StatelessWidget {
             text: AppLocalizations.of(context)!.edit,
             imagePath: imageEdit,
             onClick: () {
-              Chat.of(context).endAnimation();
+              Get.find<MessageAnimationCubit>().endAnimation();
 
               Get.find<T>().startEdit(message: message);
             },
@@ -156,7 +156,7 @@ class LongPressMenuBar<T extends BaseMessagesCubit> extends StatelessWidget {
           text: AppLocalizations.of(context)!.copy,
           imagePath: imageCopy,
           onClick: () async {
-            Chat.of(context).endAnimation();
+            Get.find<MessageAnimationCubit>().endAnimation();
 
             await FlutterClipboard.copy(message.text);
 
@@ -173,7 +173,7 @@ class LongPressMenuBar<T extends BaseMessagesCubit> extends StatelessWidget {
             imagePath: imagePinAction,
             isSecondBottom: !message.isOwnerMessage,
             onClick: () async {
-              Chat.of(context).endAnimation();
+              Get.find<MessageAnimationCubit>().endAnimation();
 
               await Get.find<PinnedMessageCubit>()
                   .pinMessage(message: message, isDirect: isDirect);
@@ -186,7 +186,7 @@ class LongPressMenuBar<T extends BaseMessagesCubit> extends StatelessWidget {
             imagePath: imageUnpinAction,
             isSecondBottom: message.isOwnerMessage,
             onClick: () async {
-              Chat.of(context).endAnimation();
+              Get.find<MessageAnimationCubit>().endAnimation();
 
               final bool result = await Get.find<PinnedMessageCubit>()
                   .unpinMessage(message: message);
@@ -204,7 +204,7 @@ class LongPressMenuBar<T extends BaseMessagesCubit> extends StatelessWidget {
             textColor: Theme.of(context).colorScheme.error,
             iconColor: Theme.of(context).colorScheme.error,
             onClick: () async {
-              Chat.of(context).endAnimation();
+              Get.find<MessageAnimationCubit>().endAnimation();
               await Get.find<T>().delete(message: message);
             },
           )

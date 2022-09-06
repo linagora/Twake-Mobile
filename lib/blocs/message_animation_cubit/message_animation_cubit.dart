@@ -8,6 +8,10 @@ import 'message_animation_state.dart';
 class MessageAnimationCubit extends Cubit<MessageAnimationState> {
   MessageAnimationCubit() : super(MessageAnimationInitial());
 
+  void resetAnimation() {
+    emit(MessageAnimationInitial());
+  }
+
   void startAnimation({
     required BuildContext messagesListContext,
     required Message longPressMessage,

@@ -11,7 +11,6 @@ import 'package:twake/blocs/pinned_message_cubit/pinned_messsage_cubit.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/models/file/file.dart';
 import 'package:twake/models/file/message_file.dart';
-import 'package:twake/pages/chat/inherited_message_animation.dart';
 import 'package:twake/pages/chat/message_animation.dart';
 import 'package:twake/pages/chat/pinned_message_sheet.dart';
 import 'package:twake/routing/app_router.dart';
@@ -21,28 +20,8 @@ import 'package:twake/widgets/message/compose_bar.dart';
 import 'package:twake/pages/chat/messages_grouped_list.dart';
 import 'chat_header.dart';
 
-class Chat<T extends BaseChannelsCubit> extends StatefulWidget {
-  @override
-  State<StatefulWidget> createState() => _ChatState<T>();
-
-  static MessageAnimationCubit of(BuildContext context) {
-    return context
-        .findAncestorWidgetOfExactType<InheritedMessageAnimationCubit>()!
-        .messageAnimationCubit;
-  }
-}
-
-class _ChatState<T extends BaseChannelsCubit> extends State<Chat> {
-
-  late MessageAnimationCubit messageAnimationCubit;
-
-  @override
-  initState() {
-    messageAnimationCubit = MessageAnimationCubit();
-    super.initState();
-  }
-
-  @override
+class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
+   @override
   Widget build(BuildContext context) {
     bool isDirect = false;
     final draft =
@@ -57,12 +36,11 @@ class _ChatState<T extends BaseChannelsCubit> extends State<Chat> {
               .clearFileUploadingState(needToCancelInProcessingFile: true);
           return false;
         }
+        Get.find<MessageAnimationCubit>().resetAnimation();
         return true;
       },
       child: Scaffold(
-        body: InheritedMessageAnimationCubit(
-          messageAnimationCubit: messageAnimationCubit,
-          child: Stack(
+        body: Stack(
             children: [
               Scaffold(
                 appBar: AppBar(
@@ -155,7 +133,6 @@ class _ChatState<T extends BaseChannelsCubit> extends State<Chat> {
             ],
           ),
         ),
-      ),
     );
   }
 
@@ -222,4 +199,3 @@ class _ChatState<T extends BaseChannelsCubit> extends State<Chat> {
     );
   }
 }
-

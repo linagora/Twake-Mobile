@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:twake/blocs/message_animation_cubit/message_animation_cubit.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/pages/chat/chat.dart';
 import 'package:twake/repositories/messages_repository.dart';
@@ -69,7 +70,7 @@ class EmojiLine extends StatelessWidget {
                 color: Theme.of(context).colorScheme.secondary,
               ),
               onPressed: () {
-                Chat.of(context).openEmojiBoard(message);
+                Get.find<MessageAnimationCubit>().openEmojiBoard(message);
               },
               iconSize: EmojiLine.fontSize + 3,
             ),
