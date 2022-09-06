@@ -6,6 +6,7 @@ import 'package:twake/blocs/message_animation_cubit/message_animation_cubit.dart
 import 'package:twake/blocs/message_animation_cubit/message_animation_state.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/blocs/pinned_message_cubit/pinned_messsage_cubit.dart';
+import 'package:twake/blocs/quote_message_cubit/quote_message_cubit.dart';
 import 'package:twake/config/image_path.dart';
 import 'package:twake/models/message/message.dart';
 import 'package:twake/pages/chat/chat.dart';
@@ -119,7 +120,7 @@ class LongPressMenuBar<T extends BaseMessagesCubit> extends StatelessWidget {
 
   const LongPressMenuBar({
     required this.message,
-    this.isDirect = false,
+    required this.isDirect,
   });
 
   @override
@@ -133,12 +134,13 @@ class LongPressMenuBar<T extends BaseMessagesCubit> extends StatelessWidget {
             isTop: true,
             onClick: () async {
               Get.find<MessageAnimationCubit>().endAnimation();
-
-              await NavigatorService.instance.navigate(
-                channelId: message.channelId,
-                threadId: message.id,
-                reloadThreads: false,
-              );
+              isDirect
+                  ? Get.find<QuoteMessageCubit>().addQuoteMessage(message)
+                  : await NavigatorService.instance.navigate(
+                      channelId: message.channelId,
+                      threadId: message.id,
+                      reloadThreads: false,
+                    );
             },
           ),
         if (message.isOwnerMessage)

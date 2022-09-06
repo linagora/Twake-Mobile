@@ -8,6 +8,7 @@ import 'package:twake/config/image_path.dart';
 import 'package:twake/models/channel/channel.dart';
 import 'package:twake/models/message/message.dart';
 import 'package:twake/pages/chat/message_file_uploading.dart';
+import 'package:twake/pages/chat/quote_message.dart';
 import 'package:twake/utils/dateformatter.dart';
 import 'package:twake/utils/twacode.dart';
 import 'package:twake/widgets/common/image_widget.dart';
@@ -115,7 +116,16 @@ class _MessageContentState<T extends BaseMessagesCubit>
                 child: Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      _buildMessageText(),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          widget.message.quoteMessage != null
+                              ? QuoteMessage(
+                                  message: widget.message.quoteMessage!)
+                              : SizedBox.shrink(),
+                          _buildMessageText(),
+                        ],
+                      ),
                       MessageFileUploading(
                         message: widget.message,
                       ),

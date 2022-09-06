@@ -47,7 +47,7 @@ class DropDownButton extends StatelessWidget {
           decoration: BoxDecoration(
               color: backgroundColor ??
                   (Get.isDarkMode
-            ? Theme.of(context).primaryColor.withOpacity(0.8)
+            ? Theme.of(context).primaryColor.withOpacity(0.7)
             : Theme.of(context).cardColor),
               borderRadius: isTop
                   ? const BorderRadius.only(
