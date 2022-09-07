@@ -6,8 +6,8 @@ import 'package:get/get.dart';
 import 'package:twake/blocs/file_cubit/file_transition_cubit.dart';
 import 'package:twake/blocs/gallery_cubit/gallery_cubit.dart';
 import 'package:twake/config/dimensions_config.dart';
-import 'package:twake/models/message/message.dart';
 import 'package:image/image.dart' as IMG;
+import 'package:twake/repositories/messages_repository.dart';
 
 class MessageFileUploading extends StatelessWidget {
   const MessageFileUploading({required this.message, Key? key})
@@ -22,66 +22,72 @@ class MessageFileUploading extends StatelessWidget {
         if (state.fileTransitionStatus ==
                 FileTransitionStatus.messageSentFileLoading &&
             state.messages.first.id == message.id) {
-          final galleryCubitState = Get.find<GalleryCubit>().state;
-          return Container(
-            constraints: BoxConstraints(maxHeight: Dim.heightPercent(70)),
-            child: Expanded(
-              child: ListView.builder(
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  itemCount: galleryCubitState.selectedFilesIndex.length,
-                  itemBuilder: (_, index) {
-                    return Padding(
-                      padding: const EdgeInsets.all(4.0),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(12),
-                        child: SizedBox(
-                          height: Dim.heightPercent(70) *
-                              _aspectRatioCoefficient(galleryCubitState
-                                      .assetsList[
-                                  galleryCubitState.selectedFilesIndex[index]]),
-                          width: Dim.widthPercent(70),
+          return buildThumbnail(context);
+        } else if (state.fileTransitionStatus ==
+                FileTransitionStatus.messageEmptyFileLoading &&
+            message.id == dummyId) {
+          return buildThumbnail(context);
+        } else {
+          return SizedBox.shrink();
+        }
+      },
+    );
+  }
+
+  Widget buildThumbnail(BuildContext context) {
+    final galleryCubitState = Get.find<GalleryCubit>().state;
+    return Container(
+      constraints: BoxConstraints(maxHeight: Dim.heightPercent(70)),
+      child: ListView.builder(
+          shrinkWrap: true,
+          physics: NeverScrollableScrollPhysics(),
+          itemCount: galleryCubitState.selectedFilesIndex.length,
+          itemBuilder: (_, index) {
+            return Padding(
+              padding: const EdgeInsets.all(4.0),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: SizedBox(
+                  height: Dim.heightPercent(70) *
+                      _aspectRatioCoefficient(galleryCubitState.assetsList[
+                          galleryCubitState.selectedFilesIndex[index]]),
+                  width: Dim.widthPercent(70),
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      Image.memory(
+                        galleryCubitState.assetsList[
+                            galleryCubitState.selectedFilesIndex[index]],
+                        fit: BoxFit.cover,
+                      ),
+                      Align(
+                        alignment: Alignment.topRight,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
                           child: Stack(
-                            fit: StackFit.expand,
                             children: [
-                              Image.memory(
-                                galleryCubitState.assetsList[galleryCubitState
-                                    .selectedFilesIndex[index]],
-                                fit: BoxFit.cover,
+                              Positioned(
+                                child: Container(
+                                  width: 30,
+                                  height: 30,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Theme.of(context)
+                                        .iconTheme
+                                        .color!
+                                        .withOpacity(0.4),
+                                  ),
+                                ),
                               ),
-                              Align(
-                                alignment: Alignment.topRight,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Stack(
-                                    children: [
-                                      Positioned(
-                                        child: Container(
-                                          width: 30,
-                                          height: 30,
-                                          decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            color: Theme.of(context)
-                                                .iconTheme
-                                                .color!
-                                                .withOpacity(0.4),
-                                          ),
-                                        ),
-                                      ),
-                                      Positioned(
-                                        left: 5,
-                                        bottom: 5,
-                                        child: SizedBox(
-                                          width: 20,
-                                          height: 20,
-                                          child: CircularProgressIndicator(
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .surface,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
+                              Positioned(
+                                left: 5,
+                                bottom: 5,
+                                child: SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(
+                                    color:
+                                        Theme.of(context).colorScheme.surface,
                                   ),
                                 ),
                               ),
@@ -89,14 +95,12 @@ class MessageFileUploading extends StatelessWidget {
                           ),
                         ),
                       ),
-                    );
-                  }),
-            ),
-          );
-        } else {
-          return SizedBox.shrink();
-        }
-      },
+                    ],
+                  ),
+                ),
+              ),
+            );
+          }),
     );
   }
 

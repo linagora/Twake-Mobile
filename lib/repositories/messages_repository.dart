@@ -2,14 +2,13 @@ import 'dart:async';
 
 import 'package:mutex/mutex.dart';
 import 'package:twake/models/account/account.dart';
-import 'package:twake/models/channel/channel.dart';
-import 'package:twake/models/file/file.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/models/message/message.dart';
 import 'package:twake/services/service_bundle.dart';
 import 'package:twake/utils/api_data_transformer.dart';
-
 export 'package:twake/models/message/message.dart';
+
+const dummyId = 'dummy-id';
 
 class MessagesRepository {
   final _api = ApiService.instance;
@@ -361,6 +360,27 @@ class MessagesRepository {
     await Future.delayed(Duration(milliseconds: 200));
 
     _sendGuard.release();
+  }
+
+  Message sendLocal() {
+    final Message message = Message(
+      id: dummyId,
+      threadId: '',
+      channelId: '',
+      blocks: const [],
+      createdAt: DateTime.now().millisecondsSinceEpoch,
+      updatedAt: DateTime.now().millisecondsSinceEpoch,
+      responsesCount: 0,
+      username: '',
+      userId: Globals.instance.userId ?? "",
+      text: '',
+      reactions: const [],
+      files: const [],
+    );
+
+    message.delivery = Delivery.inProgress;
+
+    return message;
   }
 
   Stream<Message> resend({
