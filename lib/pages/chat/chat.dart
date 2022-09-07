@@ -23,7 +23,7 @@ import 'package:twake/pages/chat/messages_grouped_list.dart';
 import 'chat_header.dart';
 
 class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
-   @override
+  @override
   Widget build(BuildContext context) {
     final draft =
         (Get.find<T>().state as ChannelsLoadedSuccess).selected!.draft;
@@ -120,8 +120,7 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       PinnedMessageSheet(),
-                      _buildChatContent(
-                          messagesState, channel, context),
+                      _buildChatContent(messagesState, channel, context),
                       _buildQuoteMessage(),
                       _composeBar(messagesState, draft, channel)
                     ],
@@ -145,27 +144,6 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
       children: [
         _buildLoading(messagesState),
         MessagesGroupedList(parentChannel: channel)
-      ],
-    ));
-  }
-
-  Widget _buildQuoteMessage() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        BlocBuilder<QuoteMessageCubit, QuoteMessageState>(
-          bloc: Get.find<QuoteMessageCubit>(),
-          builder: (context, state) {
-            return state.quoteMessageStatus == QuoteMessageStatus.quoteDone
-                ? QuoteMessage(
-                    message: state.quoteMessage.first,
-                    showCloseButton: true,
-                    isExpanded: true,
-                    paddingLeft: 55,
-                    paddingTop: 10)
-                : SizedBox.shrink();
-          },
-        ),
       ],
     ));
   }

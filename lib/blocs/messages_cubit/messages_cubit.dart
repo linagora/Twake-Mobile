@@ -98,7 +98,7 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
         hash: list.fold(0, (acc, m) => acc + m.hash),
       ));
       _unreadMessagesCubit.fetchUnreadMessages(
-          messages: list);
+          messages: list, isDirect: isDirect);
 
       if (lastList.isEmpty && threadId == null) {
         emit(NoMessagesFound());
