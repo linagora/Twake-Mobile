@@ -296,7 +296,8 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
         threadId: threadId ?? fakeId,
         isDirect: isDirect,
         now: DateTime.now().millisecondsSinceEpoch,
-        files: attachments,quoteMessage: quoteMessage);
+        files: attachments,
+        quoteMessage: quoteMessage);
 
     final state = this.state as MessagesLoadSuccess;
     emit(MessageSendInProgress(messages: state.messages, hash: state.hash));
@@ -333,6 +334,31 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
     }
 
     _sendInProgress -= 1;
+  }
+
+  Future<void> sendLocal() async {
+    final message = _repository.sendLocal();
+
+    final messages = (this.state as MessagesLoadSuccess).messages;
+    final hash = (this.state as MessagesLoadSuccess).hash;
+    messages.add(message);
+
+    emit(MessagesLoadSuccess(
+      messages: messages,
+      hash: hash + message.hash,
+    ));
+  }
+
+  Future<void> removeFromState(String id) async {
+    final messages = (this.state as MessagesLoadSuccess).messages;
+    final hash = (this.state as MessagesLoadSuccess).hash;
+
+    messages.removeWhere((m) => m.id == id);
+
+    emit(MessagesLoadSuccess(
+      messages: messages,
+      hash: hash,
+    ));
   }
 
   void startEdit({required Message message}) async {
@@ -435,7 +461,7 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
     _repository.react(message: message, reaction: unreacted ? '' : reaction);
   }
 
-  Future<void> delete({required Message message}) async {
+  Future<void> delete({required Message message, bool local: false}) async {
     if (this.state is! MessagesLoadSuccess) return;
 
     final messages = (this.state as MessagesLoadSuccess).messages;
@@ -449,6 +475,10 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
       endOfHistory: endOfHistory,
     ));
 
+    if (local) {
+      _repository.removeMessageLocal(messageId: message.id);
+      return;
+    }
     // Again, here we can use try except to undelete the message
     // if the request to API failed for some reason
     _repository.delete(messageId: message.id, threadId: message.threadId);

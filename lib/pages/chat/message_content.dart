@@ -124,10 +124,10 @@ class _MessageContentState<T extends BaseMessagesCubit>
                                   message: widget.message.quoteMessage!)
                               : SizedBox.shrink(),
                           _buildMessageText(),
+                          MessageFileUploading(
+                            message: widget.message,
+                          ),
                         ],
-                      ),
-                      MessageFileUploading(
-                        message: widget.message,
                       ),
                       _buildStatuses(),
                     ]),
