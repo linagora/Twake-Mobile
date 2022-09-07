@@ -7,7 +7,6 @@ import 'package:twake/blocs/camera_cubit/camera_cubit.dart';
 import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/blocs/file_cubit/file_transition_cubit.dart';
 import 'package:twake/blocs/file_cubit/upload/file_upload_cubit.dart';
-import 'package:twake/blocs/file_cubit/upload/file_upload_state.dart';
 import 'package:twake/blocs/gallery_cubit/gallery_cubit.dart';
 import 'package:twake/blocs/mentions_cubit/mentions_cubit.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
@@ -17,6 +16,7 @@ import 'package:twake/models/file/message_file.dart';
 import 'package:twake/models/file/upload/file_uploading.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/pages/chat/gallery/gallery_view.dart';
+import 'package:twake/repositories/messages_repository.dart';
 import 'package:twake/utils/constants.dart';
 import 'package:twake/utils/extensions.dart';
 import 'package:twake/utils/utilities.dart';
@@ -151,10 +151,13 @@ class _ComposeBar extends State<ComposeBar> {
                 attachments: attachments,
                 isDirect: channel == null ? true : channel.isDirect,
               );
-        // start clearing
-        Get.find<FileUploadCubit>().closeListUploadingStream();
-        Get.find<FileUploadCubit>().clearFileUploadingState();
-        Get.find<FileTransitionCubit>().fileTransitionFinished();
+        // start cleari
+        if (hasUploadedFileInStack) {
+          Get.find<ChannelMessagesCubit>().removeFromState(dummyId);
+          Get.find<FileUploadCubit>().closeListUploadingStream();
+          Get.find<FileUploadCubit>().clearFileUploadingState();
+          Get.find<FileTransitionCubit>().fileTransitionFinished();
+        }
       }
 
       if (hasUploadedFileInStack &&
@@ -305,20 +308,10 @@ class _ComposeBar extends State<ComposeBar> {
     );
   }
 
-  void _setSendButtonState({bool stateWithoutFileUploading = false}) {
-    final uploadState = Get.find<FileUploadCubit>().state;
-    final listFileUploading =
-        Get.find<FileUploadCubit>().state.listFileUploading;
-    if (uploadState.fileUploadStatus == FileUploadStatus.inProcessing &&
-        listFileUploading.isNotEmpty) {
-      setState(() {
-        _canSend = _canSendFiles;
-      });
-    } else {
-      setState(() {
-        _canSend = stateWithoutFileUploading;
-      });
-    }
+  void _setSendButtonState({bool stateWithoutFileUploading: false}) {
+    setState(() {
+      _canSend = stateWithoutFileUploading;
+    });
   }
 }
 
@@ -386,7 +379,6 @@ class _TextInputState extends State<TextInput> {
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.secondaryContainer,
         borderRadius: BorderRadius.circular(20.0),
-      
       ),
       child: Stack(
         alignment: Alignment.centerRight,
@@ -395,7 +387,7 @@ class _TextInputState extends State<TextInput> {
           GestureDetector(
             onTap: widget.toggleEmojiBoard as void Function()?,
             child: Padding(
-              padding: const EdgeInsets.only(right: 4,left: 4,bottom: 4),
+              padding: const EdgeInsets.only(right: 4, left: 4, bottom: 4),
               child: Image.asset(imageEmojiIcon, width: 24, height: 24),
             ),
           )

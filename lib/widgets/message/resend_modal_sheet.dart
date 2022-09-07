@@ -59,7 +59,11 @@ class ResendModalSheet extends StatelessWidget {
                         padding: const EdgeInsets.only(top: 10),
                         child: Text(
                           AppLocalizations.of(context)!.tryAgain,
-                          style: Theme.of(context).textTheme.headline1!.copyWith(fontSize: 20,fontWeight: FontWeight.w500),
+                          style: Theme.of(context)
+                              .textTheme
+                              .headline1!
+                              .copyWith(
+                                  fontSize: 20, fontWeight: FontWeight.w500),
                         ),
                       ),
                     ),
@@ -93,9 +97,9 @@ class ResendModalSheet extends StatelessWidget {
                     onTap: () {
                       isThread
                           ? Get.find<ThreadMessagesCubit>()
-                              .delete(message: message)
+                              .delete(message: message, local: true)
                           : Get.find<ChannelMessagesCubit>()
-                              .delete(message: message);
+                              .delete(message: message, local: true);
 
                       Navigator.pop(context);
                     },
@@ -117,7 +121,10 @@ class ResendModalSheet extends StatelessWidget {
                 child: Center(
                   child: Text(
                     AppLocalizations.of(context)!.cancel,
-                    style: Theme.of(context).textTheme.headline1!.copyWith(fontSize: 20,fontWeight: FontWeight.w500),
+                    style: Theme.of(context)
+                        .textTheme
+                        .headline1!
+                        .copyWith(fontSize: 20, fontWeight: FontWeight.w500),
                   ),
                 ),
                 height: 60,
