@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:logger/logger.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:twake/models/globals/globals.dart';
 import 'service_bundle.dart';
@@ -16,9 +17,13 @@ class SocketIOService {
 
   StreamController<SocketIOEvent> _eventStream = StreamController.broadcast();
   StreamController<bool> _reconnectionStream = StreamController.broadcast();
+  StreamController<SocketIOWritingEvent> _writingEventStream =
+      StreamController.broadcast();
 
   Stream<bool> get socketIOReconnectionStream => _reconnectionStream.stream;
   Stream<SocketIOEvent> get eventStream => _eventStream.stream;
+  Stream<SocketIOWritingEvent> get writingEventStream =>
+      _writingEventStream.stream;
   Stream<SocketIOResource> get resourceStream => _resourceStream.stream;
 
   factory SocketIOService({required bool reset}) {
@@ -100,14 +105,21 @@ class SocketIOService {
     _socket.emit(IOEvent.join, {'name': room, 'token': 'twake'});
   }
 
+  void emitEvent(dynamic data) async {
+    _socket.emit(IOEvent.event, data);
+  }
+
   void unsubscribe({required String room}) {
     _socket.emit(IOEvent.leave, {'name': room, 'token': 'twake'});
   }
 
   void _handleEvent(data) {
     // Logger().v('GOT EVENT: $data');
-    final event = SocketIOEvent.fromJson(json: data);
-    _eventStream.sink.add(event);
+    if (data['data'].containsKey('type')) {
+      _writingEventStream.sink.add(SocketIOWritingEvent.fromJson(json: data));
+    } else {
+      _eventStream.sink.add(SocketIOEvent.fromJson(json: data));
+    }
   }
 
   void _handleResource(data) {
@@ -143,6 +155,7 @@ class SocketIOService {
     await _eventStream.close();
     await _resourceStream.close();
     await _reconnectionStream.close();
+    await _writingEventStream.close();
   }
 
   void disconnect() {

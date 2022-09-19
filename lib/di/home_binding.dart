@@ -25,6 +25,7 @@ import 'package:twake/blocs/registration_cubit/registration_cubit.dart';
 import 'package:twake/blocs/theme_cubit/theme_cubit.dart';
 import 'package:twake/blocs/unread_messages_cubit/unread_messages_cubit.dart';
 import 'package:twake/blocs/workspaces_cubit/workspaces_cubit.dart';
+import 'package:twake/blocs/writing_cubit/writing_cubit.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/services/navigator_service.dart';
 import 'package:twake/utils/receive_sharing_file_manager.dart';
@@ -132,6 +133,9 @@ class HomeBinding implements Bindings {
 
     final quoteMessageCubitCubit = QuoteMessageCubit();
     Get.put(quoteMessageCubitCubit, permanent: true);
+
+    final writingCubit = WritingCubit();
+    Get.put(writingCubit, permanent: true);
 
     Future.delayed(Duration(seconds: 5), () {
       if (Globals.instance.token != null) authenticationCubit.registerDevice();

@@ -387,5 +387,16 @@
     "goToSettings": "Go to settings",
     "attach": "Attach",
     "noCompanyFilesHeader": "There are no uploaded files yet",
-    "unreadMessages": "Unread messages"
+    "unreadMessages": "Unread messages",
+    "typingMessage": "typing a message",
+    "writingCount": "and {number} more",
+    "@writingCount": {
+        "description": "users writing message counter",
+        "placeholders": {
+            "number": {
+                "type": "String",
+                "example": "Alexander, Diana and 3 more"
+            }
+        }
+    }
 }
