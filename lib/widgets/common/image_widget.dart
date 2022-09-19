@@ -16,6 +16,7 @@ class ImageWidget extends StatelessWidget {
   final ImageType imageType;
   final String name;
   final double size;
+  final double fontSize;
   final Color backgroundColor;
   final double borderRadius;
   final List<Avatar> avatars;
@@ -24,6 +25,7 @@ class ImageWidget extends StatelessWidget {
   const ImageWidget(
       {Key? key,
       this.size = 0,
+      this.fontSize = 0,
       this.imageUrl = "",
       required this.imageType,
       this.isPrivate = false,
@@ -39,7 +41,7 @@ class ImageWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     if (imageType == ImageType.channel) {
       if (imageUrl != null && imageUrl != "") {
-        return channelImage(imageUrl, isPrivate, backgroundColor);
+        return channelImage(imageUrl, isPrivate, backgroundColor, fontSize);
       } else
         return namedAvatar(name, size, backgroundColor, borderRadius);
     }
@@ -146,7 +148,8 @@ class ImageWidget extends StatelessWidget {
     );
   }
 
-  Widget channelImage(String? icon, bool isPrivate, Color backgroundColor) {
+  Widget channelImage(
+      String? icon, bool isPrivate, Color backgroundColor, double fontSize) {
     if (icon == null) {
       icon = "";
     }
@@ -165,7 +168,7 @@ class ImageWidget extends StatelessWidget {
           ),
           child: AutoSizeText(
             icon,
-            style: TextStyle(fontSize: size * 0.6),
+            style: TextStyle(fontSize: fontSize == 0 ? size * 0.6 : fontSize),
           ),
         ),
       ),

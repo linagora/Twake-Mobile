@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:get/get.dart';
+import 'package:twake/blocs/writing_cubit/writing_cubit.dart';
 import 'package:twake/models/channel/channel.dart';
+import 'package:twake/pages/chat/writingStatus.dart';
 import 'package:twake/widgets/common/image_widget.dart';
 import 'package:twake/widgets/common/shimmer_loading.dart';
 
@@ -8,7 +12,8 @@ class ChatHeader extends StatelessWidget {
   final bool isDirect;
   final bool isPrivate;
   final int membersCount;
-  final String? userId;
+  final List<String> users;
+  final String channelId;
   final String icon;
   final String name;
   final Function? onTap;
@@ -18,7 +23,8 @@ class ChatHeader extends StatelessWidget {
       {Key? key,
       required this.isDirect,
       this.isPrivate = false,
-      this.userId,
+      required this.users,
+      required this.channelId,
       required this.membersCount,
       this.icon = '',
       this.name = '',
@@ -32,18 +38,21 @@ class ChatHeader extends StatelessWidget {
       behavior: HitTestBehavior.opaque,
       onTap: onTap as void Function()?,
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           ImageWidget(
               imageType: isDirect ? ImageType.common : ImageType.channel,
-              size: 38,
+              size: 42,
+              fontSize: 32,
               imageUrl: isDirect ? avatars.first.link : icon,
               avatars: avatars,
               stackSize: 24,
               name: name),
-          SizedBox(width: 12.0),
+          SizedBox(width: 10.0),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 ShimmerLoading(
                   key: ValueKey<String>('name'),
@@ -58,15 +67,40 @@ class ChatHeader extends StatelessWidget {
                         .copyWith(fontSize: 17, fontWeight: FontWeight.w700),
                   ),
                 ),
-                (!isDirect) ? SizedBox(height: 4) : SizedBox.shrink(),
-                (!isDirect)
-                    ? Text(
-                        AppLocalizations.of(context)!
-                            .membersPlural(membersCount),
-                        style: Theme.of(context).textTheme.headline2!.copyWith(
-                            fontSize: 10, fontWeight: FontWeight.w400),
-                      )
-                    : SizedBox.shrink(),
+                BlocBuilder<WritingCubit, WritingState>(
+                  bloc: Get.find<WritingCubit>(),
+                  builder: (context, state) {
+                    if (state.writingStatus == WritingStatus.writing &&
+                        state.writingMap.containsKey(channelId) &&
+                        state.writingMap[channelId]!.isNotEmpty) {
+                      return ChatWritingStatus(
+                          usersList: state.writingMap[channelId]!,
+                          isDirect: isDirect,
+                          key: ValueKey(channelId));
+                    } else if (state.writingStatus ==
+                            WritingStatus.notWriting &&
+                        state.writingMap.containsKey(channelId) &&
+                        state.writingMap[channelId]!.isNotEmpty) {
+                      return ChatWritingStatus(
+                          usersList: state.writingMap[channelId]!,
+                          isDirect: isDirect,
+                          key: ValueKey(channelId));
+                    } else {
+                      return SizedBox(
+                        height: 16,
+                        child: Text(
+                          AppLocalizations.of(context)!
+                              .membersPlural(membersCount),
+                          style: Theme.of(context)
+                              .textTheme
+                              .headline2!
+                              .copyWith(
+                                  fontSize: 13, fontWeight: FontWeight.normal),
+                        ),
+                      );
+                    }
+                  },
+                )
               ],
             ),
           ),

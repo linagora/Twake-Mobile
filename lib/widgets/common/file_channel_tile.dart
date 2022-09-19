@@ -58,7 +58,7 @@ class _FileTileState extends State<FileChannelTile> {
         : _buildFileWidget(messageFile: widget.messageFile);
   }
 
-  _buildLoadingLayout() => ClipRRect(
+  Widget _buildLoadingLayout() => ClipRRect(
         borderRadius: BorderRadius.all(Radius.circular(8)),
         child: ShimmerLoading(
           width: double.maxFinite,
@@ -68,7 +68,8 @@ class _FileTileState extends State<FileChannelTile> {
         ),
       );
 
-  _buildFileWidget({File? file, MessageFile? messageFile}) => GestureDetector(
+  Widget _buildFileWidget({File? file, MessageFile? messageFile}) =>
+      GestureDetector(
         onTap: () {
           messageFile == null
               ? widget.onTap?.call(file)
@@ -87,7 +88,7 @@ class _FileTileState extends State<FileChannelTile> {
         ),
       );
 
-  _buildFileHeader({File? file, MessageFile? messageFile}) {
+  Widget _buildFileHeader({File? file, MessageFile? messageFile}) {
     return SizedBox(
       width: _fileTileHeight,
       height: _fileTileHeight,
@@ -95,7 +96,7 @@ class _FileTileState extends State<FileChannelTile> {
     );
   }
 
-  _buildThumbnail({File? file, MessageFile? messageFile}) {
+  Widget _buildThumbnail({File? file, MessageFile? messageFile}) {
     return GestureDetector(
       onTap: () {
         NavigatorService.instance.navigateToFilePreview(
@@ -118,7 +119,7 @@ class _FileTileState extends State<FileChannelTile> {
     );
   }
 
-  _buildFilePreview(String thumbUrl) {
+  Widget _buildFilePreview(String thumbUrl) {
     return ClipRRect(
       borderRadius: BorderRadius.all(Radius.circular(8)),
       child: CachedNetworkImage(
@@ -137,7 +138,7 @@ class _FileTileState extends State<FileChannelTile> {
     );
   }
 
-  _buildFileTypeIcon({File? file, MessageFile? messageFile}) {
+  Widget _buildFileTypeIcon({File? file, MessageFile? messageFile}) {
     final extension = messageFile == null
         ? file!.metadata.name.fileExtension
         : messageFile.metadata.name.fileExtension;
@@ -154,7 +155,7 @@ class _FileTileState extends State<FileChannelTile> {
     );
   }
 
-  _buildFileInfo({File? file, MessageFile? messageFile}) {
+  Widget _buildFileInfo({File? file, MessageFile? messageFile}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
