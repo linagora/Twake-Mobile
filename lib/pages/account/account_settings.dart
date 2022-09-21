@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:twake/blocs/account_cubit/account_cubit.dart';
 import 'package:twake/blocs/authentication_cubit/authentication_cubit.dart';
 import 'package:twake/blocs/language_cubit/language_cubit.dart';
+import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/pages/account/select_language.dart';
 import 'package:twake/routing/app_router.dart';
 import 'package:twake/routing/route_paths.dart';
@@ -192,11 +193,14 @@ class _AccountSettingsState extends State<AccountSettings> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(name,
-                      style: Theme.of(context)
-                          .textTheme
-                          .headline1!
-                          .copyWith(fontWeight: FontWeight.w600, fontSize: 16)),
+                  Container(
+                    constraints: BoxConstraints(maxWidth: Dim.widthPercent(55)),
+                    child: Text(name,
+                        style: Theme.of(context).textTheme.headline1!.copyWith(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 16,
+                            overflow: TextOverflow.ellipsis)),
+                  ),
                   SizedBox(
                     height: 4,
                   ),
