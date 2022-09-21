@@ -127,6 +127,10 @@ Message _$MessageFromJson(Map<String, dynamic> json) => Message(
               ?.map((e) => Message.fromJson(e as Map<String, dynamic>))
               .toList() ??
           const <Message>[],
+      messageLinks: (json['links'] as List<dynamic>?)
+              ?.map((e) => MessageLink.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          const <MessageLink>[],
     )
       ..subtype = $enumDecodeNullable(_$MessageSubtypeEnumMap, json['subtype'])
       ..pinnedInfo = json['pinned_info'] == null
@@ -155,6 +159,7 @@ Map<String, dynamic> _$MessageToJson(Message instance) => <String, dynamic>{
       'delivery': _$DeliveryEnumMap[instance.delivery],
       'quote_message': instance.quoteMessage?.toJson(),
       'last_replies': instance.lastReplies?.map((e) => e.toJson()).toList(),
+      'links': instance.messageLinks?.map((e) => e.toJson()).toList(),
     };
 
 const _$DeliveryEnumMap = {
