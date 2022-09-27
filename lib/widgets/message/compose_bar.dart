@@ -20,6 +20,7 @@ import 'package:twake/repositories/messages_repository.dart';
 import 'package:twake/utils/constants.dart';
 import 'package:twake/utils/extensions.dart';
 import 'package:twake/utils/utilities.dart';
+import 'package:twake/widgets/common/link_content_preview_input.dart';
 import 'package:twake/widgets/common/twake_alert_dialog.dart';
 import 'package:twake/widgets/sheets/mention_sheet.dart';
 
@@ -248,63 +249,67 @@ class _ComposeBar extends State<ComposeBar> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<ThreadMessagesCubit, MessagesState>(
-      bloc: Get.find<ThreadMessagesCubit>(),
-      listener: (context, state) {
-        swipeRequestFocus(false);
-      },
-      child: WillPopScope(
-        onWillPop: onBackPress,
-        child: Column(
-          children: [
-            MentionSheet(onTapMention: mentionReplace),
-            TextInput(
-              controller: _controller,
-              scrollController: _scrollController,
-              focusNode: _focusNode,
-              autofocus: widget.autofocus,
-              toggleEmojiBoard: toggleEmojiBoard,
-              emojiVisible: _emojiVisible,
-              onMessageSend: widget.onMessageSend,
-              canSend: _canSend,
-            ),
-            Offstage(
-              offstage: !_emojiVisible,
-              child: Container(
-                height: 250,
-                child: EmojiPicker(
-                  onEmojiSelected: (cat, emoji) {
-                    _controller.text += emoji.emoji;
-                    _setSendButtonState(stateWithoutFileUploading: true);
-                  },
-                  config: Config(
-                    columns: 7,
-                    emojiSizeMax: 32.0,
-                    verticalSpacing: 0,
-                    horizontalSpacing: 0,
-                    initCategory: Category.RECENT,
-                    bgColor: Theme.of(context).colorScheme.secondaryContainer,
-                    indicatorColor: Theme.of(context).colorScheme.surface,
-                    iconColor: Theme.of(context).colorScheme.secondary,
-                    iconColorSelected: Theme.of(context).colorScheme.surface,
-                    progressIndicatorColor:
-                        Theme.of(context).colorScheme.surface,
-                    showRecentsTab: true,
-                    recentsLimit: 28,
-                    noRecentsText: AppLocalizations.of(context)!.noRecents,
-                    noRecentsStyle: Theme.of(context)
-                        .textTheme
-                        .headline3!
-                        .copyWith(fontSize: 20),
-                    categoryIcons: const CategoryIcons(),
-                    buttonMode: ButtonMode.MATERIAL,
+    return Column(
+      children: [
+        LinkContentPreviewInput(controller: _controller),
+        BlocListener<ThreadMessagesCubit, MessagesState>(
+        bloc: Get.find<ThreadMessagesCubit>(),
+        listener: (context, state) {
+          swipeRequestFocus(false);
+        },
+        child: WillPopScope(
+          onWillPop: onBackPress,
+          child: Column(
+            children: [
+              MentionSheet(onTapMention: mentionReplace),
+              TextInput(
+                controller: _controller,
+                scrollController: _scrollController,
+                focusNode: _focusNode,
+                autofocus: widget.autofocus,
+                toggleEmojiBoard: toggleEmojiBoard,
+                emojiVisible: _emojiVisible,
+                onMessageSend: widget.onMessageSend,
+                canSend: _canSend,
+              ),
+              Offstage(
+                offstage: !_emojiVisible,
+                child: Container(
+                  height: 250,
+                  child: EmojiPicker(
+                    onEmojiSelected: (cat, emoji) {
+                      _controller.text += emoji.emoji;
+                      _setSendButtonState(stateWithoutFileUploading: true);
+                    },
+                    config: Config(
+                      columns: 7,
+                      emojiSizeMax: 32.0,
+                      verticalSpacing: 0,
+                      horizontalSpacing: 0,
+                      initCategory: Category.RECENT,
+                      bgColor: Theme.of(context).colorScheme.secondaryContainer,
+                      indicatorColor: Theme.of(context).colorScheme.surface,
+                      iconColor: Theme.of(context).colorScheme.secondary,
+                      iconColorSelected: Theme.of(context).colorScheme.surface,
+                      progressIndicatorColor:
+                          Theme.of(context).colorScheme.surface,
+                      showRecentsTab: true,
+                      recentsLimit: 28,
+                      noRecentsText: AppLocalizations.of(context)!.noRecents,
+                      noRecentsStyle: Theme.of(context)
+                          .textTheme
+                          .headline3!
+                          .copyWith(fontSize: 20),
+                      categoryIcons: const CategoryIcons(),
+                      buttonMode: ButtonMode.MATERIAL,
+                    ),
                   ),
                 ),
-              ),
-            )
-          ],
+              )
+            ],
+          ),
         ),
-      ),
+      ),]
     );
   }
 
@@ -363,7 +368,7 @@ class _TextInputState extends State<TextInput> {
 
   _buildAttachment() {
     return IconButton(
-      constraints: BoxConstraints(
+      constraints: const BoxConstraints(
         maxHeight: 24.0,
         maxWidth: 24.0,
       ),
@@ -429,17 +434,17 @@ class _TextInputState extends State<TextInput> {
               .textTheme
               .headline2!
               .copyWith(fontSize: 17, fontWeight: FontWeight.w500),
-          border: OutlineInputBorder(
+          border: const OutlineInputBorder(
             borderSide: BorderSide(
               style: BorderStyle.none,
             ),
           ),
-          enabledBorder: OutlineInputBorder(
+          enabledBorder: const OutlineInputBorder(
             borderSide: BorderSide(
               style: BorderStyle.none,
             ),
           ),
-          focusedBorder: OutlineInputBorder(
+          focusedBorder: const OutlineInputBorder(
             borderSide: BorderSide(
               style: BorderStyle.none,
             ),
@@ -515,7 +520,7 @@ class _TextInputState extends State<TextInput> {
         context: context,
         backgroundColor: Colors.transparent,
         isScrollControlled: true,
-        shape: RoundedRectangleBorder(
+        shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(
             top: Radius.circular(40),
           ),

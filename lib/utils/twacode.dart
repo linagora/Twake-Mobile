@@ -5,6 +5,7 @@ import 'package:twake/models/attachment/attachment.dart';
 import 'package:twake/models/message/message_link.dart';
 import 'package:twake/utils/emojis.dart';
 import 'package:twake/widgets/common/file_tile.dart';
+import 'package:twake/widgets/common/preview_link_content_chat.dart';
 import 'package:twake/widgets/common/user_mention.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -1020,7 +1021,7 @@ class TwacodeRenderer {
               firstMessageLink.url == t['content']) {
             spans.add(
               WidgetSpan(
-                child: appendPreviewLink(firstMessageLink),
+                child: PreviewLinkContentChat(messageLink: firstMessageLink),
               ),
             );
           }
@@ -1114,102 +1115,6 @@ class TwacodeRenderer {
       spans.add(WidgetSpan(child: appendFile(fileIds, parentStyle)));
     }
     return spans;
-  }
-
-  Widget appendPreviewLink(MessageLink messageLink) {
-    return Column(
-      children: [
-        IntrinsicHeight(
-          child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Container(
-              margin: EdgeInsets.only(right: 4, top: 2),
-              width: 4,
-              foregroundDecoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(24),
-                color: Colors.blue,
-              ),
-            ),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (messageLink.img != null)
-                    // need to be handle
-                    Padding(
-                      padding: EdgeInsets.symmetric(vertical: 4.0),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(16),
-                        child: Image.network(
-                          messageLink.img!,
-                          fit: BoxFit.contain,
-                          errorBuilder: (context, error, stack) => Container(),
-                          loadingBuilder: ((context, child, loadingProgress) {
-                            if (loadingProgress == null) {
-                              return child;
-                            }
-                            return Center(
-                              child: CircularProgressIndicator(
-                                value: loadingProgress.expectedTotalBytes !=
-                                        null
-                                    ? loadingProgress.cumulativeBytesLoaded /
-                                        loadingProgress.expectedTotalBytes!
-                                    : null,
-                              ),
-                            );
-                          }),
-                        ),
-                      ),
-                    ),
-                  Builder(
-                      builder: (context) => _buildFaviconDomain(
-                          context: context,
-                          favicon: messageLink.favicon,
-                          domain: messageLink.domain,)),
-                  if (messageLink.title != null)
-                    Text(messageLink.title!,
-                        style: TextStyle(
-                            color: Colors.blue, fontWeight: FontWeight.w500)),
-                  if (messageLink.description != null)
-                    Text(
-                      messageLink.description!,
-                      style: TextStyle(fontWeight: FontWeight.w400),
-                    ),
-                ],
-              ),
-            )
-          ]),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildFaviconDomain(
-      {required BuildContext context,
-      String? favicon,
-      String? domain,
-      double? fontSize}) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        if (favicon != null)
-          SizedBox(
-            height: (fontSize == null ? 14 : fontSize) *
-                MediaQuery.of(context).textScaleFactor,
-            child: Padding(
-                padding: EdgeInsets.only(right: 2),
-                child: Image.network(
-                  favicon,
-                  fit: BoxFit.contain,
-                  errorBuilder: ((context, error, stackTrace) => Container()),
-                )),
-          ),
-        if (domain != null)
-          Text(
-            domain,
-            style: TextStyle(fontWeight: FontWeight.w700, fontSize: fontSize),
-          ),
-      ],
-    );
   }
 
   Widget appendFile(List<dynamic> fileIds, TextStyle parentStyle) {

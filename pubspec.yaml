@@ -85,7 +85,6 @@ dependencies:
   device_info: ^2.0.3
   receive_sharing_intent: 1.4.5
   rxdart: ^0.27.3
-  flutter_link_previewer: ^2.6.3
   just_the_tooltip: ^0.0.11+2
   short_uuids: ^2.0.0
 
@@ -101,6 +100,7 @@ dependencies:
   sticky_grouped_list:
     git: https://github.com/EvGen94/sticky_grouped_list
   defer_pointer: ^0.0.2
+  any_link_preview: ^2.0.9
 
 dev_dependencies:
   flutter_test:
