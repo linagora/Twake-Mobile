@@ -6,7 +6,6 @@ import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:twake/blocs/message_animation_cubit/message_animation_cubit.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/models/message/message.dart';
-import 'package:twake/pages/chat/chat.dart';
 import 'package:twake/pages/chat/message_tile.dart';
 
 class MenuMessageDropDown<T extends BaseMessagesCubit> extends StatefulWidget {
@@ -81,8 +80,8 @@ class _MenuMessageDropDownState<T extends BaseMessagesCubit>
     return ValueListenableBuilder<Iterable<ItemPosition>>(
       valueListenable: widget.itemPositionsListener.itemPositions,
       builder: (context, positions, child) {
-        double? itemLeadingEdge;
-        double? itemTrailingEdge;
+        double itemLeadingEdge;
+        double itemTrailingEdge;
 
         if (positions.isEmpty) {
           return Column();
@@ -117,13 +116,17 @@ class _MenuMessageDropDownState<T extends BaseMessagesCubit>
             (itemTrailingEdge - itemLeadingEdge) * messageListHeight;
         double middleItemY =
             itemHeight / 2 + topLeftListY + itemLeadingEdge * messageListHeight;
+        // maximal height of widget which contains lower widget, item and upper widget
         double itemHeightMax =
             screenHeight - upperWidgetHeight - dropMenuHeight;
         double totalHeight = itemHeight + upperWidgetHeight + dropMenuHeight;
         double left = 0;
+        // is the dy of widget that contains upper widget, item and lower widget
         double topOfComponents = itemLeadingEdge * messageListHeight +
             topLeftListY -
-            upperWidgetHeight;
+            upperWidgetHeight -
+            MediaQuery.of(context).viewPadding.top +
+            MediaQuery.of(context).viewPadding.bottom;
 
         double itemScale = 1;
         double itemTranslateY = 0;
@@ -134,11 +137,13 @@ class _MenuMessageDropDownState<T extends BaseMessagesCubit>
               (upperWidgetHeight + itemHeightMax / 2) - middleItemY;
           topOfComponents -= upperWidgetHeight;
         } else {
+          // when a part of item is partial obscured in top of messages list
           if (itemLeadingEdge * messageListHeight + topLeftListY <
               upperWidgetHeight) {
             itemTranslateY = upperWidgetHeight -
                 itemLeadingEdge * messageListHeight -
                 topLeftListY;
+          // when a part of item is partial obscured in bottom of messages list
           } else if (itemTrailingEdge * messageListHeight + topLeftListY >
               screenHeight - dropMenuHeight) {
             itemTranslateY = screenHeight -
@@ -187,6 +192,7 @@ class _MenuMessageDropDownState<T extends BaseMessagesCubit>
                       child: GestureDetector(
                         onTap: () =>
                             Get.find<MessageAnimationCubit>().endAnimation(),
+                        // scale down if necessary first then scale up the lower widget and upper widget
                         child: _buildAnimatedMessage(
                           isOwnerMessage: widget.message.isOwnerMessage,
                           curve: curveAnimation,
