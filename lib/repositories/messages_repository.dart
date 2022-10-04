@@ -289,6 +289,7 @@ class MessagesRepository {
       reactions: [],
       lastReplies: [],
       quoteMessage: quoteMessage,
+      links: const [],
     );
 
     message.delivery = Delivery.inProgress;
@@ -376,6 +377,7 @@ class MessagesRepository {
       text: '',
       reactions: const [],
       files: const [],
+      links: const [],
     );
 
     message.delivery = Delivery.inProgress;
