@@ -173,7 +173,8 @@ abstract class BaseChannelsCubit extends Cubit<ChannelsState> {
         channelId: channel.id,
       );
     } catch (e) {
-      Logger().e('Error occurred while fetching updated channel from remote:\n$e');
+      Logger()
+          .e('Error occurred while fetching updated channel from remote:\n$e');
     }
 
     emit(ChannelsLoadedSuccess(
@@ -221,7 +222,8 @@ abstract class BaseChannelsCubit extends Cubit<ChannelsState> {
         channelId: channel.id,
       );
     } catch (e) {
-      Logger().e('Error occurred while fetching updated channel from remote:\n$e');
+      Logger()
+          .e('Error occurred while fetching updated channel from remote:\n$e');
     }
 
     emit(ChannelsLoadedSuccess(
@@ -264,13 +266,13 @@ abstract class BaseChannelsCubit extends Cubit<ChannelsState> {
     );
     SynchronizationService.instance
         .cancelNotificationsForChannel(channelId: channelId);
-    if(selectedChannel != null) {
+    if (selectedChannel != null) {
       _repository.markChannel(channel: selectedChannel!, read: true);
     }
   }
 
-  void markChannelRead({required String channelId}){
-    if(selectedChannel != null) {
+  void markChannelRead({required String channelId}) {
+    if (selectedChannel != null) {
       _repository.markChannel(channel: selectedChannel!, read: true);
     }
   }
@@ -292,6 +294,20 @@ abstract class BaseChannelsCubit extends Cubit<ChannelsState> {
       channels: channels,
       hash: hash,
     ));
+  }
+
+  Map<String, List<String>> getAllDirectUsers() {
+    final Map<String, List<String>> channelUserId = {};
+    if (state is ChannelsLoadedSuccess) {
+      final stateChannels = (state as ChannelsLoadedSuccess).channels;
+      stateChannels.forEach((channel) {
+        channelUserId[channel.id] = [];
+        channel.members.forEach((id) {
+          channelUserId[channel.id]!.add(id);
+        });
+      });
+    }
+    return channelUserId;
   }
 
   void listenToMembershipChanges() async {

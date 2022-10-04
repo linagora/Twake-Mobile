@@ -1,5 +1,6 @@
 import 'package:twake/models/account/account.dart';
 import 'package:twake/models/channel/channel.dart';
+import 'package:twake/models/file/user.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/services/service_bundle.dart';
 
@@ -193,7 +194,8 @@ class ChannelsRepository {
         );
 
         membersJson.addAll(res['resources'] as List<dynamic>);
-        if (res.containsKey('next_page_token')) {
+        if (res.containsKey('next_page_token') &&
+            res['next_page_token'] != null) {
           queryParameters['page_token'] = res['next_page_token'];
         } else {
           break;
@@ -220,6 +222,33 @@ class ChannelsRepository {
     }
 
     return members;
+  }
+
+  Future<Map<String, List<User>>> fetchUsersOnlineStatus() async {
+    final queryParameters = <String, dynamic>{'include_users': 1, 'mine': 1};
+
+    Map<String, List<User>> result = {};
+
+    final Map<String, dynamic> r = await _api.get(
+      endpoint: sprintf(
+        Endpoint.channels,
+        [
+          Globals.instance.companyId,
+          'direct',
+        ],
+      ),
+      queryParameters: queryParameters,
+    );
+
+    (r['resources'] as List<dynamic>).forEach((channel) {
+      if (channel.containsKey('users')) {
+        result[channel['id']] = [];
+        (channel['users'] as List<dynamic>).forEach((user) {
+          result[channel['id']]!.add(User.fromJson(user));
+        });
+      }
+    });
+    return result;
   }
 
   Future<Channel> addMembers({

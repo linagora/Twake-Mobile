@@ -21,7 +21,7 @@ class CompaniesCubit extends Cubit<CompaniesState> {
 
   Future<bool> fetch() async {
     SynchronizationService.instance.subscribeToWriting();
-
+    SynchronizationService.instance.subscribeToOnlineStatus();
     final streamCompanies = _repository.fetch();
 
     Company? selected;
