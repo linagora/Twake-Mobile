@@ -13,6 +13,7 @@ import 'package:twake/blocs/badges_cubit/badges_cubit.dart';
 import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/blocs/companies_cubit/companies_cubit.dart';
 import 'package:twake/blocs/file_cubit/download/file_download_cubit.dart';
+import 'package:twake/blocs/online_status_cubit/online_status_cubit.dart';
 import 'package:twake/blocs/receive_file_cubit/receive_file_cubit.dart';
 import 'package:twake/blocs/workspaces_cubit/workspaces_cubit.dart';
 import 'package:twake/blocs/workspaces_cubit/workspaces_state.dart';
@@ -23,7 +24,6 @@ import 'package:twake/models/globals/globals.dart';
 import 'package:twake/models/receive_sharing/receive_sharing_type.dart';
 import 'package:twake/routing/app_router.dart';
 import 'package:twake/routing/route_paths.dart';
-import 'package:twake/services/push_notifications_service.dart';
 import 'package:twake/services/service_bundle.dart';
 import 'package:twake/utils/platform_detection.dart';
 import 'package:twake/utils/receive_sharing_file_manager.dart';
@@ -73,7 +73,7 @@ class _HomeWidgetState extends State<HomeWidget> with WidgetsBindingObserver {
         _searchText = _searchController.text.toLowerCase();
       });
     });
-
+    Get.find<OnlineStatusCubit>().getOnlineStatusInit();
     _initFileDownloader();
     _handleReceiveSharing();
   }
@@ -372,6 +372,10 @@ class _HomeWidgetState extends State<HomeWidget> with WidgetsBindingObserver {
             ),
           ),
         ],
+        onTap: (int) {
+          if (int == 1) // update online statuses for direct chats
+            Get.find<OnlineStatusCubit>().getOnlineStatusWebSocket();
+        },
         isScrollable: true,
         indicatorColor: Theme.of(context).colorScheme.surface,
         unselectedLabelColor: Theme.of(context).colorScheme.secondary,

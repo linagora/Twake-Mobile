@@ -65,7 +65,7 @@ class _FileTileState extends State<FileTile> {
         : _buildFileWidget(cacheFile, width, height);
   }
 
-  _buildLoadingLayout(double width, double height) => ClipRRect(
+  Widget _buildLoadingLayout(double width, double height) => ClipRRect(
         borderRadius: BorderRadius.all(Radius.circular(8)),
         child: ShimmerLoading(
           width: width,
@@ -75,7 +75,7 @@ class _FileTileState extends State<FileTile> {
         ),
       );
 
-  _buildFileWidget(File file, double width, double height) => Container(
+  Widget _buildFileWidget(File file, double width, double height) => Container(
         margin: const EdgeInsets.only(bottom: 4.0),
         child: Row(
             mainAxisSize:
@@ -91,7 +91,7 @@ class _FileTileState extends State<FileTile> {
             ]),
       );
 
-  _buildFileHeader(File file, double width, double height) {
+  Widget _buildFileHeader(File file, double width, double height) {
     return Container(
       constraints: BoxConstraints(maxWidth: width, maxHeight: height),
       child: BlocBuilder<FileDownloadCubit, FileDownloadState>(
@@ -116,8 +116,8 @@ class _FileTileState extends State<FileTile> {
     );
   }
 
-  _buildThumbnail(File file, FileDownloading? fileDownloading, double width,
-      double height) {
+  Widget _buildThumbnail(File file, FileDownloading? fileDownloading,
+      double width, double height) {
     return GestureDetector(
       onTap: () {
         /// Read [1] for the detail
@@ -147,7 +147,7 @@ class _FileTileState extends State<FileTile> {
     );
   }
 
-  _buildFileInfo(File file) => Column(
+  Widget _buildFileInfo(File file) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
@@ -176,7 +176,7 @@ class _FileTileState extends State<FileTile> {
         ],
       );
 
-  _buildDownloadIcon(File file, FileDownloading? fileDownloading) {
+  Widget _buildDownloadIcon(File file, FileDownloading? fileDownloading) {
     /// Read [1] for the detail
     if (file.metadata.mime.isImageMimeType) {
       return SizedBox.shrink();
@@ -194,7 +194,7 @@ class _FileTileState extends State<FileTile> {
     }
   }
 
-  _downloadInProgressIcon(FileDownloading fileDownloading) {
+  Widget _downloadInProgressIcon(FileDownloading fileDownloading) {
     return GestureDetector(
       onTap: () => _handleCancelDownloadFile(fileDownloading),
       child: Container(
@@ -220,7 +220,7 @@ class _FileTileState extends State<FileTile> {
     );
   }
 
-  _initDownloadIcon(File file) {
+  Widget _initDownloadIcon(File file) {
     return GestureDetector(
       onTap: () => _handleDownloadFile(file),
       child: Container(
@@ -235,7 +235,7 @@ class _FileTileState extends State<FileTile> {
     );
   }
 
-  _buildFilePreview(File file, double width, double height) {
+  Widget _buildFilePreview(File file, double width, double height) {
     return Padding(
       padding: const EdgeInsets.all(2.0),
       child: ClipRRect(
@@ -261,7 +261,7 @@ class _FileTileState extends State<FileTile> {
     );
   }
 
-  _buildFileTypeIcon(File file) {
+  Widget _buildFileTypeIcon(File file) {
     final extension = file.metadata.name.fileExtension;
     return Container(
       width: 75,

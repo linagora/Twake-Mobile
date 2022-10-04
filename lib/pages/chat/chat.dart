@@ -7,8 +7,10 @@ import 'package:twake/blocs/file_cubit/upload/file_upload_cubit.dart';
 import 'package:twake/blocs/file_cubit/upload/file_upload_state.dart';
 import 'package:twake/blocs/message_animation_cubit/message_animation_cubit.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
+import 'package:twake/blocs/online_status_cubit/online_status_cubit.dart';
 import 'package:twake/blocs/pinned_message_cubit/pinned_messsage_cubit.dart';
 import 'package:twake/blocs/quote_message_cubit/quote_message_cubit.dart';
+import 'package:twake/blocs/writing_cubit/writing_cubit.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/models/file/file.dart';
 import 'package:twake/models/file/message_file.dart';
@@ -62,6 +64,8 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
                               Get.find<ThreadMessagesCubit>().reset();
                               Get.find<PinnedMessageCubit>().init();
                               Get.find<QuoteMessageCubit>().init();
+                              Get.find<OnlineStatusCubit>()
+                                  .getOnlineStatusWebSocket();
                               // TODO: Currently, no need to clean cached files.
                               // Once there are some related performance bugs occur in the future,
                               // just un-comment this and test
@@ -88,9 +92,8 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
                       return ChatHeader(
                           isDirect: selectedChannel.isDirect,
                           isPrivate: selectedChannel.isPrivate,
-                          userId: selectedChannel.members.isNotEmpty
-                              ? selectedChannel.members.first
-                              : null,
+                          users: selectedChannel.members,
+                          channelId: selectedChannel.id,
                           name: selectedChannel.name,
                           icon: Emojis.getByName(selectedChannel.icon ?? ''),
                           avatars: selectedChannel.isDirect
@@ -226,6 +229,8 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
       },
       onTextUpdated: (text, ctx) {
         Get.find<T>().saveDraft(draft: text);
+        print(channel.id);
+        Get.find<WritingCubit>().sendWritingEvent(channel.id);
       },
     );
   }

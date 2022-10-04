@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/repositories/companies_repository.dart';
 import 'package:twake/services/service_bundle.dart';
-
 import 'companies_state.dart';
 
 export 'companies_state.dart';
@@ -21,6 +20,8 @@ class CompaniesCubit extends Cubit<CompaniesState> {
   }
 
   Future<bool> fetch() async {
+    SynchronizationService.instance.subscribeToWriting();
+    SynchronizationService.instance.subscribeToOnlineStatus();
     final streamCompanies = _repository.fetch();
 
     Company? selected;

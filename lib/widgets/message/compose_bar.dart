@@ -46,7 +46,6 @@ class _ComposeBar extends State<ComposeBar> {
   bool _emojiVisible = false;
   bool _forceLooseFocus = false;
   bool _canSend = false;
-  bool _canSendFiles = false;
 
   final _focusNode = FocusNode();
   final _controller = TextEditingController();
@@ -56,7 +55,6 @@ class _ComposeBar extends State<ComposeBar> {
   void initState() {
     super.initState();
 
-    widget.onTextUpdated(widget.initialText ?? '', context);
     if (widget.initialText?.isNotReallyEmpty ?? false) {
       _controller.text = widget.initialText!; // possibly retrieved from cache.
       setState(() {
@@ -73,7 +71,6 @@ class _ComposeBar extends State<ComposeBar> {
 
     _controller.addListener(() {
       if (_controller.selection.base.offset < 0) return;
-
       String text = _controller.text;
       text = text.substring(0, _controller.selection.base.offset);
       if (_userMentionRegex.hasMatch(text)) {
