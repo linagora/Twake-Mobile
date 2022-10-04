@@ -1,0 +1,6 @@
+const String ALTER_MESSAGE_ADD_LINKS = '''
+ALTER TABLE message ADD COLUMN links TEXT;
+''';
+
+const DB_V14 = 14;
+const MIGRATION_14 = [ALTER_MESSAGE_ADD_LINKS];

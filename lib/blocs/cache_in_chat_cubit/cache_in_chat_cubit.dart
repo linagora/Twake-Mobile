@@ -2,7 +2,6 @@ import 'package:bloc/bloc.dart';
 import 'package:collection/collection.dart';
 import 'package:twake/blocs/cache_in_chat_cubit/cache_in_chat_state.dart';
 import 'package:twake/models/file/file.dart';
-import 'package:flutter_chat_types/flutter_chat_types.dart' show PreviewData;
 
 class CacheInChatCubit extends Cubit<CacheInChatState> {
   CacheInChatCubit() : super(CacheInChatState());
@@ -22,22 +21,5 @@ class CacheInChatCubit extends Cubit<CacheInChatState> {
 
   void cleanCachedFiles() async {
     emit(CacheInChatState(fileList: []));
-  }
-
-  void cacheUrlPreviewData({required String url, required PreviewData previewData}) async {
-    Map<String, PreviewData> cachedData = Map.of(state.previewDataMap);
-    final cachedUrl = state.previewDataMap[url];
-    if(cachedUrl == null) {
-      cachedData[url] = previewData;
-    }
-    emit(state.copyWith(newDataMap: cachedData));
-  }
-
-  PreviewData? findCachedPreviewData({required String url}) {
-    return state.previewDataMap[url];
-  }
-
-  void cleanCachedPreviewData() async {
-    emit(state.copyWith(newDataMap: {}));
   }
 }

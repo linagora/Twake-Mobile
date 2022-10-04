@@ -135,6 +135,7 @@ class QuoteMessage extends StatelessWidget {
                     fileIds: message.files,
                     parentStyle: Theme.of(context).textTheme.headline1!,
                     userUniqueColor: message.username.hashCode % 360,
+                    messageLinks: message.links,
                   ).message,
                 if (message.text != '')
                   TwacodeRenderer(
@@ -145,6 +146,7 @@ class QuoteMessage extends StatelessWidget {
                     fileIds: [],
                     parentStyle: Theme.of(context).textTheme.headline1!,
                     userUniqueColor: message.username.hashCode % 360,
+                    messageLinks: message.links,
                   ).message,
               ],
             ),

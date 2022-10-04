@@ -76,7 +76,8 @@ CREATE TABLE message (
     delivery TEXT DEFAULT "delivered",
     pinned_info TEXT DEFAULT "[]",
     last_replies TEXT DEFAULT "[]",
-    quote_message TEXT DEFAULT "[]"
+    quote_message TEXT DEFAULT "[]",
+    links TEXT DEFAULT "[]"
 );
 ''';
 
