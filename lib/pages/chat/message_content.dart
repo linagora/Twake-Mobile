@@ -255,10 +255,9 @@ class _MessageContentState<T extends BaseMessagesCubit>
                   style: Theme.of(context).textTheme.headline1!,
                 )
               : TwacodeRenderer(
-                  twacode: widget.message.blocks.length == 0
-                      ? [widget.message.text]
-                      : widget.message.blocks,
+                  twacode: TwacodeParser(widget.message.text).message[0]['elements'],
                   fileIds: widget.message.files,
+                  messageLinks: widget.message.messageLinks,
                   parentStyle: Theme.of(context).textTheme.headline1!,
                   userUniqueColor: widget.message.username.hashCode % 360,
                 ).message,
