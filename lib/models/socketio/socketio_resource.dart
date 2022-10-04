@@ -37,7 +37,9 @@ enum ResourceType {
   @JsonValue('user_notification_badges')
   userNotificationBadges,
   @JsonValue('notification:desktop')
-  notificationDesktop, // ignore this one for now
+  notificationDesktop,
+  @JsonValue('user:online')
+  userOnlineStatus, // ignore this one for now
 }
 
 enum ResourceAction {

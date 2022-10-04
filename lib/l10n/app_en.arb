@@ -389,6 +389,7 @@
     "noCompanyFilesHeader": "There are no uploaded files yet",
     "unreadMessages": "Unread messages",
     "typingMessage": "typing a message",
+    "online": "online",
     "writingCount": "and {number} more",
     "@writingCount": {
         "description": "users writing message counter",
