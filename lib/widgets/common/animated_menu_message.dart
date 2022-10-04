@@ -125,8 +125,7 @@ class _MenuMessageDropDownState<T extends BaseMessagesCubit>
         double topOfComponents = itemLeadingEdge * messageListHeight +
             topLeftListY -
             upperWidgetHeight -
-            MediaQuery.of(context).viewPadding.top +
-            MediaQuery.of(context).viewPadding.bottom;
+            MediaQuery.of(context).viewPadding.top;
 
         double itemScale = 1;
         double itemTranslateY = 0;
