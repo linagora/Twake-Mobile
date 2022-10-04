@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get/get.dart';
+import 'package:twake/blocs/online_status_cubit/online_status_cubit.dart';
 import 'package:twake/blocs/writing_cubit/writing_cubit.dart';
 import 'package:twake/models/channel/channel.dart';
 import 'package:twake/pages/chat/writingStatus.dart';
+import 'package:twake/utils/dateformatter.dart';
 import 'package:twake/widgets/common/image_widget.dart';
+import 'package:twake/widgets/common/online_status_circle.dart';
 import 'package:twake/widgets/common/shimmer_loading.dart';
 
 class ChatHeader extends StatelessWidget {
@@ -40,14 +43,25 @@ class ChatHeader extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          ImageWidget(
-              imageType: isDirect ? ImageType.common : ImageType.channel,
-              size: 42,
-              fontSize: 32,
-              imageUrl: isDirect ? avatars.first.link : icon,
-              avatars: avatars,
-              stackSize: 24,
-              name: name),
+          Stack(
+            children: [
+              ImageWidget(
+                  imageType: isDirect ? ImageType.common : ImageType.channel,
+                  size: 42,
+                  fontSize: 32,
+                  imageUrl: isDirect ? avatars.first.link : icon,
+                  avatars: avatars,
+                  stackSize: 24,
+                  name: name),
+              if (isDirect)
+                Positioned(
+                    left: 28,
+                    child: OnlineStatusCircle(
+                      channelId: channelId,
+                      size: 16,
+                    ))
+            ],
+          ),
           SizedBox(width: 10.0),
           Expanded(
             child: Column(
@@ -86,21 +100,51 @@ class ChatHeader extends StatelessWidget {
                           isDirect: isDirect,
                           key: ValueKey(channelId));
                     } else {
-                      return SizedBox(
-                        height: 16,
-                        child: Text(
-                          AppLocalizations.of(context)!
-                              .membersPlural(membersCount),
-                          style: Theme.of(context)
-                              .textTheme
-                              .headline2!
-                              .copyWith(
-                                  fontSize: 13, fontWeight: FontWeight.normal),
-                        ),
-                      );
+                      return isDirect && avatars.length == 1
+                          ? BlocBuilder<OnlineStatusCubit, OnlineStatusState>(
+                              bloc: Get.find<OnlineStatusCubit>(),
+                              builder: (context, state) {
+                                final statusList = Get.find<OnlineStatusCubit>()
+                                    .isConnected(channelId);
+                                return state.onlineStatus ==
+                                            OnlineStatus.success &&
+                                        statusList[0]
+                                    ? Text(
+                                        AppLocalizations.of(context)!.online,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .headline2!
+                                            .copyWith(
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.normal),
+                                      )
+                                    : Text(
+                                        '${AppLocalizations.of(context)!.online} ${DateFormatter.getVerboseDate(statusList[1])}',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .headline2!
+                                            .copyWith(
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.normal),
+                                      );
+                              },
+                            )
+                          : SizedBox(
+                              height: 16,
+                              child: Text(
+                                AppLocalizations.of(context)!
+                                    .membersPlural(membersCount),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headline2!
+                                    .copyWith(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.normal),
+                              ),
+                            );
                     }
                   },
-                )
+                ),
               ],
             ),
           ),

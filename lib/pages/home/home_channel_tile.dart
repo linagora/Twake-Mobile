@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/models/badge/badge.dart';
 import 'package:twake/models/channel/channel.dart';
-import 'package:twake/models/globals/globals.dart';
 import 'package:twake/utils/dateformatter.dart';
 import 'package:twake/widgets/common/badges.dart';
 import 'package:twake/widgets/common/image_widget.dart';
+import 'package:twake/widgets/common/online_status_circle.dart';
 
 typedef OnHomeChannelTileClick = void Function();
 
@@ -44,15 +44,28 @@ class HomeChannelTile extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            ImageWidget(
-              imageType: isDirect ? ImageType.common : ImageType.channel,
-              imageUrl: imageUrl ?? '',
-              isPrivate: isPrivate,
-              name: title,
-              size: 54,
-              avatars: avatars,
-              stackSize: 35,
-              backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
+            Stack(
+              children: [
+                ImageWidget(
+                  imageType: isDirect ? ImageType.common : ImageType.channel,
+                  imageUrl: imageUrl ?? '',
+                  isPrivate: isPrivate,
+                  name: title,
+                  size: 54,
+                  avatars: avatars,
+                  stackSize: 35,
+                  backgroundColor:
+                      Theme.of(context).colorScheme.secondaryContainer,
+                ),
+                if (isDirect && avatars.length == 1)
+                  Positioned(
+                      top: 2,
+                      left: 36,
+                      child: OnlineStatusCircle(
+                        channelId: channelId,
+                        size: 18,
+                      ))
+              ],
             ),
             Expanded(
               child: Container(
