@@ -14,12 +14,14 @@ class SocketIOService {
 
   StreamController<SocketIOResource> _resourceStream =
       StreamController.broadcast();
-
   StreamController<SocketIOEvent> _eventStream = StreamController.broadcast();
   StreamController<bool> _reconnectionStream = StreamController.broadcast();
   StreamController<SocketIOWritingEvent> _writingEventStream =
       StreamController.broadcast();
+  StreamController<List<dynamic>> _onlineUserStream =
+      StreamController.broadcast();
 
+  Stream<List<dynamic>> get onlineUserStream => _onlineUserStream.stream;
   Stream<bool> get socketIOReconnectionStream => _reconnectionStream.stream;
   Stream<SocketIOEvent> get eventStream => _eventStream.stream;
   Stream<SocketIOWritingEvent> get writingEventStream =>
@@ -105,8 +107,24 @@ class SocketIOService {
     _socket.emit(IOEvent.join, {'name': room, 'token': 'twake'});
   }
 
+  void subscribeToOnlineStatus({required String room}) async {
+    _socket.emit(IOEvent.join, {'name': room, 'token': Globals.instance.token});
+  }
+
   void emitEvent(dynamic data) async {
     _socket.emit(IOEvent.event, data);
+  }
+
+  void emitEventOnlineStatus(Map<String, dynamic> data) async {
+    _socket.emitWithAck('online:get', data, ack: (data) {
+      if (data != null) {
+        if ((data as Map<String, dynamic>).containsKey('data')) {
+          (data['data'] as List<dynamic>).forEach((element) {
+            _onlineUserStream.add(element);
+          });
+        }
+      }
+    });
   }
 
   void unsubscribe({required String room}) {
@@ -156,6 +174,7 @@ class SocketIOService {
     await _resourceStream.close();
     await _reconnectionStream.close();
     await _writingEventStream.close();
+    await _onlineUserStream.close();
   }
 
   void disconnect() {
