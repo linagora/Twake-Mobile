@@ -72,11 +72,11 @@ extension StringExtension on String {
   }
 
   TwakeErrorMessage get twakeErrorByStringMessage {
-    if(this.contains('User is already in workspace'))
+    if (this.contains('User is already in workspace'))
       return TwakeErrorMessage.UserAlreadyInWorkspace;
-    else if(this.contains('Unable to invite this user to your company'))
+    else if (this.contains('Unable to invite this user to your company'))
       return TwakeErrorMessage.UnableInviteUser;
-    else if(this.contains('Pending user already exists'))
+    else if (this.contains('Pending user already exists'))
       return TwakeErrorMessage.PendingUserIsExist;
     return TwakeErrorMessage.None;
   }

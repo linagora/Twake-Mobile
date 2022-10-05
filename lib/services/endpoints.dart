@@ -78,6 +78,19 @@ class Endpoint {
   static const companyFiles =
       '/internal/services/messages/v1/companies/%s/files';
 
+  // API Endpoint for search
+  static const searchChannels =
+      '/internal/services/channels/v1/companies/%s/search';
+  static const searchRecentChannels =
+      '/internal/services/channels/v1/companies/%s/channels/recent';
+  static const searchUsers = '/internal/services/users/v1/users';
+  static const searchMessages =
+      '/internal/services/messages/v1/companies/%s/search';
+  static const searchFiles =
+      '/internal/services/messages/v1/companies/%s/files/search';
+  static const searchMedia =
+      '/internal/services/messages/v1/companies/%s/media/search';
+
   static const publicMethods = const [info, reservation, signup, emailResend];
 
   static const consoleMethods = const [reservation, signup, emailResend];

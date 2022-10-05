@@ -38,7 +38,7 @@
     "invitationLimitInfo": "To add more team members,please, verify your account. We sent verification details to: ",
     "ok": "OK",
     "processing": "Processing",
-    "search": "Find channels",
+    "search": "Search for messages or users",
     "email": "Email",
     "channels": "Channels",
     "chats": "Chats",
@@ -399,5 +399,12 @@
                 "example": "Alexander, Diana and 3 more"
             }
         }
-    }
+    },
+    "noCompanyFilesHeader": "There are no uploaded files yet",
+    "searchChatsRecentHeader": "Recent channels and contacts",
+    "searchChatsHeader": "Channels",
+    "searchNoResultsFor": "There were no results for",
+    "searchEmptyResults": "There were no results",
+    "searchTryAnother": "Try a new search",
+    "searchResetButton": "Reset search"
 }

@@ -100,6 +100,7 @@ dependencies:
     git: https://github.com/EvGen94/sticky_grouped_list
   defer_pointer: ^0.0.2
   any_link_preview: ^2.0.9
+  flutter_contacts: ^1.1.4
 
 dev_dependencies:
   flutter_test:

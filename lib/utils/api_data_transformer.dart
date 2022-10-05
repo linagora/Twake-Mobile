@@ -27,10 +27,12 @@ class ApiDataTransformer {
   static Map<String, dynamic> account({required Map<String, dynamic> json}) {
     if (json['preferences'] != null) {
       json['language'] = json['preferences']['locale'];
-      json['workspace_id'] =
-          json['preferences']['recent_workspaces'][0]['workspace_id'];
-      json['company_id'] =
-          json['preferences']['recent_workspaces'][0]['company_id'];
+      if (json['preferences']['recent_workspaces'] != null) {
+        json['workspace_id'] =
+            json['preferences']['recent_workspaces'][0]['workspace_id'];
+        json['company_id'] =
+            json['preferences']['recent_workspaces'][0]['company_id'];
+      }
     }
     if (json['is_verified'] != null) {
       json['is_verified'] = json['is_verified'] ? 1 : 0;
@@ -68,6 +70,8 @@ class ApiDataTransformer {
     }
     json['role'] =
         json['owner'] == Globals.instance.userId ? 'owner' : 'member';
+
+    if (json['last_activity'] == null) json['last_activity'] = 0;
 
     if (json['workspace_id'] == 'direct' && json['users'] != null) {
       final users = json['users'] as List;
