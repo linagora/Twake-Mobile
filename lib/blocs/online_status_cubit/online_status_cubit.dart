@@ -2,6 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
+import 'package:twake/models/account/account.dart';
 import 'package:twake/models/file/user.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/repositories/channels_repository.dart';
@@ -24,7 +25,15 @@ class OnlineStatusCubit extends Cubit<OnlineStatusState> {
     listenToOnlineUserStream();
   }
 
-  void getOnlineStatusWebSocket() async {
+  void getOnlineStatusWebSocket({List<Account> accounts = const []}) async {
+    if (accounts.isNotEmpty) {
+      final List<String> ids = [];
+      accounts.forEach((account) {
+        ids.add(account.id);
+      });
+      SynchronizationService.instance.getOnlineStatus(ids);
+      return;
+    }
     final List<String> ids = [];
     // TODO: do it only for users which are displayed on the screen
     final users = Get.find<DirectsCubit>().getAllDirectUsers();
@@ -74,6 +83,7 @@ class OnlineStatusCubit extends Cubit<OnlineStatusState> {
       }
     }
     data[0] = false;
+    data[1] = 946670400000;
     return data;
   }
 

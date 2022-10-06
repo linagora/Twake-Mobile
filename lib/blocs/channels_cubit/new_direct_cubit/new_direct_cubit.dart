@@ -1,7 +1,9 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/get.dart';
 import 'package:twake/blocs/account_cubit/account_cubit.dart';
 import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/blocs/channels_cubit/new_direct_cubit/new_direct_state.dart';
+import 'package:twake/blocs/online_status_cubit/online_status_cubit.dart';
 import 'package:twake/blocs/workspaces_cubit/workspaces_cubit.dart';
 import 'package:twake/models/channel/channel_role.dart';
 import 'package:twake/models/globals/globals.dart';
@@ -24,7 +26,7 @@ class NewDirectCubit extends Cubit<NewDirectState> {
     required this.channelsRepository,
   }) : super(NewDirectInitial());
 
-  void fetchAllMember() async {
+  Future<bool> fetchAllMember() async {
     emit(NewDirectInProgress());
 
     final result = await Future.wait(
@@ -39,6 +41,7 @@ class NewDirectCubit extends Cubit<NewDirectState> {
       members: workspaceMembers,
       recentChats: recentChats,
     ));
+    return true;
   }
 
   void searchMembers(String memberName) {
@@ -96,10 +99,28 @@ class NewDirectCubit extends Cubit<NewDirectState> {
           (key) => state.recentChats[key]?.id == accounts.first.id,
           orElse: () => '');
       if (recentKey.isNotEmpty) {
+        Get.find<OnlineStatusCubit>()
+            .getOnlineStatusWebSocket(accounts: accounts);
         NavigatorService.instance.navigate(channelId: recentKey);
         return;
+      } else {
+        final bool res = await fetchAllMember();
+        if (res) {
+          Get.find<OnlineStatusCubit>()
+              .getOnlineStatusWebSocket(accounts: accounts);
+          final recentKey = state.recentChats.keys.firstWhere(
+              (key) => state.recentChats[key]?.id == accounts.first.id,
+              orElse: () => '');
+          if (recentKey.isNotEmpty) {
+            Get.find<OnlineStatusCubit>()
+                .getOnlineStatusWebSocket(accounts: accounts);
+            NavigatorService.instance.navigate(channelId: recentKey);
+            return;
+          }
+        }
       }
     }
+
     final channel = await channelsRepository.create(
       channel: Channel(
         id: 'fake',
@@ -118,6 +139,8 @@ class NewDirectCubit extends Cubit<NewDirectState> {
         lastActivity: DateTime.now().millisecondsSinceEpoch,
       ),
     );
+    Get.find<OnlineStatusCubit>().getOnlineStatusInit();
+    Get.find<OnlineStatusCubit>().getOnlineStatusWebSocket();
     directsCubit.changeSelectedChannelAfterCreateSuccess(channel: channel);
     popBack();
     NavigatorService.instance.navigate(channelId: channel.id);
