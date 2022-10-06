@@ -171,6 +171,7 @@ class NavigatorService {
       pinnedMessageCubit.getPinnedMessages(channelId, channel.isDirect);
 
       if (channel.isDirect) {
+        channelsCubit.clearSelection();
         directsCubit.selectChannel(channelId: channelId);
 
         Get.toNamed(RoutePaths.directMessages.path)?.then((_) {
@@ -200,7 +201,8 @@ class NavigatorService {
           ? RoutePaths.directMessageThread.path
           : RoutePaths.channelMessageThread.path;
 
-      Get.toNamed(path, arguments: [pinnedMessage, userLastAccessFromChat])?.then((_) {
+      Get.toNamed(path, arguments: [pinnedMessage, userLastAccessFromChat])
+          ?.then((_) {
         channelMessagesCubit.clearSelectedThread();
         threadMessagesCubit.reset();
       });
