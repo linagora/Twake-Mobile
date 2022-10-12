@@ -139,7 +139,7 @@ class NewDirectCubit extends Cubit<NewDirectState> {
         lastActivity: DateTime.now().millisecondsSinceEpoch,
       ),
     );
-    Get.find<OnlineStatusCubit>().getOnlineStatusInit();
+    Get.find<OnlineStatusCubit>().getOnlineStatusHttp();
     Get.find<OnlineStatusCubit>().getOnlineStatusWebSocket();
     directsCubit.changeSelectedChannelAfterCreateSuccess(channel: channel);
     popBack();

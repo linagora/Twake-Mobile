@@ -215,8 +215,11 @@ class SynchronizationService {
     final room = sprintf('/users/online/%s', [
       Globals.instance.companyId,
     ]);
+    final userRoom = sprintf('/users/%s', [
+      Globals.instance.userId,
+    ]);
 
-    _socketio.subscribeToOnlineStatus(room: room);
+    _socketio.subscribeToOnlineStatus(room: room, userRoom: userRoom);
   }
 
   void getOnlineStatus(List<String> users) async {
@@ -229,6 +232,15 @@ class SynchronizationService {
     final data = {'name': room, 'type': 'user:online', 'data': users};
 
     _socketio.emitEventOnlineStatus(data);
+  }
+
+  void setOnlineStatus() async {
+    if (!Globals.instance.isNetworkConnected)
+      throw Exception('Should not be called with no active connection');
+
+    final List<String> data = [Globals.instance.userId ?? ""];
+
+    _socketio.setOnlineStatus(data);
   }
 
   void emitWritingEvent(WritingData writingData) async {

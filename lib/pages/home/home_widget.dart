@@ -73,7 +73,8 @@ class _HomeWidgetState extends State<HomeWidget> with WidgetsBindingObserver {
         _searchText = _searchController.text.toLowerCase();
       });
     });
-    Get.find<OnlineStatusCubit>().getOnlineStatusInit();
+    Get.find<OnlineStatusCubit>().getOnlineStatusHttp();
+    Get.find<OnlineStatusCubit>().setOnlineStatus();
     _initFileDownloader();
     _handleReceiveSharing();
   }
