@@ -219,9 +219,8 @@ class _NewDirectChatWidgetState extends State<NewDirectChatWidget> {
                         child: TextField(
                           focusNode: _searchFocusNode,
                           controller: _searchController,
-                          cursorColor: Theme.of(context)
-                                            .textSelectionTheme
-                                            .cursorColor,
+                          cursorColor:
+                              Theme.of(context).textSelectionTheme.cursorColor,
                           style: Theme.of(context)
                               .textTheme
                               .headline1!
@@ -278,8 +277,9 @@ class _NewDirectChatWidgetState extends State<NewDirectChatWidget> {
                                     fontSize: 17, fontWeight: FontWeight.w400),
                             hintText:
                                 AppLocalizations.of(context)!.searchForMembers,
-                            fillColor:
-                                Theme.of(context).colorScheme.secondaryContainer,
+                            fillColor: Theme.of(context)
+                                .colorScheme
+                                .secondaryContainer,
                           ),
                         ),
                       ),
@@ -354,55 +354,6 @@ class _NewDirectChatWidgetState extends State<NewDirectChatWidget> {
   }
 }
 
-typedef OnRecentChatTileClick = void Function();
-
-class _RecentChatTile extends StatelessWidget {
-  final String name;
-  final String imageUrl;
-  final OnRecentChatTileClick? onRecentChatTileClick;
-
-  const _RecentChatTile(
-      {Key? key,
-      this.onRecentChatTileClick,
-      required this.name,
-      required this.imageUrl})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onRecentChatTileClick,
-      child: Container(
-        width: 66,
-        height: 78,
-        child: Column(
-          children: [
-            ImageWidget(
-              imageType: ImageType.common,
-              size: 52,
-              imageUrl: imageUrl,
-              name: name,
-            ),
-            Expanded(
-              child: Align(
-                alignment: Alignment.bottomCenter,
-                child: Text(name,
-                    maxLines: 1,
-                    textAlign: TextAlign.center,
-                    overflow: TextOverflow.clip,
-                    style: Theme.of(context)
-                        .textTheme
-                        .headline1!
-                        .copyWith(fontSize: 17, fontWeight: FontWeight.normal)),
-              ),
-            )
-          ],
-        ),
-      ),
-    );
-  }
-}
-
 typedef OnFoundPeopleDirectTileClick = void Function();
 
 class _FoundPeopleDirectTile extends StatelessWidget {
@@ -452,7 +403,7 @@ class _FoundPeopleDirectTile extends StatelessWidget {
                 ? Padding(
                     padding: const EdgeInsets.only(right: 16),
                     child: Text(
-                        AppLocalizations.of(context)!.youRespectful,
+                      AppLocalizations.of(context)!.youRespectful,
                       style: Theme.of(context)
                           .textTheme
                           .headline2!

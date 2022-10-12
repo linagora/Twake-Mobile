@@ -44,12 +44,13 @@ class LanguageRepository {
   }
 
   List<String> get languages {
-    return translatedLanguages;
+    final List<String> lang = [...translatedLanguages]..sort();
+    return lang;
   }
 
   String getDeviceLanguage() {
     //TODO: platform - replace with relevant solution here
-    if(!PlatformDetection.isMobileSupported()) {
+    if (!PlatformDetection.isMobileSupported()) {
       return 'en_US';
     }
     final String deviceLanguage = Platform.localeName;
