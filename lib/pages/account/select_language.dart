@@ -15,7 +15,7 @@ class SelectLanguage extends StatefulWidget {
 class _SelectLanguageState extends State<SelectLanguage> {
   @override
   Widget build(BuildContext context) {
-    final languageCode = LanguageRepository().languages;
+    final List<String> languageCode = LanguageRepository().languages;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,

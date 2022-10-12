@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:get/get.dart';
@@ -15,6 +17,7 @@ class OnlineStatusCubit extends Cubit<OnlineStatusState> {
   final _socketIOResourceStream = SocketIOService.instance.resourceStream;
   final _socketIOOnlineUserStream = SocketIOService.instance.onlineUserStream;
   late ChannelsRepository channelsRepository;
+  late Timer _timer;
   OnlineStatusCubit({ChannelsRepository? repository})
       : super(OnlineStatusState(onlineStatus: OnlineStatus.off)) {
     if (repository == null) {
@@ -23,6 +26,7 @@ class OnlineStatusCubit extends Cubit<OnlineStatusState> {
     channelsRepository = repository;
     listenToResourceOnlineStatus();
     listenToOnlineUserStream();
+    startTimer();
   }
 
   void getOnlineStatusWebSocket({List<Account> accounts = const []}) async {
@@ -47,13 +51,17 @@ class OnlineStatusCubit extends Cubit<OnlineStatusState> {
     if (users.isNotEmpty) SynchronizationService.instance.getOnlineStatus(ids);
   }
 
-  void getOnlineStatusInit() async {
+  void getOnlineStatusHttp() async {
     final Map<String, List<User>> res =
         await channelsRepository.fetchUsersOnlineStatus();
 
     if (res.isNotEmpty)
       emit(OnlineStatusState(
           onlineStatus: OnlineStatus.success, channelUsers: res));
+  }
+
+  void setOnlineStatus() async {
+    SynchronizationService.instance.setOnlineStatus();
   }
 
   List<dynamic> isConnected(String channelId) {
@@ -74,6 +82,11 @@ class OnlineStatusCubit extends Cubit<OnlineStatusState> {
                 orElse: () => dummyUser())
             .lastSeen;
         data[1] = lastSeen;
+
+        //  DateTime dateTime =
+        //      DateTime.fromMillisecondsSinceEpoch(lastSeen!).toLocal();
+        //  DateTime justNow = DateTime.now().subtract(Duration(minutes: 10));
+        //  final diff = dateTime.difference(justNow);
 
         state.onlineUsers.containsKey(listUser[0].id)
             ? data[0] = state.onlineUsers[listUser[0].id]
@@ -99,6 +112,18 @@ class OnlineStatusCubit extends Cubit<OnlineStatusState> {
         emit(state.copyWith(newOnlineUsers: users));
       }
     }
+  }
+
+  void startTimer() {
+    // TODO: need to create global app timer
+    const oneSec = const Duration(minutes: 10);
+    _timer = Timer.periodic(
+      oneSec,
+      (Timer timer) {
+        setOnlineStatus();
+        getOnlineStatusHttp();
+      },
+    );
   }
 
   Future<void> listenToOnlineUserStream() async {
