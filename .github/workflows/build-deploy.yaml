@@ -55,10 +55,6 @@ jobs:
           echo "APP_ID=${{ secrets.APP_ID }}" >> .firebase.env
           echo "MESSAGE_SENDER_ID=${{ secrets.MESSAGE_SENDER_ID }}" >> .firebase.env
           echo "PROJECT_ID=${{ secrets.PROJECT_ID }}" >> .firebase.env
-      
-      - name: Setup NDK path
-        shell: bash
-        run: echo "ANDROID_NDK_ROOT=$ANDROID_NDK_LATEST_HOME" >> $GITHUB_ENV
 
       - name: Build the app
         run: flutter build appbundle -v --release --build-number=$(( 320 + $GITHUB_RUN_NUMBER )) --build-name=$GITHUB_REF_NAME
@@ -71,6 +67,7 @@ jobs:
           releaseFiles: "build/app/outputs/bundle/release/app-release.aab"
           track: beta
           status: completed
+          changesNotSentForReview: true
 
   build-and-deploy-ios:
     name: Build and deploy to App Store
