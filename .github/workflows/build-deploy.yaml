@@ -60,7 +60,7 @@ jobs:
         run: flutter build appbundle -v --release --build-number=$(( 320 + $GITHUB_RUN_NUMBER )) --build-name=$GITHUB_REF_NAME
 
       - name: Deploy the app to the Play Store
-        uses: r0adkll/upload-google-play@v1
+        uses: r0adkll/upload-google-play@v1.0.18
         with:
           serviceAccountJsonPlainText: ${{ secrets.PLAY_STORE_CONFIG_JSON }}
           packageName: "com.twake.twake"
