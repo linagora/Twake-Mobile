@@ -57,6 +57,8 @@
 	<string>Allow application to access to your phone’s Microphone</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Allow application to access to your phone’s Photo Library</string>
+	<key>NSContactsUsageDescription</key>
+    <string>Allow application to access to your phone’s Contact List</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>

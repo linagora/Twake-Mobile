@@ -53,13 +53,18 @@ class FileDownloadCubit extends Cubit<FileDownloadState> {
         return;
       }
       final updatedStateList = state.listFileDownloading.map((fileDownloading) {
-        return fileDownloading.file!.id == file!.id
-            ? fileDownloading.copyWith(
-                downloadTaskId: taskId, savedPath: savedPath)
-            : fileDownloading;
+        return fileDownloading.messageFile == null
+            ? fileDownloading.file!.id == file!.id
+                ? fileDownloading.copyWith(
+                    downloadTaskId: taskId, savedPath: savedPath)
+                : fileDownloading
+            : fileDownloading.messageFile!.metadata.externalId ==
+                    messageFile!.metadata.externalId
+                ? fileDownloading.copyWith(
+                    downloadTaskId: taskId, savedPath: savedPath)
+                : fileDownloading;
       }).toList();
-      emit(state.copyWith(
-          listFileDownloading: updatedStateList as List<FileDownloading>?));
+      emit(state.copyWith(listFileDownloading: updatedStateList));
     } catch (e) {
       Logger().e('Error occurred during file downloading:\n$e');
       handleDownloadFailed(file: file, messageFile: messageFile);
@@ -73,10 +78,16 @@ class FileDownloadCubit extends Cubit<FileDownloadState> {
     if (file != null || messageFile != null) {
       final List<FileDownloading>? updatedStateList =
           state.listFileDownloading.map((fileDownloading) {
-        return fileDownloading.file!.id == file!.id
-            ? fileDownloading.copyWith(
-                downloadStatus: FileItemDownloadStatus.downloadFailed)
-            : fileDownloading;
+        return messageFile == null
+            ? fileDownloading.file!.id == file!.id
+                ? fileDownloading.copyWith(
+                    downloadStatus: FileItemDownloadStatus.downloadFailed)
+                : fileDownloading
+            : fileDownloading.messageFile!.metadata.externalId ==
+                    messageFile.metadata.externalId
+                ? fileDownloading.copyWith(
+                    downloadStatus: FileItemDownloadStatus.downloadFailed)
+                : fileDownloading;
       }).toList();
 
       emit(state.copyWith(listFileDownloading: updatedStateList));

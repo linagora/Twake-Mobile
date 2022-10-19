@@ -131,7 +131,7 @@ class SocketIOService {
   }
 
   void setOnlineStatus(List<String> data) async {
-    _socket.emitWithAck('online:set', data, ack: (data) {});
+    _socket.emit('online:set', data);
   }
 
   void unsubscribe({required String room}) {

@@ -38,7 +38,7 @@
     "invitationLimitInfo": "To add more team members,please, verify your account. We sent verification details to: ",
     "ok": "OK",
     "processing": "Processing",
-    "search": "Find channels",
+    "search": "Search for messages or users",
     "email": "Email",
     "channels": "Channels",
     "chats": "Chats",
@@ -326,6 +326,9 @@
     "channelAndChat": "Channels and chats",
     "searchChannelAndChat": "Search channels and chats",
     "files": "Files",
+    "recentFiles": "Recent files",
+    "media": "Media",
+    "recentMedia": "Recent media",
     "images": "Images",
     "sentBy": "Sent by {sender}",
     "@sentBy": {
@@ -399,5 +402,12 @@
                 "example": "Alexander, Diana and 3 more"
             }
         }
-    }
+    },
+    "noCompanyFilesHeader": "There are no uploaded files yet",
+    "searchChatsRecentHeader": "Recent channels and contacts",
+    "searchChatsHeader": "Channels",
+    "searchNoResultsFor": "There were no results for",
+    "searchEmptyResults": "There were no results",
+    "searchTryAnother": "Try a new search",
+    "searchResetButton": "Reset search"
 }

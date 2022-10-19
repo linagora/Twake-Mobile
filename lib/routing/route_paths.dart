@@ -76,6 +76,9 @@ class RoutePaths {
       _RoutePathsType(shareFile.path, '/share_file_ws_list');
   static final shareFileChannelList =
       _RoutePathsType(shareFile.path, '/share_file_channel_list');
+
+  // search
+  static final search = _RoutePathsType(initial, '/search');
 }
 
 class _RoutePathsType {

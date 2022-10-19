@@ -19,7 +19,7 @@ class MessageFile extends Equatable {
   final int createdAt;
   final MessageFileMetadata metadata;
   final User? user;
-  final Context context;
+  final Context? context;
 
   MessageFile(
       {required this.id,
