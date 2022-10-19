@@ -15,7 +15,9 @@ MessageFile _$MessageFileFromJson(Map<String, dynamic> json) => MessageFile(
       user: json['user'] == null
           ? null
           : User.fromJson(json['user'] as Map<String, dynamic>),
-      context: Context.fromJson(json['context'] as Map<String, dynamic>),
+      context: json['context'] == null
+          ? null
+          : Context.fromJson(json['context'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$MessageFileToJson(MessageFile instance) =>

@@ -8,6 +8,8 @@ import 'package:twake/pages/search/search_tabbar_view/messages/messages_status_i
 import 'package:twake/repositories/search_repository.dart';
 
 class SearchMessagesView extends StatefulWidget {
+  final bool isAllTab;
+  SearchMessagesView({this.isAllTab: false});
   @override
   State<SearchMessagesView> createState() => _SearchMessagesViewState();
 }
@@ -28,28 +30,36 @@ class _SearchMessagesViewState extends State<SearchMessagesView>
       builder: (context, state) {
         // if no results and on search tern display empty icon
         if (state.messages.isEmpty && state.searchTerm.isEmpty) {
-          return MessagesStatusInformer(
-              status: MessagesStateStatus.init,
-              searchTerm: state.searchTerm,
-              onResetTap: () => Get.find<SearchCubit>().resetSearch());
+          return widget.isAllTab
+              ? SizedBox.shrink()
+              : MessagesStatusInformer(
+                  status: MessagesStateStatus.init,
+                  searchTerm: state.searchTerm,
+                  onResetTap: () => Get.find<SearchCubit>().resetSearch());
         }
 
         if (state.messagesStateStatus == MessagesStateStatus.done &&
             state.messages.isNotEmpty) {
-          return SizedBox.expand(
-            child: ListView(children: [
-              MessagesSection(
-                searchTerm: state.searchTerm,
-                messages: state.messages,
-              )
-            ]),
-          );
+          return ListView(
+              shrinkWrap: true,
+              physics: widget.isAllTab
+                  ? NeverScrollableScrollPhysics()
+                  : ScrollPhysics(),
+              children: [
+                MessagesSection(
+                  searchTerm: state.searchTerm,
+                  messages: state.messages,
+                  isAllTab: widget.isAllTab,
+                )
+              ]);
         }
 
-        return MessagesStatusInformer(
-            status: state.messagesStateStatus,
-            searchTerm: state.searchTerm,
-            onResetTap: () => Get.find<SearchCubit>().resetSearch());
+        return widget.isAllTab
+            ? SizedBox.shrink()
+            : MessagesStatusInformer(
+                status: state.messagesStateStatus,
+                searchTerm: state.searchTerm,
+                onResetTap: () => Get.find<SearchCubit>().resetSearch());
       },
     );
   }
@@ -61,9 +71,13 @@ class _SearchMessagesViewState extends State<SearchMessagesView>
 class MessagesSection extends StatelessWidget {
   final List<SearchMessage> messages;
   final String searchTerm;
+  final bool isAllTab;
 
   const MessagesSection(
-      {Key? key, required this.messages, required this.searchTerm})
+      {Key? key,
+      required this.messages,
+      required this.isAllTab,
+      required this.searchTerm})
       : super(key: key);
 
   @override
@@ -83,7 +97,7 @@ class MessagesSection extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 15),
           itemCount: messages.length,
           shrinkWrap: true,
-          physics: ScrollPhysics(),
+          physics: isAllTab ? NeverScrollableScrollPhysics() : ScrollPhysics(),
           itemBuilder: (context, index) {
             return MessageItem(
               searchTerm: searchTerm,

@@ -326,6 +326,9 @@
     "channelAndChat": "Channels and chats",
     "searchChannelAndChat": "Search channels and chats",
     "files": "Files",
+    "recentFiles": "Recent files",
+    "media": "Media",
+    "recentMedia": "Recent media",
     "images": "Images",
     "sentBy": "Sent by {sender}",
     "@sentBy": {

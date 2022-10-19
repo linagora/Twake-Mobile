@@ -322,24 +322,39 @@ class NavigatorService {
   }
 
   Future<void> navigateToFilePreview({
-    required String channelId,
+    String? channelId,
     File? file,
     MessageFile? messageFile,
     bool? enableDownload,
     bool? isImage,
   }) async {
-    if (file == null && messageFile == null) return;
-    final channel = await directsCubit.getChannel(channelId: channelId);
-    if (channel.isDirect) {
+    if (channelId == null) {
       Get.toNamed(
         RoutePaths.directFilePreview.path,
         arguments: [file == null ? messageFile : file, enableDownload, isImage],
       );
     } else {
-      Get.toNamed(
-        RoutePaths.channelFilePreview.path,
-        arguments: [file == null ? messageFile : file, enableDownload, isImage],
-      );
+      if (file == null && messageFile == null) return;
+      final channel = await directsCubit.getChannel(channelId: channelId);
+      if (channel.isDirect) {
+        Get.toNamed(
+          RoutePaths.directFilePreview.path,
+          arguments: [
+            file == null ? messageFile : file,
+            enableDownload,
+            isImage
+          ],
+        );
+      } else {
+        Get.toNamed(
+          RoutePaths.channelFilePreview.path,
+          arguments: [
+            file == null ? messageFile : file,
+            enableDownload,
+            isImage
+          ],
+        );
+      }
     }
   }
 

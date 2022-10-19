@@ -56,6 +56,7 @@ class SearchCubit extends Cubit<SearchState> {
     fetchRecentChats();
     fetchChatsBySearchTerm();
     fetchFilesBySearchTerm();
+    fetchMediaBySearchTerm();
   }
 
   void fetchRecentChats() async {
@@ -124,9 +125,12 @@ class SearchCubit extends Cubit<SearchState> {
       emit(state.copyWith(filesStateStatus: FilesStateStatus.failed));
       return;
     }
-
-    emit(state.copyWith(
-        filesStateStatus: FilesStateStatus.done, files: request.result));
+    state.searchTerm.isEmpty
+        ? emit(state.copyWith(
+            filesStateStatus: FilesStateStatus.doneRecent,
+            files: request.result))
+        : emit(state.copyWith(
+            filesStateStatus: FilesStateStatus.done, files: request.result));
   }
 
   void fetchMediaBySearchTerm() async {
@@ -139,9 +143,12 @@ class SearchCubit extends Cubit<SearchState> {
       emit(state.copyWith(mediaStateStatus: MediaStateStatus.failed));
       return;
     }
-
-    emit(state.copyWith(
-        mediaStateStatus: MediaStateStatus.done, medias: request.result));
+    state.searchTerm.isEmpty
+        ? emit(state.copyWith(
+            mediaStateStatus: MediaStateStatus.doneRecent,
+            medias: request.result))
+        : emit(state.copyWith(
+            mediaStateStatus: MediaStateStatus.done, medias: request.result));
   }
 
   void setTextEditingController(TextEditingController controller) {

@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:filesize/filesize.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get/get.dart';
@@ -12,8 +13,6 @@ import 'package:twake/utils/dateformatter.dart';
 import 'package:twake/utils/extensions.dart';
 import 'package:twake/widgets/common/shimmer_loading.dart';
 
-const _fileTileHeight = 76.0;
-
 typedef OnTap = void Function(dynamic file);
 
 class FileChannelTile extends StatefulWidget {
@@ -21,12 +20,16 @@ class FileChannelTile extends StatefulWidget {
   final String senderName;
   final OnTap? onTap;
   final MessageFile? messageFile;
+  final bool onlyImage;
+  final double fileTileHeight;
 
   FileChannelTile(
       {required this.fileId,
       required this.senderName,
       this.onTap,
-      this.messageFile})
+      this.messageFile,
+      this.onlyImage: false,
+      this.fileTileHeight: 76})
       : super(key: ValueKey(fileId));
 
   @override
@@ -62,7 +65,7 @@ class _FileTileState extends State<FileChannelTile> {
         borderRadius: BorderRadius.all(Radius.circular(8)),
         child: ShimmerLoading(
           width: double.maxFinite,
-          height: _fileTileHeight,
+          height: widget.fileTileHeight,
           isLoading: true,
           child: Container(),
         ),
@@ -80,18 +83,19 @@ class _FileTileState extends State<FileChannelTile> {
           margin: const EdgeInsets.only(bottom: 4.0),
           child: Row(children: [
             _buildFileHeader(file: file, messageFile: messageFile),
-            SizedBox(width: 12.0),
-            Expanded(
-              child: _buildFileInfo(file: file, messageFile: messageFile),
-            ),
+            if (!widget.onlyImage) SizedBox(width: 12.0),
+            if (!widget.onlyImage)
+              Expanded(
+                child: _buildFileInfo(file: file, messageFile: messageFile),
+              ),
           ]),
         ),
       );
 
   Widget _buildFileHeader({File? file, MessageFile? messageFile}) {
     return SizedBox(
-      width: _fileTileHeight,
-      height: _fileTileHeight,
+      width: widget.fileTileHeight,
+      height: widget.fileTileHeight,
       child: _buildThumbnail(file: file, messageFile: messageFile),
     );
   }
@@ -100,7 +104,7 @@ class _FileTileState extends State<FileChannelTile> {
     return GestureDetector(
       onTap: () {
         NavigatorService.instance.navigateToFilePreview(
-          channelId: Globals.instance.channelId!,
+          channelId: Globals.instance.channelId,
           file: file,
           messageFile: messageFile,
           enableDownload: true,
@@ -168,7 +172,7 @@ class _FileTileState extends State<FileChannelTile> {
                 style: Theme.of(context)
                     .textTheme
                     .headline1!
-                    .copyWith(fontWeight: FontWeight.w600, fontSize: 16)),
+                    .copyWith(fontWeight: FontWeight.w500, fontSize: 16)),
             overflow: TextOverflow.ellipsis,
             maxLines: 2),
         SizedBox(height: 4.0),
@@ -181,14 +185,38 @@ class _FileTileState extends State<FileChannelTile> {
               .headline1!
               .copyWith(fontWeight: FontWeight.w200, fontSize: 14),
         ),
-        Text(
-          DateFormatter.getVerboseDateTime(
-              messageFile == null ? file!.updatedAt : messageFile.createdAt),
-          textAlign: TextAlign.start,
-          style: Theme.of(context)
-              .textTheme
-              .headline1!
-              .copyWith(fontWeight: FontWeight.w200, fontSize: 14),
+        Row(
+          children: [
+            Text(
+              filesize(messageFile!.metadata.size),
+              textAlign: TextAlign.start,
+              style: Theme.of(context)
+                  .textTheme
+                  .headline1!
+                  .copyWith(fontWeight: FontWeight.w200, fontSize: 14),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4),
+              child: Container(
+                width: 5,
+                height: 5,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Theme.of(context).colorScheme.secondary,
+                ),
+              ),
+            ),
+            Text(
+              DateFormatter.getVerboseDateTime(messageFile == null
+                  ? file!.updatedAt
+                  : messageFile.createdAt),
+              textAlign: TextAlign.start,
+              style: Theme.of(context)
+                  .textTheme
+                  .headline1!
+                  .copyWith(fontWeight: FontWeight.w200, fontSize: 14),
+            ),
+          ],
         ),
       ],
     );
