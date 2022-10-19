@@ -1,8 +1,5 @@
-import 'dart:math';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
-import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/blocs/unread_messages_cubit/unread_messages_state.dart';
 import 'package:twake/models/message/message.dart';
 
@@ -21,15 +18,17 @@ abstract class BaseUnreadMessagesCubit extends Cubit<UnreadMessagesState> {
     emit(NoUnreadMessages());
   }
 
-  fetchUnreadMessages({required List<Message> messages, required bool isDirect});
+  fetchUnreadMessages(
+      {required List<Message> messages, required bool isDirect});
   listenNotOwnerMessage();
 }
 
 class ChannelUnreadMessagesCubit extends BaseUnreadMessagesCubit {
-  ChannelUnreadMessagesCubit({ChannelsCubit? channelsCubit, DirectsCubit? directsCubit})
+  ChannelUnreadMessagesCubit(
+      {ChannelsCubit? channelsCubit, DirectsCubit? directsCubit})
       : super(channelsCubit: channelsCubit) {
-        this._directsCubit = directsCubit;
-      }
+    this._directsCubit = directsCubit;
+  }
 
   DirectsCubit? _directsCubit;
 
@@ -38,12 +37,12 @@ class ChannelUnreadMessagesCubit extends BaseUnreadMessagesCubit {
     required bool isDirect,
   }) {
     int userLastAccess = 0;
-    if(isDirect) {
+    if (isDirect) {
       userLastAccess = _directsCubit!.selectedChannel?.userLastAccess ?? 0;
     } else {
       userLastAccess = _channelsCubit.selectedChannel?.userLastAccess ?? 0;
     }
-    
+
     messages.sort((a, b) => a.createdAt
         .compareTo(b.createdAt)); // sort message from oldest to latest
 
@@ -131,7 +130,8 @@ class ThreadUnreadMessagesCubit extends BaseUnreadMessagesCubit {
     }
   }
 
-  void fetchUnreadMessages({required List<Message> messages, required bool isDirect}) async {
+  void fetchUnreadMessages(
+      {required List<Message> messages, required bool isDirect}) async {
     if (_channelUnreadMessagesCubit.state is UnreadMessagesThreadFound) {
       final currentState =
           _channelUnreadMessagesCubit.state as UnreadMessagesThreadFound;

@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/companies_cubit/companies_cubit.dart';
@@ -156,7 +155,8 @@ class WorkspacesManagement extends StatelessWidget {
                               return WorkspaceTile(
                                 onTap: () => context
                                     .read<WorkspacesCubit>()
-                                    .selectWorkspace(workspaceId: workSpaceList[index].id),
+                                    .selectWorkspace(
+                                        workspaceId: workSpaceList[index].id),
                                 image: workSpaceList[index].logo ?? '',
                                 title: workSpaceList[index].name,
                                 selected: workspacesState.selected?.id ==

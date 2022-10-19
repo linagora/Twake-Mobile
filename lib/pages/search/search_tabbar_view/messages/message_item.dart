@@ -5,7 +5,6 @@ import 'package:twake/blocs/workspaces_cubit/workspaces_cubit.dart';
 import 'package:twake/blocs/workspaces_cubit/workspaces_state.dart';
 import 'package:twake/config/image_path.dart';
 import 'package:twake/models/message/message.dart';
-import 'package:twake/services/navigator_service.dart';
 import 'package:twake/services/service_bundle.dart';
 import 'package:twake/utils/dateformatter.dart';
 import 'package:twake/widgets/common/highlighted_text_widget.dart';
