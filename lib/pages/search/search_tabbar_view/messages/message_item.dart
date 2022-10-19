@@ -94,7 +94,11 @@ class MessageItem extends StatelessWidget {
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 4.0),
                               child: Image.asset(imageArrowRight,
-                                  width: 13, height: 12),
+                                  width: 13,
+                                  height: 12,
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .primaryContainer),
                             ),
                             Expanded(
                               child: Text(channel.name,

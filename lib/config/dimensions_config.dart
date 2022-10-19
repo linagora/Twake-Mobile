@@ -121,6 +121,21 @@ class Dim {
   }
 
   /// Convenience method for getting multiple of width multiplier
+  static double get wm10 {
+    return _blockWidth * 10;
+  }
+
+  /// Convenience method for getting multiple of width multiplier
+  static double get wm11 {
+    return _blockWidth * 11;
+  }
+
+  /// Convenience method for getting multiple of width multiplier
+  static double get wm30 {
+    return _blockWidth * 30;
+  }
+
+  /// Convenience method for getting multiple of width multiplier
   static double get hm2 {
     return _blockHeight * 2;
   }

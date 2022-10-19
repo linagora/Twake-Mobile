@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/blocs/file_cubit/upload/file_upload_cubit.dart';
 import 'package:twake/blocs/file_cubit/upload/file_upload_state.dart';
+import 'package:twake/blocs/message_animation_cubit/message_animation_cubit.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/models/file/file.dart';
@@ -29,11 +30,12 @@ class _ThreadPageState<T extends BaseChannelsCubit>
 
   bool isDirect = false;
 
-  GlobalKey _threadKey = GlobalKey();
+  late MessageAnimationCubit messageAnimationCubit;
 
   @override
   void initState() {
     autofocus = widget.autofocus;
+    messageAnimationCubit = MessageAnimationCubit();
     super.initState();
   }
 
@@ -48,6 +50,7 @@ class _ThreadPageState<T extends BaseChannelsCubit>
               .clearFileUploadingState(needToCancelInProcessingFile: true);
           return false;
         }
+        Get.find<MessageAnimationCubit>().resetAnimation();
         return true;
       },
       child: BlocBuilder<ThreadMessagesCubit, MessagesState>(
@@ -158,7 +161,7 @@ class _ThreadPageState<T extends BaseChannelsCubit>
                                 children: [
                                   PinnedMessageSheet(),
                                   ThreadMessagesList<ThreadMessagesCubit>(
-                                      key: _threadKey, parentChannel: channel),
+                                      parentChannel: channel),
                                   ComposeBar(
                                       autofocus: autofocus ||
                                           messagesState
@@ -211,7 +214,7 @@ class _ThreadPageState<T extends BaseChannelsCubit>
                         );
                       }),
                   LongPressMessageAnimation<ThreadMessagesCubit>(
-                      messagesListKey: _threadKey, isDirect: isDirect),
+                      isDirect: isDirect),
                 ]),
               );
             } else {

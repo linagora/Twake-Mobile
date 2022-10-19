@@ -30,23 +30,23 @@ class DateFormatter {
     return '${DateFormat('d MMM HH:mm').format(localDT)}';
   }
 
-  static String getVerboseDate(int timestamp) {
+  static String getVerboseDate(int timestamp, [bool lowercase = false]) {
     DateTime dateTime =
         DateTime.fromMillisecondsSinceEpoch(timestamp).toLocal();
     DateTime justNow = DateTime.now().subtract(Duration(minutes: 1));
     if (!dateTime.difference(justNow).isNegative) {
-      return 'Now';
+      return lowercase ? 'now' : 'Now';
     }
     DateTime yesterday = justNow.subtract(Duration(days: 1));
     if (dateTime.year == yesterday.year &&
         dateTime.month == yesterday.month &&
         dateTime.day == yesterday.day) {
-      return 'Yesterday';
+      return lowercase ? 'yesterday' : 'Yesterday';
     }
     if (dateTime.year == justNow.year &&
         dateTime.month == justNow.month &&
         dateTime.day == justNow.day) {
-      return 'Today';
+      return lowercase ? 'today' : 'Today';
     }
     return '${DateFormat('d MMM y').format(dateTime)}';
   }

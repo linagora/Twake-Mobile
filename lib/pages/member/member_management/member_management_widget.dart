@@ -9,7 +9,6 @@ import 'package:twake/blocs/channels_cubit/member_management_cubit/member_manage
 import 'package:twake/blocs/channels_cubit/new_direct_cubit/new_direct_cubit.dart';
 import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/models/account/account.dart';
-import 'package:twake/models/channel/channel.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/routing/app_router.dart';
 import 'package:twake/routing/route_paths.dart';
@@ -394,7 +393,12 @@ Widget modalSheet(
                   padding: const EdgeInsets.only(top: 35, bottom: 15),
                   child: GestureDetector(
                     behavior: HitTestBehavior.opaque,
-                    onTap: () {
+                    onTap: () async {
+                      // await pushOff(RoutePaths.homeWidget.path)
+                      Get.back();
+                      Get.back();
+                      Get.back();
+                      Get.back();
                       Get.find<NewDirectCubit>().newDirect([user]);
                     },
                     child: Row(

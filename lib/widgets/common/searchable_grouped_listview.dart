@@ -5,6 +5,7 @@ import 'package:sticky_grouped_list/sticky_grouped_list.dart';
 import 'package:twake/blocs/message_animation_cubit/message_animation_cubit.dart';
 
 import 'package:twake/models/message/message.dart';
+import 'package:twake/pages/chat/chat.dart';
 import 'package:twake/utils/dateformatter.dart';
 
 class SearchableChatView extends StatefulWidget {
@@ -88,18 +89,19 @@ class _SearchableChatViewState extends State<SearchableChatView> {
       itemScrollController: _controller,
       stickyHeaderBackgroundColor: Theme.of(context).scaffoldBackgroundColor,
       reverse: widget.reverse,
-      indexedItemBuilder: (context, message, index) {
+      indexedItemBuilder: (itemContext, message, index) {
         return widget.itemPositionListener != null
-            ? GestureDetector(
-                child: widget.indexedItemBuilder(context, message, index),
+            ? InkWell(
+                child: widget.indexedItemBuilder(itemContext, message, index),
                 onLongPress: () {
                   Get.find<MessageAnimationCubit>().startAnimation(
+                    messagesListContext: context,
                     longPressMessage: message,
-                    longPressIndex: index * 2,
+                    longPressIndex: index*2, // because separator or group separator also count as a element in list
                     itemPositionsListener: widget.itemPositionListener!,
                   );
                 })
-            : widget.indexedItemBuilder(context, message, index);
+            : widget.indexedItemBuilder(itemContext, message, index);
       },
     );
   }

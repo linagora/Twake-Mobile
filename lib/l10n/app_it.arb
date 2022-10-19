@@ -199,7 +199,7 @@
   "@firstMessageInChannelInfo": {},
   "reply": "Commento",
   "@reply": {},
-  "newReply": "Nuova risposta…",
+  "newReply": "Aa",
   "@newReply": {},
   "replyTo": "Rispondi a",
   "@replyTo": {},
@@ -612,5 +612,19 @@
   "unreadMessages": "Messaggi non letti",
   "@unreadMessages": {},
   "noCompanyFilesHeader": "Non ci sono ancora file caricati",
-  "@noCompanyFilesHeader": {}
+  "@noCompanyFilesHeader": {},
+  "typingMessage": "digitando un messaggio",
+  "@typingMessage": {},
+  "online": "online",
+  "@online": {},
+  "writingCount": "e altre {number} persone",
+  "@writingCount": {
+    "description": "users writing message counter",
+    "placeholders": {
+      "number": {
+        "type": "String",
+        "example": "Alexander, Diana and 3 more"
+      }
+    }
+  }
 }

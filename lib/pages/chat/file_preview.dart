@@ -44,7 +44,7 @@ class _FilePreviewState<T extends BaseChannelsCubit>
 
   @override
   Widget build(BuildContext context) {
-    final channel = (Get.find<T>().state as ChannelsLoadedSuccess).selected!;
+    final channel = (Get.find<T>().state as ChannelsLoadedSuccess).selected;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black,
@@ -52,15 +52,17 @@ class _FilePreviewState<T extends BaseChannelsCubit>
         titleSpacing: 0.0,
         shadowColor: Colors.grey[300],
         toolbarHeight: 60.0,
-        title: FilePreviewHeader(
-          isDirect: channel.isDirect,
-          channelName: channel.name,
-          avatars: channel.isDirect ? channel.avatars : const [],
-          fileName: messageFile == null
-              ? file!.metadata.name
-              : messageFile!.metadata.name,
-          channelIcon: Emojis.getByName(channel.icon ?? ''),
-        ),
+        title: channel != null
+            ? FilePreviewHeader(
+                isDirect: channel.isDirect,
+                channelName: channel.name,
+                avatars: channel.isDirect ? channel.avatars : const [],
+                fileName: messageFile == null
+                    ? file!.metadata.name
+                    : messageFile!.metadata.name,
+                channelIcon: Emojis.getByName(channel.icon ?? ''),
+              )
+            : SizedBox.shrink(),
         actions: [
           IconButton(
               onPressed: () {
@@ -118,7 +120,7 @@ class _FilePreviewState<T extends BaseChannelsCubit>
                 (fileDownloading) => fileDownloading.messageFile == null
                     ? fileDownloading.file!.id == file!.id
                     : fileDownloading.messageFile!.metadata.externalId ==
-                        file!.id);
+                        messageFile!.metadata.externalId);
           }
           return _buildDownloadIcon(file, messageFile, selectedFile);
         },
@@ -129,7 +131,7 @@ class _FilePreviewState<T extends BaseChannelsCubit>
                 (fileDownloading) => fileDownloading.messageFile == null
                     ? fileDownloading.file!.id == file!.id
                     : fileDownloading.messageFile!.metadata.externalId ==
-                        file!.id);
+                        messageFile!.metadata.externalId);
           }
           if (selectedFile != null) {
             if (selectedFile.downloadStatus ==

@@ -1,12 +1,11 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:tuple/tuple.dart';
 import 'package:twake/models/attachment/attachment.dart';
+import 'package:twake/models/message/message_link.dart';
 import 'package:twake/utils/emojis.dart';
-import 'package:twake/utils/utilities.dart';
 import 'package:twake/widgets/common/file_tile.dart';
-import 'package:twake/widgets/common/url_preview.dart';
+import 'package:twake/widgets/common/preview_link_content_chat.dart';
 import 'package:twake/widgets/common/user_mention.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -583,20 +582,44 @@ class TwacodeRenderer {
   List<dynamic> twacode;
   List<InlineSpan> spans = [];
   List<dynamic>? fileIds = [];
+  List<dynamic>? messageLinks;
+  bool isLimitedSize;
 
   TwacodeRenderer({
     required this.twacode,
     required this.fileIds,
+    required this.messageLinks,
     required TextStyle parentStyle,
+    this.isLimitedSize: false,
     double userUniqueColor = 0.0,
   }) {
     spans = render(this.twacode, parentStyle, userUniqueColor,
-        fileIds: this.fileIds);
+        fileIds: this.fileIds,
+        firstMessageLink: messageLinks != null && messageLinks!.isNotEmpty
+            ? messageLinks![0]
+            : null);
+  }
+  RichText get message {
+    return RichText(
+      overflow: isLimitedSize ? TextOverflow.ellipsis : TextOverflow.visible,
+      text: TextSpan(
+        children: this.spans,
+      ),
+    );
   }
 
   TextStyle getStyle(
       TType type, TextStyle parentStyle, double userUniqueColor) {
     TextStyle style;
+    TextStyle linkStyle = parentStyle.color == Colors.black
+        ? TextStyle(
+            color: Colors.blue,
+            decoration: TextDecoration.underline,
+          )
+        : TextStyle(
+            color: Colors.white,
+            decoration: TextDecoration.underline,
+          );
     switch (type) {
       case TType.InlineCode:
         style = TextStyle(
@@ -668,16 +691,10 @@ class TwacodeRenderer {
         break;
 
       case TType.Url:
+        style = linkStyle;
+        break;
       case TType.Link:
-        style = parentStyle.color == Colors.black
-            ? TextStyle(
-                color: Colors.blue,
-                decoration: TextDecoration.underline,
-              )
-            : TextStyle(
-                color: Colors.white,
-                decoration: TextDecoration.underline,
-              );
+        style = linkStyle;
         break;
 
       case TType.Attachment:
@@ -689,15 +706,7 @@ class TwacodeRenderer {
         break;
 
       case TType.Email:
-        style = parentStyle.color == Colors.black
-            ? TextStyle(
-                color: Colors.blue,
-                decoration: TextDecoration.underline,
-              )
-            : TextStyle(
-                color: Colors.white,
-                decoration: TextDecoration.underline,
-              );
+        style = linkStyle;
         break;
 
       case TType.Unknown:
@@ -714,14 +723,6 @@ class TwacodeRenderer {
     return style;
   }
 
-  RichText get message {
-    return RichText(
-      text: TextSpan(
-        children: this.spans,
-      ),
-    );
-  }
-
   RichText get messageOnSwipe {
     return RichText(
       text: TextSpan(children: this.spans),
@@ -732,7 +733,7 @@ class TwacodeRenderer {
 
   List<InlineSpan> render(
       List<dynamic> twacode, TextStyle parentStyle, double userUniqueColor,
-      {List<dynamic>? fileIds}) {
+      {List<dynamic>? fileIds, MessageLink? firstMessageLink}) {
     List<InlineSpan> spans = [];
 
     for (int i = 0; i < twacode.length; i++) {
@@ -747,10 +748,12 @@ class TwacodeRenderer {
           ),
         );
       } else if (twacode[i] is List) {
-        spans.addAll(render(twacode[i], parentStyle, userUniqueColor));
+        spans.addAll(render(twacode[i], parentStyle, userUniqueColor,
+            firstMessageLink: firstMessageLink));
       } else if (twacode[i] is Map && twacode[i]['type'] == 'twacode') {
         spans.addAll(
-          render(twacode[i]['elements'], parentStyle, userUniqueColor),
+          render(twacode[i]['elements'], parentStyle, userUniqueColor,
+              firstMessageLink: firstMessageLink),
         );
       } else if (twacode[i] is Map) {
         final t = twacode[i];
@@ -892,7 +895,8 @@ class TwacodeRenderer {
           );
         } else if (type == TType.Attachment &&
             (t['content'] as List).isNotEmpty) {
-          final items = render(t['content'], parentStyle, userUniqueColor);
+          final items = render(t['content'], parentStyle, userUniqueColor,
+              firstMessageLink: firstMessageLink);
           final text = TextSpan(
             children: items,
             style: parentStyle.merge(
@@ -926,7 +930,8 @@ class TwacodeRenderer {
           InlineSpan text;
 
           if (t['content'] is List) {
-            final items = render(t['content'], parentStyle, userUniqueColor);
+            final items = render(t['content'], parentStyle, userUniqueColor,
+                firstMessageLink: firstMessageLink);
             text = TextSpan(
               children: items,
               style: parentStyle.merge(
@@ -976,7 +981,8 @@ class TwacodeRenderer {
               t['context']
             ]; // I know, I know, it cannot be uglier
           }
-          final items = render(t['content'], parentStyle, userUniqueColor);
+          final items = render(t['content'], parentStyle, userUniqueColor,
+              firstMessageLink: firstMessageLink);
           spans.add(
             TextSpan(
               children: items,
@@ -990,16 +996,39 @@ class TwacodeRenderer {
           //
           // spans.add(WidgetSpan(child: widget));
         } else if (type == TType.Url) {
-          final url = Utilities.preprocessString(t['url']);
-          final content = Utilities.preprocessString(t['content']);
-          final launchUrl =
-              url.isNotEmpty ? url : (content.isNotEmpty ? content : '');
           spans.add(
-            WidgetSpan(
-              child: UrlPreview(
-                url: launchUrl,
-                textStyle: getStyle(type, parentStyle, userUniqueColor),
+            TextSpan(
+              text: '\n',
+              style: getStyle(TType.LineBreak, parentStyle, userUniqueColor),
+            ),
+          );
+
+          spans.add(
+            TextSpan(
+                text: t['content'],
+                style: getStyle(TType.Url, parentStyle, userUniqueColor),
+                recognizer: TapGestureRecognizer()
+                  ..onTap = () async {
+                    Uri myUri = Uri.parse(t['content']);
+                    if (await canLaunchUrl(myUri)) {
+                      await launchUrl(
+                        myUri,
+                      );
+                    }
+                  }),
+          );
+          if (firstMessageLink != null &&
+              firstMessageLink.url == t['content']) {
+            spans.add(
+              WidgetSpan(
+                child: PreviewLinkContentChat(messageLink: firstMessageLink),
               ),
+            );
+          }
+          spans.add(
+            TextSpan(
+              text: '\n',
+              style: getStyle(TType.LineBreak, parentStyle, userUniqueColor),
             ),
           );
         } else if (type == TType.Link) {
@@ -1009,10 +1038,10 @@ class TwacodeRenderer {
               text: (t['content'] as String).split(']').first,
               recognizer: TapGestureRecognizer()
                 ..onTap = () async {
-                  if (await canLaunch(url)) {
-                    await launch(
-                      url,
-                      // forceSafariVC: true,
+                  Uri myUri = Uri.parse(url);
+                  if (await canLaunchUrl(myUri)) {
+                    await launchUrl(
+                      myUri,
                     );
                   }
                 }));
@@ -1021,7 +1050,8 @@ class TwacodeRenderer {
               text: '\n',
               style: getStyle(TType.LineBreak, parentStyle, userUniqueColor)));
         } else if (t['content'] is List) {
-          final items = render(t['content'], parentStyle, userUniqueColor);
+          final items = render(t['content'], parentStyle, userUniqueColor,
+              firstMessageLink: firstMessageLink);
           spans.add(
             TextSpan(
               children: items,
@@ -1081,33 +1111,59 @@ class TwacodeRenderer {
       }
     }
     if (fileIds != null && fileIds.isNotEmpty) {
-      final listFileTile = appendFile(fileIds, parentStyle);
-      spans.add(WidgetSpan(child: const Text("         ")));
-      spans.add(WidgetSpan(child: listFileTile));
+      if (!isLimitedSize) spans.add(WidgetSpan(child: const Text("         ")));
+      spans.add(WidgetSpan(child: appendFile(fileIds, parentStyle)));
     }
     return spans;
   }
 
   Widget appendFile(List<dynamic> fileIds, TextStyle parentStyle) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 16.0, top: 8),
-      child: Column(
-        children: fileIds.map((element) {
-          // element may be a string when loaded from local DB first time
-          // or it could be a File after editing
-          if (element is String && element.isNotEmpty) {
-            return FileTile(
-                fileId: element,
-                isMyMessage: parentStyle.color == Colors.black ? false : true);
-          } else if (element is Attachment) {
-            return FileTile(
-                fileId: element.metadata.externalId.id,
-                isMyMessage: parentStyle.color == Colors.black ? false : true);
-          } else {
-            return SizedBox.shrink();
-          }
-        }).toList(),
-      ),
+      margin: const EdgeInsets.only(bottom: 2.0, top: 2),
+      child: isLimitedSize
+          ? (fileIds.first is String && fileIds.first.isNotEmpty)
+              ? FileTile(
+                  fileId: fileIds.first,
+                  isMyMessage: parentStyle.color == Colors.black ? false : true,
+                  isLimitedSize: isLimitedSize,
+                )
+              : (fileIds.first is Attachment)
+                  ? FileTile(
+                      fileId: fileIds.first.metadata.externalId.id,
+                      isMyMessage:
+                          parentStyle.color == Colors.black ? false : true,
+                      isLimitedSize: isLimitedSize,
+                    )
+                  : (fileIds.first.containsKey("metadata"))
+                      ? FileTile(
+                          fileId: fileIds.first["metadata"]["external_id"]
+                              ["id"],
+                          isMyMessage:
+                              parentStyle.color == Colors.black ? false : true,
+                          isLimitedSize: isLimitedSize,
+                        )
+                      : SizedBox.shrink()
+          : Column(
+              children: fileIds.map((element) {
+                // element may be a string when loaded from local DB first time
+                // or it could be a File after editing
+                if (element is String && element.isNotEmpty) {
+                  return FileTile(
+                    fileId: element,
+                    isMyMessage:
+                        parentStyle.color == Colors.black ? false : true,
+                  );
+                } else if (element is Attachment) {
+                  return FileTile(
+                    fileId: element.metadata.externalId.id,
+                    isMyMessage:
+                        parentStyle.color == Colors.black ? false : true,
+                  );
+                } else {
+                  return SizedBox.shrink();
+                }
+              }).toList(),
+            ),
     );
   }
 }

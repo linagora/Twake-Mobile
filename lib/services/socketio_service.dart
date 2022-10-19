@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:logger/logger.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:twake/models/globals/globals.dart';
 import 'service_bundle.dart';
@@ -13,12 +14,18 @@ class SocketIOService {
 
   StreamController<SocketIOResource> _resourceStream =
       StreamController.broadcast();
-
   StreamController<SocketIOEvent> _eventStream = StreamController.broadcast();
   StreamController<bool> _reconnectionStream = StreamController.broadcast();
+  StreamController<SocketIOWritingEvent> _writingEventStream =
+      StreamController.broadcast();
+  StreamController<List<dynamic>> _onlineUserStream =
+      StreamController.broadcast();
 
+  Stream<List<dynamic>> get onlineUserStream => _onlineUserStream.stream;
   Stream<bool> get socketIOReconnectionStream => _reconnectionStream.stream;
   Stream<SocketIOEvent> get eventStream => _eventStream.stream;
+  Stream<SocketIOWritingEvent> get writingEventStream =>
+      _writingEventStream.stream;
   Stream<SocketIOResource> get resourceStream => _resourceStream.stream;
 
   factory SocketIOService({required bool reset}) {
@@ -100,14 +107,44 @@ class SocketIOService {
     _socket.emit(IOEvent.join, {'name': room, 'token': 'twake'});
   }
 
+  void subscribeToOnlineStatus(
+      {required String room, required String userRoom}) async {
+    _socket.emit(IOEvent.join, {'name': room, 'token': Globals.instance.token});
+    _socket.emit(
+        IOEvent.join, {'name': userRoom, 'token': Globals.instance.token});
+  }
+
+  void emitEvent(dynamic data) async {
+    _socket.emit(IOEvent.event, data);
+  }
+
+  void emitEventOnlineStatus(Map<String, dynamic> data) async {
+    _socket.emitWithAck('online:get', data, ack: (data) {
+      if (data != null) {
+        if ((data as Map<String, dynamic>).containsKey('data')) {
+          (data['data'] as List<dynamic>).forEach((element) {
+            _onlineUserStream.add(element);
+          });
+        }
+      }
+    });
+  }
+
+  void setOnlineStatus(List<String> data) async {
+    _socket.emit('online:set', data);
+  }
+
   void unsubscribe({required String room}) {
     _socket.emit(IOEvent.leave, {'name': room, 'token': 'twake'});
   }
 
   void _handleEvent(data) {
     // Logger().v('GOT EVENT: $data');
-    final event = SocketIOEvent.fromJson(json: data);
-    _eventStream.sink.add(event);
+    if (data['data'].containsKey('type')) {
+      _writingEventStream.sink.add(SocketIOWritingEvent.fromJson(json: data));
+    } else {
+      _eventStream.sink.add(SocketIOEvent.fromJson(json: data));
+    }
   }
 
   void _handleResource(data) {
@@ -143,6 +180,8 @@ class SocketIOService {
     await _eventStream.close();
     await _resourceStream.close();
     await _reconnectionStream.close();
+    await _writingEventStream.close();
+    await _onlineUserStream.close();
   }
 
   void disconnect() {

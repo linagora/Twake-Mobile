@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
+import 'package:twake/blocs/quote_message_cubit/quote_message_cubit.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/models/message/message.dart';
 import 'package:twake/pages/chat/empty_chat_container.dart';
@@ -28,22 +29,21 @@ class MessagesGroupedList extends StatefulWidget {
 }
 
 class _MessagesGroupedListState extends State<MessagesGroupedList> {
-  bool isTop = false;
 
   @override
   Widget build(BuildContext context) {
-    return NotificationListener<ScrollNotification>(
+    return NotificationListener<ScrollEndNotification>(
         onNotification: (scrollInfo) {
           // when user scroll out of viewport
           if (scrollInfo.metrics.atEdge) {
-            isTop = scrollInfo.metrics.pixels == 0;
-            if (isTop) {
-              Get.find<ChannelMessagesCubit>().fetchBefore(
+            final isBottom = scrollInfo.metrics.pixels == 0;
+            if (isBottom) {
+              Get.find<ChannelMessagesCubit>().fetchAfter(
                 channelId: Globals.instance.channelId!,
                 isDirect: widget.parentChannel.isDirect,
               );
             } else {
-              Get.find<ChannelMessagesCubit>().fetchAfter(
+              Get.find<ChannelMessagesCubit>().fetchBefore(
                 channelId: Globals.instance.channelId!,
                 isDirect: widget.parentChannel.isDirect,
               );
@@ -149,6 +149,7 @@ class _ChatViewState extends State<_ChatView> {
                     height: 25,
                     child: Image.asset(
                       'assets/images/reply.png',
+                      color: Theme.of(context).colorScheme.surface,
                     ),
                   ),
                   SizedBox(
@@ -157,11 +158,13 @@ class _ChatViewState extends State<_ChatView> {
                 ],
               ),
               onTap: (CompletionHandler handler) async {
-                await NavigatorService.instance.navigate(
-                  channelId: message.channelId,
-                  threadId: message.id,
-                  reloadThreads: false,
-                );
+                widget.parentChannel.isDirect
+                    ? Get.find<QuoteMessageCubit>().addQuoteMessage(message)
+                    : await NavigatorService.instance.navigate(
+                        channelId: message.channelId,
+                        threadId: message.id,
+                        reloadThreads: false,
+                      );
                 _swipeActionController.closeAllOpenCell();
               },
               color: Colors.transparent),

@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/blocs/search_cubit/search_cubit.dart';
 import 'package:twake/blocs/search_cubit/search_state.dart';
+import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/pages/search/search_settings.dart';
 import 'package:twake/pages/search/search_tabbar_view/channels/channel_item.dart';
 import 'package:twake/pages/search/search_tabbar_view/channels/chats_status_informer.dart';
@@ -12,6 +13,8 @@ import 'package:twake/pages/search/search_tabbar_view/channels/recent_channel_it
 import 'package:twake/utils/translit.dart';
 
 class SearchChatsView extends StatefulWidget {
+  final bool isAllTab;
+  SearchChatsView({this.isAllTab: false});
   @override
   State<SearchChatsView> createState() => _SearchChatsViewState();
 }
@@ -30,51 +33,66 @@ class _SearchChatsViewState extends State<SearchChatsView>
     return BlocBuilder<SearchCubit, SearchState>(
       bloc: Get.find<SearchCubit>(),
       builder: (context, state) {
+        final bool isShowChatSection =
+            widget.isAllTab && state.searchTerm.isNotEmpty
+                ? true
+                : widget.isAllTab && state.searchTerm.isEmpty
+                    ? false
+                    : true;
         if (state.chatsStateStatus == ChatsStateStatus.done &&
             state.chats.isEmpty) {
-          return ChatsStatusInformer(
-              status: state.chatsStateStatus,
-              searchTerm: state.searchTerm,
-              onResetTap: () => Get.find<SearchCubit>().resetSearch());
+          return widget.isAllTab
+              ? SizedBox.shrink()
+              : ChatsStatusInformer(
+                  status: state.chatsStateStatus,
+                  searchTerm: state.searchTerm,
+                  onResetTap: () => Get.find<SearchCubit>().resetSearch());
         }
 
         if (state.chatsStateStatus == ChatsStateStatus.done) {
-          return SizedBox.expand(
-            child: ListView(children: [
-              if (state.searchTerm.isEmpty)
-                RecentSection(recentChats: state.recentChats),
-              BlocBuilder<DirectsCubit, ChannelsState>(
-                  bloc: Get.find<DirectsCubit>(),
-                  builder: (context, directState) {
-                    List<Channel> direct = [];
+          return ListView(
+              shrinkWrap: true,
+              physics: widget.isAllTab
+                  ? NeverScrollableScrollPhysics()
+                  : ScrollPhysics(),
+              children: [
+                if (state.searchTerm.isEmpty)
+                  RecentSection(recentChats: state.recentChats),
+                if (isShowChatSection)
+                  BlocBuilder<DirectsCubit, ChannelsState>(
+                      bloc: Get.find<DirectsCubit>(),
+                      builder: (context, directState) {
+                        List<Channel> direct = [];
 
-                    if (directState is ChannelsLoadedSuccess) {
-                      direct = state.searchTerm.isEmpty
-                          ? directState.channels
-                          : directState.channels.where((channel) {
-                              return channel.name
-                                      .toLowerCase()
-                                      .contains(state.searchTerm) ||
-                                  channel.name.toLowerCase().contains(
-                                      translitCyrillicToLatin(
-                                          state.searchTerm));
-                            }).toList();
-                    }
+                        if (directState is ChannelsLoadedSuccess) {
+                          direct = state.searchTerm.isEmpty
+                              ? directState.channels
+                              : directState.channels.where((channel) {
+                                  return channel.name
+                                          .toLowerCase()
+                                          .contains(state.searchTerm) ||
+                                      channel.name.toLowerCase().contains(
+                                          translitCyrillicToLatin(
+                                              state.searchTerm));
+                                }).toList();
+                        }
 
-                    return ChatSection(
-                      chats: state.chats,
-                      direct: direct,
-                      displayUsers: state.searchTerm.isNotEmpty,
-                    );
-                  }),
-            ]),
-          );
+                        return ChatSection(
+                          chats: state.chats,
+                          direct: direct,
+                          displayUsers: state.searchTerm.isNotEmpty,
+                          isAllTab: widget.isAllTab,
+                        );
+                      }),
+              ]);
         }
 
-        return ChatsStatusInformer(
-            status: state.chatsStateStatus,
-            searchTerm: state.searchTerm,
-            onResetTap: () => Get.find<SearchCubit>().resetSearch());
+        return widget.isAllTab
+            ? SizedBox.shrink()
+            : ChatsStatusInformer(
+                status: state.chatsStateStatus,
+                searchTerm: state.searchTerm,
+                onResetTap: () => Get.find<SearchCubit>().resetSearch());
       },
     );
   }
@@ -103,8 +121,11 @@ class RecentSection extends StatelessWidget {
                     .headline6!
                     .copyWith(fontSize: 15.0, fontWeight: FontWeight.w600)),
           ),
-          Expanded(
+          SizedBox(
+            height: 115,
+            width: Dim.maxScreenWidth,
             child: ListView.builder(
+              physics: ScrollPhysics(),
               padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
               scrollDirection: Axis.horizontal,
               itemCount: recentChats.length < displayLimitOfRecentChats
@@ -131,11 +152,13 @@ class ChatSection extends StatelessWidget {
   final List<Channel> chats;
   final List<Channel> direct;
   final bool displayUsers;
+  final bool isAllTab;
 
   const ChatSection(
       {Key? key,
       required this.chats,
       required this.direct,
+      required this.isAllTab,
       required this.displayUsers})
       : super(key: key);
 
@@ -165,7 +188,7 @@ class ChatSection extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 15),
           itemCount: list.length,
           shrinkWrap: true,
-          physics: ScrollPhysics(),
+          physics: isAllTab ? NeverScrollableScrollPhysics() : ScrollPhysics(),
           itemBuilder: (context, index) {
             final item = list[index];
 

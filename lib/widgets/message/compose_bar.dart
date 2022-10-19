@@ -7,7 +7,6 @@ import 'package:twake/blocs/camera_cubit/camera_cubit.dart';
 import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/blocs/file_cubit/file_transition_cubit.dart';
 import 'package:twake/blocs/file_cubit/upload/file_upload_cubit.dart';
-import 'package:twake/blocs/file_cubit/upload/file_upload_state.dart';
 import 'package:twake/blocs/gallery_cubit/gallery_cubit.dart';
 import 'package:twake/blocs/mentions_cubit/mentions_cubit.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
@@ -17,9 +16,11 @@ import 'package:twake/models/file/message_file.dart';
 import 'package:twake/models/file/upload/file_uploading.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/pages/chat/gallery/gallery_view.dart';
+import 'package:twake/repositories/messages_repository.dart';
 import 'package:twake/utils/constants.dart';
 import 'package:twake/utils/extensions.dart';
 import 'package:twake/utils/utilities.dart';
+import 'package:twake/widgets/common/link_content_preview_input.dart';
 import 'package:twake/widgets/common/twake_alert_dialog.dart';
 import 'package:twake/widgets/sheets/mention_sheet.dart';
 
@@ -45,7 +46,6 @@ class _ComposeBar extends State<ComposeBar> {
   bool _emojiVisible = false;
   bool _forceLooseFocus = false;
   bool _canSend = false;
-  bool _canSendFiles = false;
 
   final _focusNode = FocusNode();
   final _controller = TextEditingController();
@@ -55,7 +55,6 @@ class _ComposeBar extends State<ComposeBar> {
   void initState() {
     super.initState();
 
-    widget.onTextUpdated(widget.initialText ?? '', context);
     if (widget.initialText?.isNotReallyEmpty ?? false) {
       _controller.text = widget.initialText!; // possibly retrieved from cache.
       setState(() {
@@ -72,7 +71,6 @@ class _ComposeBar extends State<ComposeBar> {
 
     _controller.addListener(() {
       if (_controller.selection.base.offset < 0) return;
-
       String text = _controller.text;
       text = text.substring(0, _controller.selection.base.offset);
       if (_userMentionRegex.hasMatch(text)) {
@@ -151,10 +149,13 @@ class _ComposeBar extends State<ComposeBar> {
                 attachments: attachments,
                 isDirect: channel == null ? true : channel.isDirect,
               );
-        // start clearing
-        Get.find<FileUploadCubit>().closeListUploadingStream();
-        Get.find<FileUploadCubit>().clearFileUploadingState();
-        Get.find<FileTransitionCubit>().fileTransitionFinished();
+        // start cleari
+        if (hasUploadedFileInStack) {
+          Get.find<ChannelMessagesCubit>().removeFromState(dummyId);
+          Get.find<FileUploadCubit>().closeListUploadingStream();
+          Get.find<FileUploadCubit>().clearFileUploadingState();
+          Get.find<FileTransitionCubit>().fileTransitionFinished();
+        }
       }
 
       if (hasUploadedFileInStack &&
@@ -245,80 +246,74 @@ class _ComposeBar extends State<ComposeBar> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<ThreadMessagesCubit, MessagesState>(
-      bloc: Get.find<ThreadMessagesCubit>(),
-      listener: (context, state) {
-        swipeRequestFocus(false);
-      },
-      child: WillPopScope(
-        onWillPop: onBackPress,
-        child: Column(
-          children: [
-            MentionSheet(onTapMention: mentionReplace),
-            TextInput(
-              controller: _controller,
-              scrollController: _scrollController,
-              focusNode: _focusNode,
-              autofocus: widget.autofocus,
-              toggleEmojiBoard: toggleEmojiBoard,
-              emojiVisible: _emojiVisible,
-              onMessageSend: widget.onMessageSend,
-              canSend: _canSend,
-            ),
-            Offstage(
-              offstage: !_emojiVisible,
-              child: Container(
-                height: 250,
-                child: EmojiPicker(
-                  onEmojiSelected: (cat, emoji) {
-                    _controller.text += emoji.emoji;
-                    _setSendButtonState(stateWithoutFileUploading: true);
-                  },
-                  config: Config(
-                    columns: 7,
-                    emojiSizeMax: 32.0,
-                    verticalSpacing: 0,
-                    horizontalSpacing: 0,
-                    initCategory: Category.RECENT,
-                    bgColor: Theme.of(context).colorScheme.secondaryContainer,
-                    indicatorColor: Theme.of(context).colorScheme.surface,
-                    iconColor: Theme.of(context).colorScheme.secondary,
-                    iconColorSelected: Theme.of(context).colorScheme.surface,
-                    progressIndicatorColor:
-                        Theme.of(context).colorScheme.surface,
-                    showRecentsTab: true,
-                    recentsLimit: 28,
-                    noRecentsText: AppLocalizations.of(context)!.noRecents,
-                    noRecentsStyle: Theme.of(context)
-                        .textTheme
-                        .headline3!
-                        .copyWith(fontSize: 20),
-                    categoryIcons: const CategoryIcons(),
-                    buttonMode: ButtonMode.MATERIAL,
+    return Column(
+      children: [
+        LinkContentPreviewInput(controller: _controller),
+        BlocListener<ThreadMessagesCubit, MessagesState>(
+        bloc: Get.find<ThreadMessagesCubit>(),
+        listener: (context, state) {
+          swipeRequestFocus(false);
+        },
+        child: WillPopScope(
+          onWillPop: onBackPress,
+          child: Column(
+            children: [
+              MentionSheet(onTapMention: mentionReplace),
+              TextInput(
+                controller: _controller,
+                scrollController: _scrollController,
+                focusNode: _focusNode,
+                autofocus: widget.autofocus,
+                toggleEmojiBoard: toggleEmojiBoard,
+                emojiVisible: _emojiVisible,
+                onMessageSend: widget.onMessageSend,
+                canSend: _canSend,
+              ),
+              Offstage(
+                offstage: !_emojiVisible,
+                child: Container(
+                  height: 250,
+                  child: EmojiPicker(
+                    onEmojiSelected: (cat, emoji) {
+                      _controller.text += emoji.emoji;
+                      _setSendButtonState(stateWithoutFileUploading: true);
+                    },
+                    config: Config(
+                      columns: 7,
+                      emojiSizeMax: 32.0,
+                      verticalSpacing: 0,
+                      horizontalSpacing: 0,
+                      initCategory: Category.RECENT,
+                      bgColor: Theme.of(context).colorScheme.secondaryContainer,
+                      indicatorColor: Theme.of(context).colorScheme.surface,
+                      iconColor: Theme.of(context).colorScheme.secondary,
+                      iconColorSelected: Theme.of(context).colorScheme.surface,
+                      progressIndicatorColor:
+                          Theme.of(context).colorScheme.surface,
+                      showRecentsTab: true,
+                      recentsLimit: 28,
+                      noRecentsText: AppLocalizations.of(context)!.noRecents,
+                      noRecentsStyle: Theme.of(context)
+                          .textTheme
+                          .headline3!
+                          .copyWith(fontSize: 20),
+                      categoryIcons: const CategoryIcons(),
+                      buttonMode: ButtonMode.MATERIAL,
+                    ),
                   ),
                 ),
-              ),
-            )
-          ],
+              )
+            ],
+          ),
         ),
-      ),
+      ),]
     );
   }
 
-  void _setSendButtonState({bool stateWithoutFileUploading = false}) {
-    final uploadState = Get.find<FileUploadCubit>().state;
-    final listFileUploading =
-        Get.find<FileUploadCubit>().state.listFileUploading;
-    if (uploadState.fileUploadStatus == FileUploadStatus.inProcessing &&
-        listFileUploading.isNotEmpty) {
-      setState(() {
-        _canSend = _canSendFiles;
-      });
-    } else {
-      setState(() {
-        _canSend = stateWithoutFileUploading;
-      });
-    }
+  void _setSendButtonState({bool stateWithoutFileUploading: false}) {
+    setState(() {
+      _canSend = stateWithoutFileUploading;
+    });
   }
 }
 
@@ -351,7 +346,7 @@ class _TextInputState extends State<TextInput> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.only(top: 11.0, bottom: 11.0),
+      padding: EdgeInsets.only(bottom: 11.0),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -370,9 +365,9 @@ class _TextInputState extends State<TextInput> {
 
   _buildAttachment() {
     return IconButton(
-      constraints: BoxConstraints(
-        minHeight: 24.0,
-        minWidth: 24.0,
+      constraints: const BoxConstraints(
+        maxHeight: 24.0,
+        maxWidth: 24.0,
       ),
       padding: EdgeInsets.zero,
       icon: Image.asset(imageAddFile),
@@ -385,10 +380,7 @@ class _TextInputState extends State<TextInput> {
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.secondaryContainer,
-        borderRadius: BorderRadius.circular(30.0),
-        border: Border.all(
-          color: Theme.of(context).colorScheme.secondaryContainer,
-        ),
+        borderRadius: BorderRadius.circular(20.0),
       ),
       child: Stack(
         alignment: Alignment.centerRight,
@@ -397,7 +389,7 @@ class _TextInputState extends State<TextInput> {
           GestureDetector(
             onTap: widget.toggleEmojiBoard as void Function()?,
             child: Padding(
-              padding: const EdgeInsets.all(4.0),
+              padding: const EdgeInsets.only(right: 4, left: 4, bottom: 4),
               child: Image.asset(imageEmojiIcon, width: 24, height: 24),
             ),
           )
@@ -439,17 +431,17 @@ class _TextInputState extends State<TextInput> {
               .textTheme
               .headline2!
               .copyWith(fontSize: 17, fontWeight: FontWeight.w500),
-          border: OutlineInputBorder(
+          border: const OutlineInputBorder(
             borderSide: BorderSide(
               style: BorderStyle.none,
             ),
           ),
-          enabledBorder: OutlineInputBorder(
+          enabledBorder: const OutlineInputBorder(
             borderSide: BorderSide(
               style: BorderStyle.none,
             ),
           ),
-          focusedBorder: OutlineInputBorder(
+          focusedBorder: const OutlineInputBorder(
             borderSide: BorderSide(
               style: BorderStyle.none,
             ),
@@ -474,10 +466,10 @@ class _TextInputState extends State<TextInput> {
               }
             : null,
         child: Padding(
-          padding: const EdgeInsets.all(9.0),
+          padding: const EdgeInsets.all(8.0),
           child: SizedBox(
-            height: 38,
-            width: 38,
+            height: 36,
+            width: 36,
             child: widget.canSend
                 ? Get.isDarkMode
                     ? Image.asset(
@@ -525,7 +517,7 @@ class _TextInputState extends State<TextInput> {
         context: context,
         backgroundColor: Colors.transparent,
         isScrollControlled: true,
-        shape: RoundedRectangleBorder(
+        shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(
             top: Radius.circular(40),
           ),

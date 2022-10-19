@@ -18,13 +18,16 @@ import 'package:twake/blocs/magic_link_cubit/joining_cubit/joining_cubit.dart';
 import 'package:twake/blocs/mentions_cubit/mentions_cubit.dart';
 import 'package:twake/blocs/message_animation_cubit/message_animation_cubit.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
+import 'package:twake/blocs/online_status_cubit/online_status_cubit.dart';
 import 'package:twake/blocs/pinned_message_cubit/pinned_messsage_cubit.dart';
+import 'package:twake/blocs/quote_message_cubit/quote_message_cubit.dart';
 import 'package:twake/blocs/receive_file_cubit/receive_file_cubit.dart';
 import 'package:twake/blocs/registration_cubit/registration_cubit.dart';
 import 'package:twake/blocs/search_cubit/search_cubit.dart';
 import 'package:twake/blocs/theme_cubit/theme_cubit.dart';
 import 'package:twake/blocs/unread_messages_cubit/unread_messages_cubit.dart';
 import 'package:twake/blocs/workspaces_cubit/workspaces_cubit.dart';
+import 'package:twake/blocs/writing_cubit/writing_cubit.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/services/navigator_service.dart';
 import 'package:twake/utils/receive_sharing_file_manager.dart';
@@ -129,6 +132,15 @@ class HomeBinding implements Bindings {
 
     final messageAnimationCubit = MessageAnimationCubit();
     Get.put(messageAnimationCubit, permanent: true);
+
+    final quoteMessageCubitCubit = QuoteMessageCubit();
+    Get.put(quoteMessageCubitCubit, permanent: true);
+
+    final writingCubit = WritingCubit();
+    Get.put(writingCubit, permanent: true);
+
+    final onlineStatusCubit = OnlineStatusCubit();
+    Get.put(onlineStatusCubit, permanent: true);
 
     final searchCubit = SearchCubit.initWithRepository();
     Get.put(searchCubit, permanent: true);

@@ -41,7 +41,7 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
     }
     _channelsCubit = channelCubit;
 
-    if(directsCubit == null) {
+    if (directsCubit == null) {
       directsCubit = DirectsCubit();
     }
     _directsCubit = directsCubit;
@@ -62,9 +62,9 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
     bool empty: false,
   }) async {
     this.isDirect = isDirect;
-    if(isDirect) {
+    if (isDirect) {
       _baseChannelsCubit = _directsCubit;
-    }else {
+    } else {
       _baseChannelsCubit = _channelsCubit;
     }
 
@@ -97,7 +97,8 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
         messages: list,
         hash: list.fold(0, (acc, m) => acc + m.hash),
       ));
-      _unreadMessagesCubit.fetchUnreadMessages(messages: list, isDirect: isDirect);
+      _unreadMessagesCubit.fetchUnreadMessages(
+          messages: list, isDirect: isDirect);
 
       if (lastList.isEmpty && threadId == null) {
         emit(NoMessagesFound());
@@ -112,14 +113,17 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
     String? threadId,
     required bool isDirect,
   }) async {
+    // wait for previous fetch finish before continue
     if (this.state is! MessagesLoadSuccess) return;
-    if ((this.state as MessagesLoadSuccess).endOfHistory) return;
-
+    if ((this.state as MessagesLoadSuccess).endOfHistory) {
+      return;
+    }
     final state = this.state as MessagesLoadSuccess;
 
     emit(MessagesBeforeLoadInProgress(
       messages: state.messages,
       hash: state.hash,
+      endOfHistory: state.endOfHistory,
     ));
 
     final oldestMessage = state.messages.last;
@@ -136,13 +140,15 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
     // if user switched channel before the fetchBefore method is complete, abort
     // and just ignore the result
     if (channelId != Globals.instance.channelId) return;
-    final endOfHistory = messages.length <= 1;
 
-    // if (endOfHistory) {
-    //   // insert the dummy message for the endOfHistory widget
-    //   messages.insert(0, dummy(oldestMessage.createdAt - 1));
-    // }
-    state.messages.addAll(messages);
+    final endOfHistory = messages.length < 1;
+
+    if (endOfHistory) {
+      // insert the dummy message for the endOfHistory widget
+      messages.insert(0, dummy(oldestMessage.createdAt - 1));
+    }
+
+    state.messages.addAll(messages.where((message) => !state.messages.contains(message)));
 
     final newState = MessagesLoadSuccess(
       messages: state.messages,
@@ -168,6 +174,7 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
         emit(MessagesBeforeLoadInProgress(
           messages: state.messages,
           hash: state.hash,
+          endOfHistory: state.endOfHistory,
         ));
 
         final lastestMessage = state.messages.first;
@@ -189,7 +196,7 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
         final newState = MessagesLoadSuccess(
           messages: state.messages,
           hash: messages.fold(0, (acc, m) => acc + m.hash),
-          endOfHistory: false,
+          endOfHistory: state.endOfHistory,
         );
 
         emit(newState);
@@ -275,12 +282,12 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
     await for (final message in sendStream) {}
   }
 
-  Future<void> send({
-    String? originalStr,
-    List<dynamic> attachments: const [],
-    String? threadId,
-    bool isDirect: false,
-  }) async {
+  Future<void> send(
+      {String? originalStr,
+      List<dynamic> attachments: const [],
+      String? threadId,
+      bool isDirect: false,
+      Message? quoteMessage}) async {
     final prepared = TwacodeParser(originalStr ?? '').message;
     final fakeId = DateTime.now().millisecondsSinceEpoch.toString();
     Message message;
@@ -295,10 +302,11 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
         threadId: threadId ?? fakeId,
         isDirect: isDirect,
         now: DateTime.now().millisecondsSinceEpoch,
-        files: attachments);
+        files: attachments,
+        quoteMessage: quoteMessage);
 
     final state = this.state as MessagesLoadSuccess;
-    emit(MessageSendInProgress(messages: state.messages, hash: state.hash));
+    emit(MessageSendInProgress(messages: state.messages, hash: state.hash, endOfHistory: state.endOfHistory));
 
     await for (message in sendStream) {
       // user might have changed screen, so make sure we are still in
@@ -325,6 +333,7 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
         messages: messages,
         hash: hash + message.hash,
         latestMessage: messages.last,
+        endOfHistory: endOfHistory,
       ));
 
       //after message is send successfully mark channel as read
@@ -332,6 +341,31 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
     }
 
     _sendInProgress -= 1;
+  }
+
+  Future<void> sendLocal() async {
+    final message = _repository.sendLocal();
+
+    final messages = (this.state as MessagesLoadSuccess).messages;
+    final hash = (this.state as MessagesLoadSuccess).hash;
+    messages.add(message);
+
+    emit(MessagesLoadSuccess(
+      messages: messages,
+      hash: hash + message.hash,
+    ));
+  }
+
+  Future<void> removeFromState(String id) async {
+    final messages = (this.state as MessagesLoadSuccess).messages;
+    final hash = (this.state as MessagesLoadSuccess).hash;
+
+    messages.removeWhere((m) => m.id == id);
+
+    emit(MessagesLoadSuccess(
+      messages: messages,
+      hash: hash,
+    ));
   }
 
   void startEdit({required Message message}) async {
@@ -347,6 +381,7 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
       messages: s.messages,
       hash: s.hash,
       message: message,
+      endOfHistory: s.endOfHistory,
     ));
   }
 
@@ -434,7 +469,7 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
     _repository.react(message: message, reaction: unreacted ? '' : reaction);
   }
 
-  Future<void> delete({required Message message}) async {
+  Future<void> delete({required Message message, bool local: false}) async {
     if (this.state is! MessagesLoadSuccess) return;
 
     final messages = (this.state as MessagesLoadSuccess).messages;
@@ -448,6 +483,10 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
       endOfHistory: endOfHistory,
     ));
 
+    if (local) {
+      _repository.removeMessageLocal(messageId: message.id);
+      return;
+    }
     // Again, here we can use try except to undelete the message
     // if the request to API failed for some reason
     _repository.delete(messageId: message.id, threadId: message.threadId);
@@ -512,10 +551,12 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
           if (state is MessagesLoadSuccess) {
             final messages = (state as MessagesLoadSuccess).messages;
             final hash = (state as MessagesLoadSuccess).hash;
+            final endOfHistory = (state as MessagesLoadSuccess).endOfHistory;
             messages.removeWhere((m) => m.id == change.resource['id']);
             emit(MessagesLoadSuccess(
               messages: messages,
-              hash: hash - 1, // we only need to update hash in someway
+              hash: hash - 1,
+              endOfHistory: endOfHistory,  // we only need to update hash in someway
             ));
           }
           break;
@@ -532,10 +573,11 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
           if (state is MessagesLoadSuccess) {
             final messages = (state as MessagesLoadSuccess).messages;
             final hash = (state as MessagesLoadSuccess).hash;
+            final endOfHistory = (state as MessagesLoadSuccess).endOfHistory;
 
             // update channel read
             _baseChannelsCubit.markChannelRead(channelId: message.channelId);
-            
+
             // message is already present
             if (messages.any((m) => m.id == message.id)) {
               final index = messages.indexWhere((m) => m.id == message.id);
@@ -544,7 +586,8 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
 
               emit(MessagesLoadSuccess(
                 messages: messages,
-                hash: hash + 1, // we only need to update hash in someway
+                hash: hash + 1,
+                endOfHistory: endOfHistory, // we only need to update hash in someway
               ));
             } else {
               // update unread messages
@@ -556,6 +599,7 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
                 messages: messages,
                 hash: hash + message.hash,
                 latestMessage: message,
+                endOfHistory: endOfHistory,
               );
               emit(newState);
             }
@@ -588,8 +632,8 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
                   afterMessageId: latestMessage.id,
                   workspaceId:
                       isDirect! ? 'direct' : Globals.instance.workspaceId);
-                      
-              if(messages.isEmpty){
+
+              if (messages.isEmpty) {
                 continue;
               }
               Message newLatestMessage = messages.reduce((value, element) =>
@@ -597,14 +641,15 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
               if (newLatestMessage == latestMessage) {
                 continue;
               }
-              
+
               // remove lastest messages in current state because it's also in api
               currentState.messages.remove(latestMessage);
               currentState.messages.addAll(messages);
               emit(MessagesLoadSuccess(
                   messages: currentState.messages,
                   hash:
-                      currentState.messages.fold(0, (acc, m) => acc + m.hash)));
+                      currentState.messages.fold(0, (acc, m) => acc + m.hash),
+                      endOfHistory: currentState.endOfHistory));
             }
           } while (messages != null);
         }
@@ -645,6 +690,7 @@ class ChannelMessagesCubit extends BaseMessagesCubit {
           if (state is MessagesLoadSuccess) {
             final messages = (state as MessagesLoadSuccess).messages;
             final hash = (state as MessagesLoadSuccess).hash;
+            final endOfHistory = (state as MessagesLoadSuccess).endOfHistory;
 
             if (!messages.any((m) => m.id == change.resource['thread_id']))
               continue;
@@ -658,6 +704,7 @@ class ChannelMessagesCubit extends BaseMessagesCubit {
             emit(MessagesLoadSuccess(
               messages: messages,
               hash: hash - oldHash + message.hash,
+              endOfHistory: endOfHistory,
             ));
           }
           break;
@@ -668,6 +715,7 @@ class ChannelMessagesCubit extends BaseMessagesCubit {
           if (state is MessagesLoadSuccess) {
             final messages = (state as MessagesLoadSuccess).messages;
             final hash = (state as MessagesLoadSuccess).hash;
+            final endOfHistory = (state as MessagesLoadSuccess).endOfHistory;
 
             final message = await _repository.getMessageRemote(
               messageId: change.resource['thread_id'],
@@ -686,6 +734,7 @@ class ChannelMessagesCubit extends BaseMessagesCubit {
               hash:
                   hash + message.hash, // just update the hash to force rerender
               latestMessage: message,
+              endOfHistory: endOfHistory,
             );
 
             emit(newState);
@@ -702,9 +751,7 @@ class ThreadMessagesCubit extends BaseMessagesCubit {
   ThreadMessagesCubit(
       {MessagesRepository? repository,
       ThreadUnreadMessagesCubit? unreadMessageCubit})
-      : super(
-            repository: repository,
-            unreadMessagesCubit: unreadMessageCubit);
+      : super(repository: repository, unreadMessagesCubit: unreadMessageCubit);
 
   @override
   final _socketIOResourceStream = SynchronizationService

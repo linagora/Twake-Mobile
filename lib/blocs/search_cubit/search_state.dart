@@ -2,13 +2,14 @@ import 'package:equatable/equatable.dart';
 import 'package:twake/blocs/account_cubit/account_cubit.dart';
 import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/models/contacts/app_contact.dart';
+import 'package:twake/models/file/message_file.dart';
 import 'package:twake/repositories/search_repository.dart';
 
 enum ContactsStateStatus { init, loading, done, failed, noPermission }
 enum ChatsStateStatus { init, loading, done, failed }
 enum MessagesStateStatus { init, loading, done, failed }
-enum FilesStateStatus { init, loading, done, failed }
-enum MediaStateStatus { init, loading, done, failed }
+enum FilesStateStatus { init, loading, doneRecent, done, failed }
+enum MediaStateStatus { init, loading, doneRecent, done, failed }
 
 class SearchState extends Equatable {
   final String searchTerm;
@@ -25,8 +26,8 @@ class SearchState extends Equatable {
   final List<Channel> recentChats;
   final List<Channel> chats;
   final List<SearchMessage> messages;
-  final List<SearchFile> files;
-  final List<SearchMedia> medias;
+  final List<MessageFile> files;
+  final List<MessageFile> medias;
 
   const SearchState(
       {required this.searchTerm,
@@ -72,8 +73,8 @@ class SearchState extends Equatable {
     final MessagesStateStatus? messagesStateStatus,
     final FilesStateStatus? filesStateStatus,
     final MediaStateStatus? mediaStateStatus,
-    final List<SearchFile>? files,
-    final List<SearchMedia>? medias,
+    final List<MessageFile>? files,
+    final List<MessageFile>? medias,
   }) {
     return SearchState(
       searchTerm: searchTerm ?? this.searchTerm,

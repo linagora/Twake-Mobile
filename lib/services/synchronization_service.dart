@@ -37,11 +37,11 @@ class SynchronizationService {
         if (Globals.instance.companyId != null) {
           if (Globals.instance.workspaceId != null) {
             await subscribeForChannels(
-              companyId: Globals.instance.companyId!,
-              workspaceId: Globals.instance.workspaceId!);
+                companyId: Globals.instance.companyId!,
+                workspaceId: Globals.instance.workspaceId!);
           }
           await subscribeForChannels(
-            companyId: Globals.instance.companyId!, workspaceId: 'direct');
+              companyId: Globals.instance.companyId!, workspaceId: 'direct');
         }
 
         await subscribeToBadges();
@@ -195,6 +195,76 @@ class SynchronizationService {
       [Globals.instance.userId],
     );
 
+    _socketio.subscribe(room: room);
+  }
+
+  void subscribeToWriting() async {
+    if (!Globals.instance.isNetworkConnected)
+      throw Exception('Should not be called with no active connection');
+
+    final room = sprintf('/companies/%s/workspaces', [
+      Globals.instance.companyId,
+    ]);
+    _socketio.subscribe(room: room);
+  }
+
+  void subscribeToOnlineStatus() async {
+    if (!Globals.instance.isNetworkConnected)
+      throw Exception('Should not be called with no active connection');
+
+    final room = sprintf('/users/online/%s', [
+      Globals.instance.companyId,
+    ]);
+    final userRoom = sprintf('/users/%s', [
+      Globals.instance.userId,
+    ]);
+
+    _socketio.subscribeToOnlineStatus(room: room, userRoom: userRoom);
+  }
+
+  void getOnlineStatus(List<String> users) async {
+    if (!Globals.instance.isNetworkConnected)
+      throw Exception('Should not be called with no active connection');
+
+    final room = sprintf('/users/online/%s', [
+      Globals.instance.companyId,
+    ]);
+    final data = {'name': room, 'type': 'user:online', 'data': users};
+
+    _socketio.emitEventOnlineStatus(data);
+  }
+
+  void setOnlineStatus() async {
+    if (!Globals.instance.isNetworkConnected)
+      throw Exception('Should not be called with no active connection');
+
+    final List<String> data = [Globals.instance.userId ?? ""];
+
+    _socketio.setOnlineStatus(data);
+  }
+
+  void emitWritingEvent(WritingData writingData) async {
+    if (!Globals.instance.isNetworkConnected)
+      throw Exception('Should not be called with no active connection');
+
+    final room = sprintf('/companies/%s/workspaces', [
+      Globals.instance.companyId,
+    ]);
+
+    final event = SocketIOWritingEvent(name: room, data: writingData).toJson();
+    event["token"] = "twake";
+
+    _socketio.emitEvent(event);
+  }
+
+  void unSubscribeFromWriting() async {
+    if (!Globals.instance.isNetworkConnected)
+      throw Exception('Should not be called with no active connection');
+
+    final room = sprintf('/companies/%s/workspaces', [
+      Globals.instance.companyId,
+    ]);
+    // Subscribe, to new company
     _socketio.subscribe(room: room);
   }
 

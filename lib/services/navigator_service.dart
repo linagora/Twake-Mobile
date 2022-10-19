@@ -171,6 +171,7 @@ class NavigatorService {
       pinnedMessageCubit.getPinnedMessages(channelId, channel.isDirect);
 
       if (channel.isDirect) {
+        channelsCubit.clearSelection();
         directsCubit.selectChannel(channelId: channelId);
 
         Get.toNamed(RoutePaths.directMessages.path)?.then((_) {
@@ -200,7 +201,8 @@ class NavigatorService {
           ? RoutePaths.directMessageThread.path
           : RoutePaths.channelMessageThread.path;
 
-      Get.toNamed(path, arguments: [pinnedMessage, userLastAccessFromChat])?.then((_) {
+      Get.toNamed(path, arguments: [pinnedMessage, userLastAccessFromChat])
+          ?.then((_) {
         channelMessagesCubit.clearSelectedThread();
         threadMessagesCubit.reset();
       });
@@ -320,24 +322,39 @@ class NavigatorService {
   }
 
   Future<void> navigateToFilePreview({
-    required String channelId,
+    String? channelId,
     File? file,
     MessageFile? messageFile,
     bool? enableDownload,
     bool? isImage,
   }) async {
-    if (file == null && messageFile == null) return;
-    final channel = await directsCubit.getChannel(channelId: channelId);
-    if (channel.isDirect) {
+    if (channelId == null) {
       Get.toNamed(
         RoutePaths.directFilePreview.path,
         arguments: [file == null ? messageFile : file, enableDownload, isImage],
       );
     } else {
-      Get.toNamed(
-        RoutePaths.channelFilePreview.path,
-        arguments: [file == null ? messageFile : file, enableDownload, isImage],
-      );
+      if (file == null && messageFile == null) return;
+      final channel = await directsCubit.getChannel(channelId: channelId);
+      if (channel.isDirect) {
+        Get.toNamed(
+          RoutePaths.directFilePreview.path,
+          arguments: [
+            file == null ? messageFile : file,
+            enableDownload,
+            isImage
+          ],
+        );
+      } else {
+        Get.toNamed(
+          RoutePaths.channelFilePreview.path,
+          arguments: [
+            file == null ? messageFile : file,
+            enableDownload,
+            isImage
+          ],
+        );
+      }
     }
   }
 

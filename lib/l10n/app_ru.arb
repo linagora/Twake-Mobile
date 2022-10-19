@@ -149,7 +149,7 @@
   "@firstMessageInChannelInfo": {},
   "reply": "Комментировать",
   "@reply": {},
-  "newReply": "Новый ответ...",
+  "newReply": "Аа...",
   "@newReply": {},
   "edit": "Редактировать",
   "@edit": {},
@@ -600,5 +600,19 @@
   "unreadMessages": "Непрочитанные сообщения",
   "@unreadMessages": {},
   "noCompanyFilesHeader": "Загруженных файлов пока нет",
-  "@noCompanyFilesHeader": {}
+  "@noCompanyFilesHeader": {},
+  "typingMessage": "печатает сообщение",
+  "@typingMessage": {},
+  "online": "онлайн",
+  "@online": {},
+  "writingCount": "и еще {number}",
+  "@writingCount": {
+    "description": "users writing message counter",
+    "placeholders": {
+      "number": {
+        "type": "String",
+        "example": "Alexander, Diana and 3 more"
+      }
+    }
+  }
 }

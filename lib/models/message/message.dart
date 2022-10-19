@@ -3,6 +3,7 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:twake/data/local/type_constants.dart';
 import 'package:twake/models/base_model/base_model.dart';
 import 'package:twake/models/globals/globals.dart';
+import 'package:twake/models/message/message_link.dart';
 import 'package:twake/models/message/pinned_info.dart';
 import 'package:twake/utils/api_data_transformer.dart';
 import 'package:twake/utils/json.dart' as jsn;
@@ -19,6 +20,8 @@ class Message extends BaseModel {
     'files',
     'pinned_info',
     'last_replies',
+    'quote_message',
+    'links',
   ];
 
   final String id;
@@ -53,7 +56,6 @@ class Message extends BaseModel {
   String? firstName;
   String? lastName;
   String? picture;
-
   String? draft;
 
   @JsonKey(defaultValue: 1, name: 'is_read')
@@ -64,6 +66,9 @@ class Message extends BaseModel {
 
   @JsonKey(defaultValue: const [], name: 'last_replies')
   List<Message>? _lastReplies;
+
+  @JsonKey(name: 'quote_message')
+  Message? quoteMessage;
 
   List<Message>? get lastReplies => _lastReplies;
 
@@ -78,6 +83,14 @@ class Message extends BaseModel {
     }
     return null;
   }
+
+  @JsonKey(defaultValue: const [], name: 'links')
+  List<MessageLink>? _links;
+
+  List<MessageLink>? get links => _links;
+
+  bool get isMessageHasLinks =>
+      _links != null && _links!.isNotEmpty;
 
   int get hash {
     return this.id.hashCode +
@@ -94,26 +107,17 @@ class Message extends BaseModel {
                 ._lastReplies!
                 .fold(0, (prevReply, reply) => reply.hashCode + prevReply)
             : 0) +
-        this.reactions.fold(0, (acc, r) => r.count + acc) as int;
+                this.reactions.fold(0, (acc, r) => r.count + acc as int) +
+        (this._links != null
+            ? this
+                ._links!
+                .fold(0, (prevLink, link) => prevLink.hashCode + link.hashCode)
+            : 0) as int;
   }
 
   @override
   int get hashCode {
-    return this.id.hashCode +
-        this.text.hashCode +
-        this.responsesCount +
-        this.reactions.fold(0, (acc, r) => r.name.hashCode + acc) +
-        (this.files != null
-            ? this.files!.fold(0, (prevFile, file) => file.hashCode + prevFile)
-            : 0) +
-        this.delivery.hashCode +
-        this._isRead +
-        this.reactions.fold(0, (acc, r) => r.count + acc) +
-        (this._lastReplies != null
-            ? this
-                ._lastReplies!
-                .fold(0, (prevReply, reply) => reply.hashCode + prevReply)
-            : 0) as int;
+    return this.hash;
   }
 
   @override
@@ -141,7 +145,9 @@ class Message extends BaseModel {
 
   String get sender {
     if (this.firstName == null || this.lastName == null) {
-      return this.username!;
+      return (this.firstName == null && this.lastName == null)
+          ? ""
+          : this.username!;
     }
     return '$firstName $lastName';
   }
@@ -172,10 +178,17 @@ class Message extends BaseModel {
     this.lastName,
     this.picture,
     this.draft,
+    this.quoteMessage,
     List<Message>? lastReplies = const <Message>[],
-  }) : this._lastReplies = lastReplies;
+    List<MessageLink>? links = const <MessageLink>[],
+  }) {
+    this._lastReplies = lastReplies;
+    this._links = links;
+  }
 
   bool get isOwnerMessage => this.userId == Globals.instance.userId;
+
+  bool get isDeleted => this.subtype == MessageSubtype.deleted;
 
   factory Message.fromJson(
     Map<String, dynamic> json, {
