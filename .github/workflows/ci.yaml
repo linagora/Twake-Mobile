@@ -1,0 +1,108 @@
+on:
+  workflow_dispatch:
+  pull_request:
+    paths-ignore:
+      - ".github/**"
+
+name: CI
+
+jobs:
+  analyze-test:
+    name: Analyze and test
+    uses: ./.github/workflows/analyze-test.yaml
+
+  build-app:
+    name: Build app
+    needs:
+      - analyze-test
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      matrix:
+        include:
+          - os: android
+            runner: ubuntu-latest
+          - os: ios
+            runner: macos-latest
+    environment: dev
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "2.10.x"
+          channel: "stable"
+          cache: true
+          cache-key: deps-${{ hashFiles('**/pubspec.lock') }} # optional, change this to force refresh cache
+          cache-path: ${{ runner.tool_cache }}/flutter # optional, change this to specify the cache path
+
+      - name: Setup environment variables
+        env:
+          CAPTCHA_TOKEN: ${{ secrets.CAPTCHA_TOKEN }}
+          API_KEY: ${{ secrets.API_KEY }}
+          APP_ID: ${{ secrets.APP_ID }}
+          MESSAGE_SENDER_ID: ${{ secrets.MESSAGE_SENDER_ID }}
+          PROJECT_ID: ${{ secrets.PROJECT_ID }}
+        run: |
+          echo "CAPTCHA_TOKEN=$CAPTCHA_TOKEN" >> .env
+          echo "API_KEY=$API_KEY" >> .firebase.env
+          echo "APP_ID=$APP_ID" >> .firebase.env
+          echo "MESSAGE_SENDER_ID=$MESSAGE_SENDER_ID" >> .firebase.env
+          echo "PROJECT_ID=$PROJECT_ID" >> .firebase.env
+
+      - name: Setup Android environment
+        if: matrix.os == 'android'
+        env:
+          GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
+          PLAY_STORE_UPLOAD_KEY_BASE64: ${{ secrets.PLAY_STORE_UPLOAD_KEY_BASE64 }}
+          PLAY_STORE_KEY_INFO_BASE64: ${{ secrets.PLAY_STORE_KEY_INFO_BASE64 }}
+        run: |
+          echo "$GOOGLE_SERVICES_JSON" > app/google-services.json
+          echo "$PLAY_STORE_UPLOAD_KEY_BASE64" | base64 --decode > app/android.jks
+          echo "$PLAY_STORE_KEY_INFO_BASE64" | base64 --decode > key.properties
+        working-directory: ${{ matrix.os }}
+
+      - name: Setup Java
+        if: matrix.os == 'android'
+        uses: actions/setup-java@v3
+        with:
+          distribution: "temurin"
+          java-version: "11"
+
+      - name: Setup iOS environment
+        if: matrix.os == 'ios'
+        env:
+          GOOGLE_SERVICES_PLIST: ${{ secrets.GOOGLE_SERVICES_PLIST }}
+          CERTIFICATE_BASE64: ${{ secrets.CERTIFICATE_BASE64 }}
+          PROVISION_PROFILE_BASE64: ${{ secrets.PROVISION_PROFILE_BASE64 }}
+          SHAREEXT_PROVISION_PROFILE_BASE64: ${{ secrets.SHAREEXT_PROVISION_PROFILE_BASE64 }}
+        run: |
+          echo -n "$GOOGLE_SERVICES_PLIST" > Runner/GoogleService-Info.plist
+          echo -n "$CERTIFICATE_BASE64" | base64 --decode --output cert.p12
+          echo -n "$PROVISION_PROFILE_BASE64" | base64 --decode --output buildpp.mobileprovision
+          echo -n "$SHAREEXT_PROVISION_PROFILE_BASE64" | base64 --decode --output shareextpp.mobileprovision
+          flutter pub get && pod install
+        working-directory: ${{ matrix.os }}
+
+      - name: Setup Fastlane
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "ruby"
+          bundler-cache: true
+          working-directory: ${{ matrix.os }}
+
+      - name: Build
+        env:
+          CERTIFICATE_PASSWORD: ${{ secrets.CERTIFICATE_PASSWORD }}
+        run: bundle exec fastlane dev
+        working-directory: ${{ matrix.os }}
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: twake-dev
+          path: |
+            build/app/outputs/flutter-apk/app-release.apk
+            ios/Twake.ipa
