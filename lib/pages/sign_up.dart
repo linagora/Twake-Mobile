@@ -1,15 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/authentication_cubit/authentication_cubit.dart';
 import 'package:twake/blocs/registration_cubit/registration_cubit.dart';
 import 'package:twake/config/dimensions_config.dart';
-import 'package:twake/config/styles_config.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -295,8 +292,9 @@ class _SignUpState extends State<SignUp> {
                           )
                         : CircleAvatar(
                             radius: 10,
-                            backgroundColor:
-                                Theme.of(context).colorScheme.secondaryContainer,
+                            backgroundColor: Theme.of(context)
+                                .colorScheme
+                                .secondaryContainer,
                             child: Icon(
                               CupertinoIcons.exclamationmark_circle_fill,
                               color: Theme.of(context).colorScheme.error,

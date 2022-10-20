@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:twake/blocs/authentication_cubit/authentication_cubit.dart';
 import 'package:twake/blocs/registration_cubit/registration_cubit.dart';
 import 'package:twake/config/dimensions_config.dart';
-import 'package:twake/config/image_path.dart';
 import 'package:twake/pages/server_configuration.dart';
 import 'package:twake/pages/sign_up.dart';
 
