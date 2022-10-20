@@ -104,7 +104,7 @@ platform :ios do
     )
     upload_to_testflight(
       skip_waiting_for_build_processing: true,
-      ipa: "Twake.ipa"
+      ipa: "Runner.ipa"
     )
   end
 end

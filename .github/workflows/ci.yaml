@@ -105,4 +105,4 @@ jobs:
           name: twake-dev
           path: |
             build/app/outputs/flutter-apk/app-release.apk
-            ios/Twake.ipa
+            ios/Runner.ipa
