@@ -13,9 +13,9 @@ class SearchTabBarView extends StatelessWidget {
     return TabBarView(
       children: [
         SearchAllView(),
+        SearchMessagesView(),
         SearchMediaView(),
         SearchFilesView(),
-        SearchMessagesView(),
         SearchChatsView(),
         // SearchContactsView(),
       ],

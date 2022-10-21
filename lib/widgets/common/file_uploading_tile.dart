@@ -27,6 +27,7 @@ class _FileUploadingTileState extends State<FileUploadingTile> {
     if (widget.thumbnailUrl != null) {
       return Image.network(
         widget.thumbnailUrl!,
+        errorBuilder: (context, error, stack) => Container(),
         fit: BoxFit.cover,
       );
     }

@@ -42,6 +42,8 @@ class MentionSheet extends StatelessWidget {
                               : Image.network(
                                   state.accounts[i].picture!,
                                   fit: BoxFit.contain,
+                                  errorBuilder: (context, error, stack) =>
+                                      Container(),
                                   loadingBuilder: (context, child, progress) {
                                     if (progress == null) {
                                       return child;

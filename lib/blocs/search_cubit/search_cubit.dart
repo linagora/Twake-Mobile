@@ -75,10 +75,13 @@ class SearchCubit extends Cubit<SearchState> {
 
   void fetchChatsBySearchTerm() async {
     emit(state.copyWith(chatsStateStatus: ChatsStateStatus.loading));
+    final String searchTerm = state.searchTerm;
 
     final request =
         await _searchRepository.fetchChats(searchTerm: state.searchTerm);
-
+    if (searchTerm != state.searchTerm) {
+      return; // if searchTerm has changed while awaiting fetchChats then don't emit results
+    }
     if (request.hasError) {
       emit(state.copyWith(chatsStateStatus: ChatsStateStatus.failed));
       return;
@@ -117,10 +120,13 @@ class SearchCubit extends Cubit<SearchState> {
 
   void fetchFilesBySearchTerm() async {
     emit(state.copyWith(filesStateStatus: FilesStateStatus.loading));
+    final String searchTerm = state.searchTerm;
 
     final request =
         await _searchRepository.fetchFiles(searchTerm: state.searchTerm);
-
+    if (searchTerm != state.searchTerm) {
+      return; // if searchTerm has changed while awaiting fetchFiles then don't emit results
+    }
     if (request.hasError) {
       emit(state.copyWith(filesStateStatus: FilesStateStatus.failed));
       return;
@@ -135,10 +141,13 @@ class SearchCubit extends Cubit<SearchState> {
 
   void fetchMediaBySearchTerm() async {
     emit(state.copyWith(mediaStateStatus: MediaStateStatus.loading));
+    final String searchTerm = state.searchTerm;
 
     final request =
         await _searchRepository.fetchMedia(searchTerm: state.searchTerm);
-
+    if (searchTerm != state.searchTerm) {
+      return; // if searchTerm has changed while awaiting fetchMedia then don't emit results
+    }
     if (request.hasError) {
       emit(state.copyWith(mediaStateStatus: MediaStateStatus.failed));
       return;
