@@ -9,7 +9,6 @@ import 'package:twake/blocs/pinned_message_cubit/pinned_messsage_cubit.dart';
 import 'package:twake/blocs/quote_message_cubit/quote_message_cubit.dart';
 import 'package:twake/config/image_path.dart';
 import 'package:twake/models/message/message.dart';
-import 'package:twake/pages/chat/chat.dart';
 import 'package:twake/services/navigator_service.dart';
 import 'package:twake/utils/utilities.dart';
 import 'package:twake/widgets/common/animated_menu_message.dart';
@@ -22,8 +21,7 @@ class LongPressMessageAnimation<T extends BaseMessagesCubit>
     extends StatelessWidget {
   final bool isDirect;
 
-  LongPressMessageAnimation(
-      {required this.isDirect});
+  LongPressMessageAnimation({required this.isDirect});
 
   @override
   Widget build(BuildContext context) {
@@ -53,31 +51,30 @@ class LongPressMessageAnimation<T extends BaseMessagesCubit>
         Size? size;
         Offset? messageListTopLeftPoint;
         RenderObject? renderObject =
-            state.messagesListContext.findRenderObject(); 
+            state.messagesListContext.findRenderObject();
         if (renderObject != null && (renderObject as RenderBox).hasSize) {
           size = renderObject.size;
           messageListTopLeftPoint = renderObject.localToGlobal(Offset.zero);
 
-          return 
-            MenuMessageDropDown<T>(
+          return MenuMessageDropDown<T>(
+            message: state.longPressMessage,
+            itemPositionsListener: state.itemPositionListener,
+            clickedItem: state.longPressIndex,
+            messagesListSize: size,
+            messageListPosition: messageListTopLeftPoint,
+            lowerWidget: LongPressMenuBar<T>(
               message: state.longPressMessage,
-              itemPositionsListener: state.itemPositionListener,
-              clickedItem: state.longPressIndex,
-              messagesListSize: size,
-              messageListPosition: messageListTopLeftPoint,
-              lowerWidget: LongPressMenuBar<T>(
-                message: state.longPressMessage,
-                isDirect: isDirect,
-              ),
-              lowerWidgetHeight: _getHeightMenuBar(state.longPressMessage),
-              upperWidget: EmojiLine(
-                onEmojiSelected: (String emojiCode) {
-                  _onEmojiSelected(state.longPressMessage, emojiCode);
-                },
-                message: state.longPressMessage,
-              ),
-              upperWidgetHeight: 50,
-            );
+              isDirect: isDirect,
+            ),
+            lowerWidgetHeight: _getHeightMenuBar(state.longPressMessage),
+            upperWidget: EmojiLine(
+              onEmojiSelected: (String emojiCode) {
+                _onEmojiSelected(state.longPressMessage, emojiCode);
+              },
+              message: state.longPressMessage,
+            ),
+            upperWidgetHeight: 50,
+          );
         }
 
         return Container();
@@ -111,7 +108,6 @@ class LongPressMessageAnimation<T extends BaseMessagesCubit>
             DropDownButton.DROPDOWN_SEPARATOR_HEIGHT) *
         countDropDown;
   }
-
 }
 
 class LongPressMenuBar<T extends BaseMessagesCubit> extends StatelessWidget {
