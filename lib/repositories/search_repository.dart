@@ -26,7 +26,7 @@ class SearchRepository {
     required String searchTerm,
   }) async {
     final queryParameters = <String, dynamic>{
-      'limit': 100,
+      'limit': 50,
       'q': searchTerm,
       'company_id': Globals.instance.companyId,
     };
@@ -200,6 +200,10 @@ class SearchRepository {
         queryParameters: queryParameters,
         key: 'resources',
       ) as List<dynamic>;
+
+      queryResult.removeWhere((element) =>
+          element['company_id'] ==
+          null); //TODO fix on backend to remove this condition
 
       final List<MessageFile> messageFiles =
           queryResult.map((e) => MessageFile.fromJson(e)).toList();

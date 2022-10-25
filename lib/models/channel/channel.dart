@@ -65,7 +65,7 @@ class Channel extends BaseModel {
       throw 'The getter avatars exist only for direct channels';
     }
 
-    final links = icon!.split(',').toList();
+    final links = icon != null ? icon!.split(',').toList() : [""];
     final names = name.split(', ').toList();
 
     final avatarsList = <Avatar>[];
@@ -82,23 +82,22 @@ class Channel extends BaseModel {
 
   bool get isPrivate => visibility == ChannelVisibility.private;
 
-  Channel({
-    required this.id,
-    required this.name,
-    this.icon,
-    this.description,
-    required this.companyId,
-    required this.workspaceId,
-    this.lastMessage,
-    required this.members,
-    required this.visibility,
-    required this.lastActivity,
-    required this.membersCount,
-    required this.role,
-    this.userLastAccess: 0,
-    this.draft,
-    this.stats
-  });
+  Channel(
+      {required this.id,
+      required this.name,
+      this.icon,
+      this.description,
+      required this.companyId,
+      required this.workspaceId,
+      this.lastMessage,
+      required this.members,
+      required this.visibility,
+      required this.lastActivity,
+      required this.membersCount,
+      required this.role,
+      this.userLastAccess: 0,
+      this.draft,
+      this.stats});
 
   factory Channel.fromJson({
     required Map<String, dynamic> json,
@@ -118,17 +117,16 @@ class Channel extends BaseModel {
     return _$ChannelFromJson(json);
   }
 
-  Channel copyWith({
-    String? name,
-    String? icon,
-    String? description,
-    ChannelVisibility? visibility,
-    int? lastActivity,
-    MessageSummary? lastMessage,
-    int? userLastAccess,
-    int? membersCount,
-    ChannelStats? stats
-  }) {
+  Channel copyWith(
+      {String? name,
+      String? icon,
+      String? description,
+      ChannelVisibility? visibility,
+      int? lastActivity,
+      MessageSummary? lastMessage,
+      int? userLastAccess,
+      int? membersCount,
+      ChannelStats? stats}) {
     final copy = Channel(
       id: id,
       name: name ?? this.name,

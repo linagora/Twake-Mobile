@@ -113,7 +113,7 @@ class MessageItem extends StatelessWidget {
                           ],
                         ),
                       ),
-                      Text(DateFormatter.getVerboseTime(message.createdAt),
+                      Text(DateFormatter.getVerboseDateTime(message.createdAt),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: Theme.of(context)
