@@ -83,7 +83,7 @@
   "@ok": {},
   "processing": "In lavorazione",
   "@processing": {},
-  "search": "Ricerca canali",
+  "search": "Ricerca di messaggi o utenti",
   "@search": {},
   "email": "E-mail",
   "@email": {},
@@ -626,5 +626,23 @@
         "example": "Alexander, Diana and 3 more"
       }
     }
-  }
+  },
+  "recentMedia": "Media recenti",
+  "@recentMedia": {},
+  "searchResetButton": "Reimposta la ricerca",
+  "@searchResetButton": {},
+  "recentFiles": "File recenti",
+  "@recentFiles": {},
+  "media": "Media",
+  "@media": {},
+  "searchNoResultsFor": "Non ci sono risultati per",
+  "@searchNoResultsFor": {},
+  "searchChatsHeader": "Canali",
+  "@searchChatsHeader": {},
+  "searchEmptyResults": "Non ci sono risultati",
+  "@searchEmptyResults": {},
+  "searchChatsRecentHeader": "Canali e contatti recenti",
+  "@searchChatsRecentHeader": {},
+  "searchTryAnother": "Prova una nuova ricerca",
+  "@searchTryAnother": {}
 }

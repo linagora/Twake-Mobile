@@ -117,7 +117,7 @@
   "@name": {},
   "noConversationInChannel": "В этом канале пока нет сообщений!\nНачните разговор и отправьте\nтекст, изображение или документ",
   "@noConversationInChannel": {},
-  "search": "Поиск каналов",
+  "search": "Поиск сообщений и пользователей",
   "@search": {},
   "email": "Email",
   "@email": {},
@@ -614,5 +614,23 @@
         "example": "Alexander, Diana and 3 more"
       }
     }
-  }
+  },
+  "recentMedia": "Последние медиа",
+  "@recentMedia": {},
+  "recentFiles": "Последние файлы",
+  "@recentFiles": {},
+  "media": "Медиа",
+  "@media": {},
+  "searchTryAnother": "Попробуйте еще раз",
+  "@searchTryAnother": {},
+  "searchNoResultsFor": "Нет результатов по запросу",
+  "@searchNoResultsFor": {},
+  "searchResetButton": "Сбросить поиск",
+  "@searchResetButton": {},
+  "searchChatsHeader": "Каналы",
+  "@searchChatsHeader": {},
+  "searchChatsRecentHeader": "Последние каналы и контакты",
+  "@searchChatsRecentHeader": {},
+  "searchEmptyResults": "Результатов не найдено",
+  "@searchEmptyResults": {}
 }
