@@ -88,12 +88,16 @@ class _LinkContentPreviewInputState extends State<LinkContentPreviewInput> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            hasPreviewLinkListener.value?.title ?? "",
+                            hasPreviewLinkListener.value != null
+                                ? hasPreviewLinkListener.value!.title ?? ""
+                                : "",
                             style: const TextStyle(fontWeight: FontWeight.bold),
                             overflow: TextOverflow.ellipsis,
                           ),
                           Text(
-                            hasPreviewLinkValue?.desc ?? "",
+                            hasPreviewLinkValue != null
+                                ? hasPreviewLinkValue.desc ?? ""
+                                : "",
                             overflow: TextOverflow.ellipsis,
                           ),
                         ],
