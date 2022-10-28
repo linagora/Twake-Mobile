@@ -34,14 +34,20 @@ class DateFormatter {
     DateTime dateTime =
         DateTime.fromMillisecondsSinceEpoch(timestamp).toLocal();
     DateTime justNow = DateTime.now().subtract(Duration(minutes: 1));
-    if (!dateTime.difference(justNow).isNegative) {
-      return lowercase ? 'now' : 'Now';
-    }
+    // if (!dateTime.difference(justNow).isNegative) { // while this status was decided to be removed as it is not needed
+    //  return lowercase ? 'now' : 'Now';
+    // }
     DateTime yesterday = justNow.subtract(Duration(days: 1));
     if (dateTime.year == yesterday.year &&
         dateTime.month == yesterday.month &&
         dateTime.day == yesterday.day) {
       return lowercase ? 'yesterday' : 'Yesterday';
+    }
+    if (dateTime.year == justNow.year &&
+        dateTime.month == justNow.month &&
+        dateTime.day == justNow.day &&
+        dateTime.hour == justNow.hour) {
+      return lowercase ? 'recently' : 'Recently';
     }
     if (dateTime.year == justNow.year &&
         dateTime.month == justNow.month &&

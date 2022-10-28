@@ -26,6 +26,7 @@ class OnlineStatusCubit extends Cubit<OnlineStatusState> {
     channelsRepository = repository;
     listenToResourceOnlineStatus();
     listenToOnlineUserStream();
+    getOnlineStatusHttp();
     startTimer();
   }
 
@@ -116,9 +117,9 @@ class OnlineStatusCubit extends Cubit<OnlineStatusState> {
 
   void startTimer() {
     // TODO: need to create global app timer
-    const oneSec = const Duration(minutes: 10);
+    const oneT = const Duration(minutes: 5);
     _timer = Timer.periodic(
-      oneSec,
+      oneT,
       (Timer timer) {
         setOnlineStatus();
         getOnlineStatusHttp();
