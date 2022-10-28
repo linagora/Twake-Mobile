@@ -119,7 +119,7 @@ class ChatHeader extends StatelessWidget {
                                                 fontWeight: FontWeight.normal),
                                       )
                                     : Text(
-                                        '${AppLocalizations.of(context)!.online} ${DateFormatter.getVerboseDate(statusList[1], true)}',
+                                        '${statusList[1] == 946670400000 ? '' : AppLocalizations.of(context)!.online} ${statusList[1] == 946670400000 ? '' : DateFormatter.getVerboseDate(statusList[1], true)}',
                                         style: Theme.of(context)
                                             .textTheme
                                             .headline2!
