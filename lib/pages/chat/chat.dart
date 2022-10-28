@@ -229,7 +229,6 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
       },
       onTextUpdated: (text, ctx) {
         Get.find<T>().saveDraft(draft: text);
-        print(channel.id);
         Get.find<WritingCubit>().sendWritingEvent(channel.id);
       },
     );

@@ -127,6 +127,10 @@ class _FileTileState extends State<FileChannelTile> {
     return ClipRRect(
       borderRadius: BorderRadius.all(Radius.circular(8)),
       child: CachedNetworkImage(
+        errorWidget: (context, url, error) => Icon(
+          Icons.error,
+          color: Theme.of(context).colorScheme.secondary,
+        ),
         width: double.maxFinite,
         height: double.maxFinite,
         fit: BoxFit.cover,

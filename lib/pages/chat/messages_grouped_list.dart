@@ -29,7 +29,6 @@ class MessagesGroupedList extends StatefulWidget {
 }
 
 class _MessagesGroupedListState extends State<MessagesGroupedList> {
-
   @override
   Widget build(BuildContext context) {
     return NotificationListener<ScrollEndNotification>(
@@ -38,15 +37,15 @@ class _MessagesGroupedListState extends State<MessagesGroupedList> {
           if (scrollInfo.metrics.atEdge) {
             final isBottom = scrollInfo.metrics.pixels == 0;
             if (isBottom) {
-              Get.find<ChannelMessagesCubit>().fetchAfter(
-                channelId: Globals.instance.channelId!,
-                isDirect: widget.parentChannel.isDirect,
-              );
+              //     Get.find<ChannelMessagesCubit>().fetchAfter(
+              //       channelId: Globals.instance.channelId!,
+              //        isDirect: widget.parentChannel.isDirect,
+              //      );
             } else {
-              Get.find<ChannelMessagesCubit>().fetchBefore(
-                channelId: Globals.instance.channelId!,
-                isDirect: widget.parentChannel.isDirect,
-              );
+              //     Get.find<ChannelMessagesCubit>().fetchBefore(
+              ///       channelId: Globals.instance.channelId!,
+              //      isDirect: widget.parentChannel.isDirect,
+              //     );
             }
           }
           return true;
