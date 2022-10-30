@@ -94,24 +94,27 @@ class _FileTileState extends State<FileChannelTile> {
 
   Widget _buildFileHeader({File? file, MessageFile? messageFile}) {
     return SizedBox(
-      width: widget.fileTileHeight,
-      height: widget.fileTileHeight,
-      child: _buildThumbnail(file: file, messageFile: messageFile),
-    );
+        width: widget.fileTileHeight,
+        height: widget.fileTileHeight,
+        child: _buildThumbnail(file: file, messageFile: messageFile));
   }
 
   Widget _buildThumbnail({File? file, MessageFile? messageFile}) {
     return GestureDetector(
       onTap: () {
-        NavigatorService.instance.navigateToFilePreview(
-          channelId: Globals.instance.channelId,
-          file: file,
-          messageFile: messageFile,
-          enableDownload: true,
-          isImage: messageFile == null
-              ? file!.metadata.mime.isImageMimeType
-              : messageFile.metadata.mime.isImageMimeType,
-        );
+        widget.onTap == null
+            ? NavigatorService.instance.navigateToFilePreview(
+                channelId: Globals.instance.channelId,
+                file: file,
+                messageFile: messageFile,
+                enableDownload: true,
+                isImage: messageFile == null
+                    ? file!.metadata.mime.isImageMimeType
+                    : messageFile.metadata.mime.isImageMimeType,
+              )
+            : messageFile == null
+                ? widget.onTap?.call(file)
+                : widget.onTap?.call(messageFile);
       },
       child: messageFile == null
           ? file!.thumbnailUrl.isNotEmpty
@@ -192,7 +195,9 @@ class _FileTileState extends State<FileChannelTile> {
         Row(
           children: [
             Text(
-              filesize(messageFile!.metadata.size),
+              filesize(messageFile == null
+                  ? file!.uploadData.size
+                  : messageFile.metadata.size),
               textAlign: TextAlign.start,
               style: Theme.of(context)
                   .textTheme
