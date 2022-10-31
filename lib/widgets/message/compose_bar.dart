@@ -246,10 +246,9 @@ class _ComposeBar extends State<ComposeBar> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        LinkContentPreviewInput(controller: _controller),
-        BlocListener<ThreadMessagesCubit, MessagesState>(
+    return Column(children: [
+      LinkContentPreviewInput(controller: _controller),
+      BlocListener<ThreadMessagesCubit, MessagesState>(
         bloc: Get.find<ThreadMessagesCubit>(),
         listener: (context, state) {
           swipeRequestFocus(false);
@@ -306,8 +305,8 @@ class _ComposeBar extends State<ComposeBar> {
             ],
           ),
         ),
-      ),]
-    );
+      ),
+    ]);
   }
 
   void _setSendButtonState({bool stateWithoutFileUploading: false}) {
@@ -421,6 +420,8 @@ class _TextInputState extends State<TextInput> {
         scrollController: widget.scrollController,
         controller: widget.controller,
         keyboardAppearance: Theme.of(context).colorScheme.brightness,
+        toolbarOptions:
+            ToolbarOptions(copy: true, paste: true, cut: true, selectAll: true),
         decoration: InputDecoration(
           filled: true,
           fillColor: Theme.of(context).colorScheme.secondaryContainer,
