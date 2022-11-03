@@ -17,6 +17,9 @@ opt_out_usage
 default_platform(:ios)
 setup_ci if ENV['CI']
 
+# Select Xcode 13
+xcversion(version: "~> 13.4")
+
 # Import signing certificate
 import_certificate(
   certificate_path: "cert.p12",
@@ -27,7 +30,6 @@ import_certificate(
 # 2 provisioning profiles, 1 for the main app and 1 for the share extension
 install_provisioning_profile(path: "buildpp.mobileprovision")
 install_provisioning_profile(path: "shareextpp.mobileprovision")
-
 
 platform :ios do
   desc "Build development version"
