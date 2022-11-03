@@ -17,9 +17,6 @@ opt_out_usage
 default_platform(:ios)
 setup_ci if ENV['CI']
 
-# Select Xcode 13
-xcversion(version: "~> 13.4")
-
 # Import signing certificate
 import_certificate(
   certificate_path: "cert.p12",

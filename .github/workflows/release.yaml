@@ -22,7 +22,7 @@ jobs:
           - os: android
             runner: ubuntu-latest
           - os: ios
-            runner: macos-latest
+            runner: macos-11
     environment: prod
 
     steps:
