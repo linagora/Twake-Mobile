@@ -195,6 +195,7 @@ class _FilesListViewState extends State<FilesListView>
   }
 
   void _handleSelectFile(dynamic file) {
+    Get.find<FileUploadCubit>().initFileUploadingStream();
     file.runtimeType == MessageFile
         ? Get.find<FileUploadCubit>().addAlreadyUploadedFile(
             existsMessageFile: (file as MessageFile),
