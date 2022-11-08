@@ -110,8 +110,8 @@ class SocketIOService {
   void subscribeToOnlineStatus(
       {required String room, required String userRoom}) async {
     _socket.emit(IOEvent.join, {'name': room, 'token': Globals.instance.token});
-    _socket.emit(
-        IOEvent.join, {'name': userRoom, 'token': Globals.instance.token});
+    //  _socket.emit(
+    //      IOEvent.join, {'name': userRoom, 'token': Globals.instance.token});
   }
 
   void emitEvent(dynamic data) async {

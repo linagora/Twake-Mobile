@@ -77,9 +77,7 @@ dependencies:
   flutter_cache_manager: ^3.3.0
   mime: ^1.0.1
   image_picker: ^0.8.4+4
-  ext_storage:
-    git:
-      url: https://github.com/huynguyennovem/ext_storage_ups.git
+  external_path: ^1.0.0
   gallery_saver: ^2.3.2
   device_info: ^2.0.3
   receive_sharing_intent: 1.4.5
