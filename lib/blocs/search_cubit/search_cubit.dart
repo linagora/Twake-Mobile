@@ -75,13 +75,10 @@ class SearchCubit extends Cubit<SearchState> {
 
   void fetchChatsBySearchTerm() async {
     emit(state.copyWith(chatsStateStatus: ChatsStateStatus.loading));
-    final String searchTerm = state.searchTerm;
 
     final request =
         await _searchRepository.fetchChats(searchTerm: state.searchTerm);
-    if (searchTerm != state.searchTerm) {
-      return; // if searchTerm has changed while awaiting fetchChats then don't emit results
-    }
+
     if (request.hasError) {
       emit(state.copyWith(chatsStateStatus: ChatsStateStatus.failed));
       return;

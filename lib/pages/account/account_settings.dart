@@ -7,6 +7,7 @@ import 'package:twake/blocs/account_cubit/account_cubit.dart';
 import 'package:twake/blocs/authentication_cubit/authentication_cubit.dart';
 import 'package:twake/blocs/language_cubit/language_cubit.dart';
 import 'package:twake/config/dimensions_config.dart';
+import 'package:twake/models/globals/globals.dart';
 import 'package:twake/pages/account/select_language.dart';
 import 'package:twake/routing/app_router.dart';
 import 'package:twake/routing/route_paths.dart';
@@ -16,6 +17,9 @@ import 'package:twake/widgets/common/button_field.dart';
 import 'package:twake/widgets/common/image_widget.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:twake/widgets/common/warning_dialog.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+const String adminPanelUrl = 'https://console.twake.app/profile?company-code=';
 
 class AccountSettings extends StatefulWidget {
   @override
@@ -65,6 +69,25 @@ class _AccountSettingsState extends State<AccountSettings> {
     );
   }
 
+  void _handleDelAcc() async {
+    Utilities.showDelAccDialog(
+      context: context,
+      titleText: AppLocalizations.of(context)!.deleteAccount,
+      buttonText1: AppLocalizations.of(context)!.adminPannel,
+      onButtonClick1: () async {
+        final Uri myUri =
+            Uri.parse('$adminPanelUrl${Globals.instance.companyId}');
+        if (await canLaunchUrl(myUri)) {
+          await launchUrl(
+            myUri,
+          );
+        }
+      },
+      message: AppLocalizations.of(context)!.deleteAccountDescription,
+      duration: Duration(hours: 1),
+    );
+  }
+
   _onShareWithEmptyOrigin(BuildContext context) async {
     Utilities.shareApp();
   }
@@ -88,7 +111,7 @@ class _AccountSettingsState extends State<AccountSettings> {
           child: SafeArea(
             bottom: false,
             child: Padding(
-              padding: EdgeInsets.fromLTRB(16.0, 22.0, 16.0, 36.0),
+              padding: EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 16.0),
               child: BlocBuilder<AccountCubit, AccountState>(
                 bloc: Get.find<AccountCubit>(),
                 builder: (context, accountState) {
@@ -153,11 +176,13 @@ class _AccountSettingsState extends State<AccountSettings> {
                       Spacer(),
                       SizedBox(height: 16.0),
                       _buildThemeSupportLanguage(),
-                      SizedBox(height: 16.0),
+                      Flexible(child: SizedBox(height: 60.0)),
                       _buildInvitePeople(),
                       Flexible(child: SizedBox(height: 80.0)),
                       _buildTwakeVersion(),
                       SizedBox(height: 16.0),
+                      _buildDelAcc(),
+                      SizedBox(height: 20.0),
                       _buildLogOut(),
                       SizedBox(height: 21.0),
                     ],
@@ -171,7 +196,7 @@ class _AccountSettingsState extends State<AccountSettings> {
     );
   }
 
-  _buildViewProfile() {
+  Widget _buildViewProfile() {
     return GestureDetector(
       child: Container(
         decoration: BoxDecoration(
@@ -225,7 +250,7 @@ class _AccountSettingsState extends State<AccountSettings> {
     );
   }
 
-  _buildThemeSupportLanguage() {
+  Widget _buildThemeSupportLanguage() {
     return Column(
       children: [
         GestureDetector(
@@ -375,7 +400,7 @@ class _AccountSettingsState extends State<AccountSettings> {
     );
   }
 
-  _buildInvitePeople() {
+  Widget _buildInvitePeople() {
     return ButtonField(
         onTap: () => _onShareWithEmptyOrigin(context),
         image: 'assets/images/2.0x/invite_people.png',
@@ -388,7 +413,7 @@ class _AccountSettingsState extends State<AccountSettings> {
         arrowColor: Theme.of(context).colorScheme.secondary);
   }
 
-  _buildTwakeVersion() {
+  Widget _buildTwakeVersion() {
     return Container(
       height: 44,
       decoration: BoxDecoration(
@@ -426,7 +451,23 @@ class _AccountSettingsState extends State<AccountSettings> {
     );
   }
 
-  _buildLogOut() {
+  Widget _buildDelAcc() {
+    return GestureDetector(
+      onTap: () => _handleDelAcc(),
+      child: Container(
+        height: 44.0,
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.secondaryContainer,
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+        alignment: Alignment.center,
+        child: Text(AppLocalizations.of(context)!.deleteAccount,
+            style: Theme.of(context).textTheme.headline5),
+      ),
+    );
+  }
+
+  Widget _buildLogOut() {
     return GestureDetector(
       onTap: () => _handleLogout(context),
       child: Container(

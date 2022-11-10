@@ -52,13 +52,13 @@
 		<true/>
 	</dict>
 	<key>NSCameraUsageDescription</key>
-	<string>Allow application to access to your phone’s camera</string>
+	<string>Application requires access to the device&apos;s camera that the user can take a photo using the device&apos;s camera and upload it to the chat dialog</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Allow application to access to your phone’s Microphone</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Allow application to access to your phone’s Photo Library</string>
+	<string>Application requires access to the Photo Gallery that the user can see the photos in the application gallery, select the necessary one and upload it to the chat dialog</string>
 	<key>NSContactsUsageDescription</key>
-    <string>Allow application to access to your phone’s Contact List</string>
+	<string>Allow application to access to your phone’s Contact List</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
