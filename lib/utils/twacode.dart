@@ -1009,7 +1009,7 @@ class TwacodeRenderer {
                 style: getStyle(TType.Url, parentStyle, userUniqueColor),
                 recognizer: TapGestureRecognizer()
                   ..onTap = () async {
-                    Uri myUri = Uri.parse(t['content']);
+                    final Uri myUri = Uri.parse(t['content']);
                     if (await canLaunchUrl(myUri)) {
                       await launchUrl(
                         myUri,
@@ -1038,7 +1038,7 @@ class TwacodeRenderer {
               text: (t['content'] as String).split(']').first,
               recognizer: TapGestureRecognizer()
                 ..onTap = () async {
-                  Uri myUri = Uri.parse(url);
+                  final Uri myUri = Uri.parse(url);
                   if (await canLaunchUrl(myUri)) {
                     await launchUrl(
                       myUri,

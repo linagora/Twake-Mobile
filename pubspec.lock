@@ -386,15 +386,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.3"
-  ext_storage:
+  external_path:
     dependency: "direct main"
     description:
-      path: "."
-      ref: HEAD
-      resolved-ref: acdb02277521a6f3641f73a97485e0f219a4227a
-      url: "https://github.com/huynguyennovem/ext_storage_ups.git"
-    source: git
-    version: "1.0.3"
+      name: external_path
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.1"
   fake_async:
     dependency: transitive
     description:
@@ -849,13 +847,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.2"
-  open_file:
+  open_file_safe:
     dependency: "direct main"
     description:
-      name: open_file
+      name: open_file_safe
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.2.1"
+    version: "3.2.3"
   package_config:
     dependency: transitive
     description:
