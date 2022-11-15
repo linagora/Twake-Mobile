@@ -644,5 +644,11 @@
   "searchChatsRecentHeader": "Canali e contatti recenti",
   "@searchChatsRecentHeader": {},
   "searchTryAnother": "Prova una nuova ricerca",
-  "@searchTryAnother": {}
+  "@searchTryAnother": {},
+  "deleteAccount": "Eliminare l'account",
+  "@deleteAccount": {},
+  "deleteAccountDescription": "Puoi eliminare il tuo account nel pannello di amministrazione",
+  "@deleteAccountDescription": {},
+  "adminPannel": "Vai al pannello di amministrazione",
+  "@adminPannel": {}
 }
