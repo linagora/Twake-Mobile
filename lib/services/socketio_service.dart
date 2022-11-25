@@ -118,6 +118,23 @@ class SocketIOService {
     _socket.emit(IOEvent.event, data);
   }
 
+  /*void emitTestEvent() async {
+    final WritingEvent writingEvent = WritingEvent(
+        channelId: 'cd2576b7-9f33-4a43-831f-6dd96b5d5cc3',
+        isWriting: true,
+        name: 'Evgenii Sharanov',
+        threadId: '',
+        userId: 'e80375ba-ad99-11eb-b6c4-0242ac120003');
+
+    final data = {
+      'name': '/companies/56393af2-e5fe-11e9-b894-0242ac120004/workspaces',
+      'data': {'type': 'writing', 'event': writingEvent},
+      'token': 'twake'
+    };
+
+    _socket.emit("realtime:event", data);
+  }*/
+
   void emitEventOnlineStatus(Map<String, dynamic> data) async {
     _socket.emitWithAck('online:get', data, ack: (data) {
       if (data != null) {
