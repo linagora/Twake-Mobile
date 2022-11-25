@@ -26,13 +26,12 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   json_annotation: 4.4.0 # serialization/deserialization auto code generation
-  dio: ^4.0.0
+  dio: ^4.0.6
   intl: ^0.17.0
   path_provider: ^2.0.8
   camera: ^0.9.4+19
   path: ^1.8.0
   photo_manager: ^2.0.7
-  scrollable_positioned_list: ^0.2.3
   webview_cookie_manager: ^2.0.1
   webview_flutter: ^3.0.0
   logger: ^1.0.0
@@ -43,10 +42,10 @@ dependencies:
   tuple: 2.0.0
   flutter_segment: ^3.1.0
   sentry_flutter: ^6.5.1
-  firebase_core: ^1.0.2
-  firebase_messaging: ^11.2.14
+  firebase_core: 2.1.1
+  firebase_messaging: 14.0.4
   equatable: ^2.0.2
-  flutter_bloc: ^7.0.1
+  flutter_bloc: ^8.1.1
   connectivity: ^3.0.4
   sliding_up_panel: ^2.0.0+1
   socket_io_client: ^1.0.1
@@ -54,20 +53,20 @@ dependencies:
   badges: ^2.0.1
   cached_network_image: ^3.0.0
   bubble: ^1.2.1
-  flutter_swipe_action_cell: 2.1.0
+  flutter_swipe_action_cell: 3.0.4
   emoji_picker_flutter: 1.0.6
   flutter_appauth: ^2.2.0
   package_info_plus: ^1.3.0
   share: ^2.0.4
   get_storage: ^2.0.3
 
-  flutter_local_notifications: ^6.0.0
+  flutter_local_notifications: ^12.0.3
   photo_view: ^0.11.1
-  flutter_downloader: ^1.7.1
+  flutter_downloader: 1.8.3
   permission_handler: ^8.1.1
   file_picker: ^3.0.2+2
   image: ^3.0.2
-  get: ^4.3.8
+  get: ^4.6.5
   pull_to_refresh: ^2.0.0
   sprintf: ^6.0.0
   flutter_dotenv: 5.0.2
@@ -89,10 +88,7 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.0
 
-  # Support LocalDB for web
-  hive: ^2.1.0
-  hive_flutter: ^1.1.0
-  # Support LocalDB for linux, windows
+
   sqflite_common_ffi: ^2.1.1
   sticky_grouped_list:
     git: https://github.com/EvGen94/sticky_grouped_list
@@ -107,8 +103,7 @@ dev_dependencies:
   json_serializable: 6.1.5
   flutter_launcher_icons: ^0.9.1
   test: ^1.15.8
-  bloc_test: ^8.0.2
-  hive_generator: ^1.1.2
+  bloc_test: ^9.1.0
 
 flutter_icons:
   android: true

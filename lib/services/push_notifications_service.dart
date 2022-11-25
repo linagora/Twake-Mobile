@@ -1,13 +1,26 @@
 import 'dart:async';
 import 'dart:io';
-
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:twake/models/push_notification/firebase_notification.dart';
-import 'package:twake/models/push_notification/local_notification.dart';
-
+import 'package:twake/services/service_bundle.dart';
 export 'package:twake/models/push_notification/firebase_notification.dart';
 export 'package:twake/models/push_notification/local_notification.dart';
+
+@pragma('vm:entry-point')
+void notificationTapBackground(NotificationResponse notificationResponse) {
+  // FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+  print(
+      'objectobjectobjectobjectobjectobjectobjectobjectobjectobjectobjectobjectobject');
+  // ignore: avoid_print
+  print('notification(${notificationResponse.id}) action tapped: '
+      '${notificationResponse.actionId} with'
+      ' payload: ${notificationResponse.payload}');
+  if (notificationResponse.input?.isNotEmpty ?? false) {
+    // ignore: avoid_print
+    print(
+        'notification action tapped with input: ${notificationResponse.input}');
+  }
+}
 
 class PushNotificationsService {
   static late PushNotificationsService _service;
@@ -34,7 +47,7 @@ class PushNotificationsService {
     // ic_notification can be swapped for another drawable resource
     const initSettings = InitializationSettings(
       android: AndroidInitializationSettings('ic_notification'),
-      iOS: IOSInitializationSettings(
+      iOS: DarwinInitializationSettings(
         requestAlertPermission: false,
         requestSoundPermission: false,
         requestBadgePermission: false,
@@ -42,10 +55,22 @@ class PushNotificationsService {
     );
 
     // Initialize the local notifications plugin with above settings
-    _notificationsPlugin.initialize(
-      initSettings,
-      onSelectNotification: _onLocalNotificationSelect,
-    );
+    _notificationsPlugin.initialize(initSettings,
+        onDidReceiveNotificationResponse:
+            (NotificationResponse notificationResponse) {
+      switch (notificationResponse.notificationResponseType) {
+        case NotificationResponseType.selectedNotification:
+          if (notificationResponse.payload == null) return;
+          final notification = LocalNotification.fromEncodedString(
+              string: notificationResponse.payload!);
+          _localNotificationClickStream.sink.add(notification);
+          break;
+        case NotificationResponseType.selectedNotificationAction:
+          //   SocketIOService _socketio = SocketIOService.instance;
+          //   _socketio.emitTestEvent();
+          break;
+      }
+    }, onDidReceiveBackgroundNotificationResponse: notificationTapBackground);
   }
 
   static PushNotificationsService get instance => _service;
@@ -97,8 +122,8 @@ class PushNotificationsService {
 
     // Not null guaranteed on android and iOS
     if (!details!.didNotificationLaunchApp) return null;
-
-    final payload = details.payload;
+    if (details.notificationResponse == null) return null;
+    final payload = details.notificationResponse!.payload;
     if (payload != null) {
       return LocalNotification.fromEncodedString(string: payload);
     }
@@ -112,7 +137,7 @@ class PushNotificationsService {
     required String body,
     String? payload,
   }) {
-    const android = const AndroidNotificationDetails('Twake', 'Twake', 'Twake');
+    const android = const AndroidNotificationDetails('Twake', 'Twake');
     const details = NotificationDetails(android: android);
     final int id = DateTime.now().millisecondsSinceEpoch % 0xFFFFFF;
 
@@ -134,13 +159,13 @@ class PushNotificationsService {
     return FirebaseMessage.fromRemote(remoteMessage: msg);
   }
 
-  Future<void> _onLocalNotificationSelect(String? payload) async {
+  /*Future<void> _onLocalNotificationSelect(String? payload) async {
     if (payload == null) return;
 
     final notification = LocalNotification.fromEncodedString(string: payload);
 
     _localNotificationClickStream.sink.add(notification);
-  }
+  }*/
 
   Future<void> dispose() async {
     await _localNotificationClickStream.close();
