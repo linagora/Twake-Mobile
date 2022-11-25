@@ -53,6 +53,8 @@ class OnlineStatusCubit extends Cubit<OnlineStatusState> {
   }
 
   void getOnlineStatusHttp() async {
+    if (Globals.instance.userId == null) return;
+
     final Map<String, List<User>> res =
         await channelsRepository.fetchUsersOnlineStatus();
 
