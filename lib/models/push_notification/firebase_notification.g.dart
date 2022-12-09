@@ -6,15 +6,14 @@ part of 'firebase_notification.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-NotificationPayload _$NotificationPayloadFromJson(Map<String, dynamic> json) {
-  return NotificationPayload(
-    companyId: json['company_id'] as String,
-    workspaceId: json['workspace_id'] as String,
-    channelId: json['channel_id'] as String,
-    messageId: json['message_id'] as String,
-    threadId: json['thread_id'] as String?,
-  );
-}
+NotificationPayload _$NotificationPayloadFromJson(Map<String, dynamic> json) =>
+    NotificationPayload(
+      companyId: json['company_id'] as String,
+      workspaceId: json['workspace_id'] as String,
+      channelId: json['channel_id'] as String,
+      messageId: json['message_id'] as String,
+      threadId: json['thread_id'] as String?,
+    );
 
 Map<String, dynamic> _$NotificationPayloadToJson(
         NotificationPayload instance) =>

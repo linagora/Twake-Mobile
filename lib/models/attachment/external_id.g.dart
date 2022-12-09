@@ -6,12 +6,10 @@ part of 'external_id.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-ExternalId _$ExternalIdFromJson(Map<String, dynamic> json) {
-  return ExternalId(
-    id: json['id'] as String,
-    companyId: json['company_id'] as String,
-  );
-}
+ExternalId _$ExternalIdFromJson(Map<String, dynamic> json) => ExternalId(
+      id: json['id'] as String,
+      companyId: json['company_id'] as String,
+    );
 
 Map<String, dynamic> _$ExternalIdToJson(ExternalId instance) =>
     <String, dynamic>{

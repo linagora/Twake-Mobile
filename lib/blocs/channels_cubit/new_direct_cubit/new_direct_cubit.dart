@@ -101,7 +101,7 @@ class NewDirectCubit extends Cubit<NewDirectState> {
       if (recentKey.isNotEmpty) {
         Get.find<OnlineStatusCubit>()
             .getOnlineStatusWebSocket(accounts: accounts);
-        NavigatorService.instance.navigate(channelId: recentKey);
+        NavigatorService.instance.navigateToChannel(channelId: recentKey);
         return;
       } else {
         final bool res = await fetchAllMember();
@@ -114,7 +114,7 @@ class NewDirectCubit extends Cubit<NewDirectState> {
           if (recentKey.isNotEmpty) {
             Get.find<OnlineStatusCubit>()
                 .getOnlineStatusWebSocket(accounts: accounts);
-            NavigatorService.instance.navigate(channelId: recentKey);
+            NavigatorService.instance.navigateToChannel(channelId: recentKey);
             return;
           }
         }
@@ -143,6 +143,6 @@ class NewDirectCubit extends Cubit<NewDirectState> {
     Get.find<OnlineStatusCubit>().getOnlineStatusWebSocket();
     directsCubit.changeSelectedChannelAfterCreateSuccess(channel: channel);
     popBack();
-    NavigatorService.instance.navigate(channelId: channel.id);
+    NavigatorService.instance.navigateToChannel(channelId: channel.id);
   }
 }

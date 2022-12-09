@@ -417,6 +417,9 @@ abstract class BaseChannelsCubit extends Cubit<ChannelsState> {
   }
 
   Future<Channel> getChannel({required String channelId}) async {
+    if (channelId == "") {
+      channelId = Globals.instance.channelId ?? "";
+    }
     final channel = await _repository.getChannelLocal(channelId: channelId);
 
     return channel;

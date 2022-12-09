@@ -1,5 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:get/get.dart';
+import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/repositories/messages_repository.dart';
 import 'package:twake/services/socketio_service.dart';
 import 'package:twake/services/synchronization_service.dart';
@@ -54,13 +56,14 @@ class PinnedMessageCubit extends Cubit<PinnedMessageState> {
       emit(state.copyWith(
           newPinnedMesssageStatus: PinnedMessageStatus.finished,
           newPinnedMessageList: messages,
+          newSelectedChatMessageIndex: state.selectedChatMessageIndex,
           newSelected: state.selected,
           newIsUnpinAll: state.isUnpinAll));
     } else
       return;
   }
 
-  Future<bool> selectPinnedMessage() async {
+  bool selectPinnedMessage() {
     if (state.pinnedMesssageStatus == PinnedMessageStatus.finished) {
       final messages = state.pinnedMessageList;
 
@@ -71,16 +74,58 @@ class PinnedMessageCubit extends Cubit<PinnedMessageState> {
           newPinnedMesssageStatus: PinnedMessageStatus.selected,
           newPinnedMessageList: messages,
           newSelected: selected,
+          newSelectedChatMessageIndex: state.selectedChatMessageIndex,
           newIsUnpinAll: state.isUnpinAll));
 
       emit(state.copyWith(
           newPinnedMesssageStatus: PinnedMessageStatus.finished,
           newPinnedMessageList: messages,
           newSelected: selected,
+          newSelectedChatMessageIndex: state.selectedChatMessageIndex,
           newIsUnpinAll: state.isUnpinAll));
       return true;
     }
     return false;
+  }
+
+  void jumpToPinnedMessage(Message message) async {
+    final stateMessagesCubit = Get.find<ChannelMessagesCubit>().state;
+    if (stateMessagesCubit is MessagesLoadSuccess) {
+      // if message is in the state
+      final messageRes = stateMessagesCubit.messages.firstWhereOrNull(
+        (m) => m.id == message.id,
+      );
+      if (messageRes != null) {
+        final res = stateMessagesCubit.messages.indexOf(messageRes);
+        emit(state.copyWith(
+            newSelectedChatMessageIndex: res,
+            newPinnedMesssageStatus: state.pinnedMesssageStatus));
+      } else {
+        // if message is not in the state, need to fetch it
+/*
+        final messagesAround = await Get.find<ChannelMessagesCubit>()
+            .getMessagesAroundSelectedMessage(
+                message: message, isDirect: false);
+        messagesAround.forEach((m) {
+          print(m.text);
+        });
+        final stateMessagesCubitr =
+            Get.find<ChannelMessagesCubit>().state as MessagesLoadSuccess;
+        final messageRes = stateMessagesCubitr.messages.firstWhereOrNull(
+          (m) => m.id == message.id,
+        );
+        if (messageRes != null) {
+          final res = messagesAround.indexOf(messageRes);
+          print(res);
+          if (res != -1)
+            emit(state.copyWith(
+                newSelectedChatMessageIndex: res,
+                newPinnedMesssageStatus: state.pinnedMesssageStatus));
+
+          //return stateMessagesCubit.messages.indexOf(messageRes);
+        }*/
+      }
+    }
   }
 
   Future<List<Message>> getMessagesAroundSelectedMessage(
@@ -110,6 +155,7 @@ class PinnedMessageCubit extends Cubit<PinnedMessageState> {
           pinnedMesssageStatus: PinnedMessageStatus.finished,
           pinnedMessageList: state.pinnedMessageList,
           selected: state.selected,
+          selectedChatMessageIndex: state.selectedChatMessageIndex,
           messagesAround: messages,
           isUnpinAll: state.isUnpinAll));
       return messages;
@@ -130,6 +176,7 @@ class PinnedMessageCubit extends Cubit<PinnedMessageState> {
           newPinnedMesssageStatus: PinnedMessageStatus.finished,
           newPinnedMessageList: messages,
           newSelected: 0,
+          newSelectedChatMessageIndex: state.selectedChatMessageIndex,
           newIsUnpinAll: state.isUnpinAll));
 
       final newMessages =
@@ -170,6 +217,7 @@ class PinnedMessageCubit extends Cubit<PinnedMessageState> {
             newPinnedMesssageStatus: PinnedMessageStatus.finished,
             newPinnedMessageList: messages,
             newSelected: newSelected,
+            newSelectedChatMessageIndex: state.selectedChatMessageIndex,
             newIsUnpinAll: state.isUnpinAll));
         return true;
       }
@@ -205,6 +253,7 @@ class PinnedMessageCubit extends Cubit<PinnedMessageState> {
                   newPinnedMessageList:
                       messages.isEmpty ? state.pinnedMessageList : messages,
                   newSelected: selected,
+                  newSelectedChatMessageIndex: state.selectedChatMessageIndex,
                   newIsUnpinAll: false))
               : emit(PinnedMessageState(
                   pinnedMesssageStatus: PinnedMessageStatus.init));

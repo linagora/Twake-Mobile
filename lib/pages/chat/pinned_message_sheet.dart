@@ -28,7 +28,7 @@ class _PinnedMessageSheetState extends State<PinnedMessageSheet> {
     super.initState();
   }
 
-  _unpinMessage(Message message, context) async {
+  void _unpinMessage(Message message, context) async {
     final bool result =
         await Get.find<PinnedMessageCubit>().unpinMessage(message: message);
     if (!result)
@@ -37,9 +37,8 @@ class _PinnedMessageSheetState extends State<PinnedMessageSheet> {
           message: AppLocalizations.of(context)!.somethingWentWrong);
   }
 
-  _selectPinnedMessage(PinnedMessageState state) async {
-    final bool result =
-        await Get.find<PinnedMessageCubit>().selectPinnedMessage();
+  void _selectPinnedMessage(PinnedMessageState state) {
+    final bool result = Get.find<PinnedMessageCubit>().selectPinnedMessage();
     final selected = state.pinnedMessageList.length - 1 == state.selected
         ? 0
         : state.selected + 1;
@@ -48,6 +47,8 @@ class _PinnedMessageSheetState extends State<PinnedMessageSheet> {
           index: selected,
           duration: Duration(milliseconds: 700),
           curve: Curves.linear);
+    Get.find<PinnedMessageCubit>()
+        .jumpToPinnedMessage(state.pinnedMessageList[selected]);
   }
 
   @override

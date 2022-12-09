@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:get/get.dart';
 import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/config/image_path.dart';
 
@@ -112,11 +113,11 @@ class MessagesLoadingAnimation extends StatelessWidget {
             child: SizedBox(
               height: 150,
               width: 150,
-              child: Image.asset(
-                'assets/animations/messages_loading.gif',
-                colorBlendMode: BlendMode.multiply,
-                color: Theme.of(context).colorScheme.secondary,
-              ),
+              child: Image.asset('assets/animations/messages_loading.gif',
+                  colorBlendMode: BlendMode.multiply,
+                  color: Get.isDarkMode
+                      ? Theme.of(context).colorScheme.secondary
+                      : Theme.of(context).colorScheme.secondaryContainer),
             ),
           ),
           Padding(

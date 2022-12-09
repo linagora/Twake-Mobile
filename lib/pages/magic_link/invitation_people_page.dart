@@ -30,7 +30,7 @@ class _InvitationPeoplePageState extends State<InvitationPeoplePage> {
   void initState() {
     super.initState();
     _workspaceName = Get.arguments;
-    WidgetsBinding.instance?.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       invitationCubit.generateNewLink();
     });
   }
@@ -79,7 +79,8 @@ class _InvitationPeoplePageState extends State<InvitationPeoplePage> {
             Align(
               alignment: Alignment.topCenter,
               child: CircleAvatar(
-                backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
+                backgroundColor:
+                    Theme.of(context).colorScheme.secondaryContainer,
                 maxRadius: 50,
                 minRadius: 50,
                 child: SizedBox(
@@ -196,8 +197,9 @@ class _InvitationPeoplePageState extends State<InvitationPeoplePage> {
                         padding: const EdgeInsets.symmetric(
                             vertical: 12, horizontal: 22),
                         decoration: StylesConfig.commonBoxDecoration.copyWith(
-                            color:
-                                Theme.of(context).colorScheme.secondaryContainer),
+                            color: Theme.of(context)
+                                .colorScheme
+                                .secondaryContainer),
                         child: Image.asset(imageConfig,
                             width: 16,
                             height: 16,
@@ -257,15 +259,22 @@ class _InvitationPeoplePageState extends State<InvitationPeoplePage> {
                 alignment: Alignment.centerRight,
                 children: [
                   ButtonTextBuilder(Key('button_invite_by_email'),
-                    backgroundColor: Theme.of(context).colorScheme.surface.withOpacity(0.25),
-                    paddingEdgeInsets: EdgeInsets.only(right: 20),
-                    onButtonClick: () => _handleClickOnButtonInviteByEmail())
-                    .setWidth(double.infinity)
-                    .setHeight(50)
-                    .setText(AppLocalizations.of(context)?.inviteByEmail ?? '')
-                    .setTextStyle(Theme.of(context).textTheme.headline4!
-                      .copyWith(fontSize: 17, fontWeight: FontWeight.w600))
-                    .build(),
+                          backgroundColor: Theme.of(context)
+                              .colorScheme
+                              .surface
+                              .withOpacity(0.25),
+                          paddingEdgeInsets: EdgeInsets.only(right: 20),
+                          onButtonClick: () =>
+                              _handleClickOnButtonInviteByEmail())
+                      .setWidth(double.infinity)
+                      .setHeight(50)
+                      .setText(
+                          AppLocalizations.of(context)?.inviteByEmail ?? '')
+                      .setTextStyle(Theme.of(context)
+                          .textTheme
+                          .headline4!
+                          .copyWith(fontSize: 17, fontWeight: FontWeight.w600))
+                      .build(),
                   Container(
                     margin: const EdgeInsets.only(right: 15),
                     child: Image.asset(imageSendEmail, width: 20, height: 20),
@@ -275,15 +284,14 @@ class _InvitationPeoplePageState extends State<InvitationPeoplePage> {
               SizedBox(height: 16),
             ],
           );
-        }
-    );
+        });
   }
 
   Widget _buildLinkField() => GestureDetector(
         onTap: () => _handleClickOnLink(),
         child: Container(
-          decoration: StylesConfig.commonBoxDecoration
-              .copyWith(color: Theme.of(context).colorScheme.secondaryContainer),
+          decoration: StylesConfig.commonBoxDecoration.copyWith(
+              color: Theme.of(context).colorScheme.secondaryContainer),
           padding:
               const EdgeInsets.only(left: 12, top: 12, bottom: 12, right: 30),
           child: Row(
@@ -413,8 +421,7 @@ class _InvitationPeoplePageState extends State<InvitationPeoplePage> {
                                   .copyWith(
                                       fontSize: 17,
                                       fontWeight: FontWeight.normal,
-                                      color: Colors.white
-                                  ))
+                                      color: Colors.white))
                               .build(),
                         )
                       ],
@@ -476,16 +483,17 @@ class _InvitationPeoplePageState extends State<InvitationPeoplePage> {
           header: Text(
             AppLocalizations.of(context)?.confirmGenerateNewMagicLink ?? '',
             style: Theme.of(context).textTheme.headline1!.copyWith(
-              fontSize: 20.0,
-              fontWeight: FontWeight.bold,
-            ),
+                  fontSize: 20.0,
+                  fontWeight: FontWeight.bold,
+                ),
             textAlign: TextAlign.center,
           ),
           body: Text(
-            AppLocalizations.of(context)?.confirmGenerateNewMagicLinkSubtitle ?? '',
+            AppLocalizations.of(context)?.confirmGenerateNewMagicLinkSubtitle ??
+                '',
             style: Theme.of(context).textTheme.headline6!.copyWith(
-              fontSize: 14.0,
-            ),
+                  fontSize: 14.0,
+                ),
             textAlign: TextAlign.center,
           ),
           cancelActionTitle: AppLocalizations.of(context)?.no ?? '',

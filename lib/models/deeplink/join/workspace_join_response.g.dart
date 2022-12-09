@@ -7,15 +7,14 @@ part of 'workspace_join_response.dart';
 // **************************************************************************
 
 WorkspaceJoinResponse _$WorkspaceJoinResponseFromJson(
-    Map<String, dynamic> json) {
-  return WorkspaceJoinResponse(
-    WorkspaceJoinResponseCompany.fromJson(
-        json['company'] as Map<String, dynamic>),
-    WorkspaceJoinResponseWorkspace.fromJson(
-        json['workspace'] as Map<String, dynamic>),
-    json['auth_url'] as String?,
-  );
-}
+        Map<String, dynamic> json) =>
+    WorkspaceJoinResponse(
+      WorkspaceJoinResponseCompany.fromJson(
+          json['company'] as Map<String, dynamic>),
+      WorkspaceJoinResponseWorkspace.fromJson(
+          json['workspace'] as Map<String, dynamic>),
+      json['auth_url'] as String?,
+    );
 
 Map<String, dynamic> _$WorkspaceJoinResponseToJson(
         WorkspaceJoinResponse instance) =>

@@ -16,7 +16,7 @@ class RecentChannelItemWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        NavigatorService.instance.navigate(
+        NavigatorService.instance.navigateToChannel(
           channelId: channel.id,
         );
       },
