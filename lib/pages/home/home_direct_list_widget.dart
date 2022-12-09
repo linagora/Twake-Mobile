@@ -58,9 +58,9 @@ class HomeDirectListWidget extends StatelessWidget {
                   return Padding(
                     padding: const EdgeInsets.only(left: 78),
                     child: Container(
-                      height: 1,
-                      color:  Theme.of(context).colorScheme.secondaryContainer
-                    ),
+                        height: 1,
+                        color:
+                            Theme.of(context).colorScheme.secondaryContainer),
                   );
                 },
                 itemCount: channels.length,
@@ -68,7 +68,7 @@ class HomeDirectListWidget extends StatelessWidget {
                   final avatar = channels[index].avatars.first;
                   return HomeChannelTile(
                     onHomeChannelTileClick: () =>
-                        NavigatorService.instance.navigate(
+                        NavigatorService.instance.navigateToChannel(
                       channelId: channels[index].id,
                     ),
                     title: channels[index].name,

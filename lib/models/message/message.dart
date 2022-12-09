@@ -1,6 +1,4 @@
-import 'package:hive/hive.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:twake/data/local/type_constants.dart';
 import 'package:twake/models/base_model/base_model.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/models/message/message_link.dart';
@@ -65,20 +63,20 @@ class Message extends BaseModel {
   Delivery delivery;
 
   @JsonKey(defaultValue: const [], name: 'last_replies')
-  List<Message>? _lastReplies;
+  List<Message>? lastReplies1;
 
   @JsonKey(name: 'quote_message')
   Message? quoteMessage;
 
-  List<Message>? get lastReplies => _lastReplies;
+  List<Message>? get lastReplies => lastReplies1;
 
-  Message? get lastReply => _lastReplies != null && _lastReplies!.isNotEmpty
-      ? _lastReplies![_lastReplies!.length - 1]
+  Message? get lastReply => lastReplies1 != null && lastReplies1!.isNotEmpty
+      ? lastReplies1![lastReplies1!.length - 1]
       : null;
   List<Message>? get last3Replies {
-    if (_lastReplies != null && _lastReplies!.isNotEmpty) {
-      return _lastReplies!
-          .getRange(responsesCount < 3 ? 1 : 0, _lastReplies!.length)
+    if (lastReplies != null && lastReplies!.isNotEmpty) {
+      return lastReplies!
+          .getRange(responsesCount < 3 ? 1 : 0, lastReplies!.length)
           .toList();
     }
     return null;
@@ -89,8 +87,7 @@ class Message extends BaseModel {
 
   List<MessageLink>? get links => _links;
 
-  bool get isMessageHasLinks =>
-      _links != null && _links!.isNotEmpty;
+  bool get isMessageHasLinks => _links != null && _links!.isNotEmpty;
 
   int get hash {
     return this.id.hashCode +
@@ -102,12 +99,12 @@ class Message extends BaseModel {
             : 0) +
         this.delivery.hashCode +
         this._isRead +
-        (this._lastReplies != null
+        (this.lastReplies1 != null
             ? this
-                ._lastReplies!
+                .lastReplies1!
                 .fold(0, (prevReply, reply) => reply.hashCode + prevReply)
             : 0) +
-                this.reactions.fold(0, (acc, r) => r.count + acc as int) +
+        this.reactions.fold(0, (acc, r) => r.count + acc as int) +
         (this._links != null
             ? this
                 ._links!
@@ -182,7 +179,7 @@ class Message extends BaseModel {
     List<Message>? lastReplies = const <Message>[],
     List<MessageLink>? links = const <MessageLink>[],
   }) {
-    this._lastReplies = lastReplies;
+    this.lastReplies1 = lastReplies;
     this._links = links;
   }
 
@@ -229,32 +226,24 @@ class Message extends BaseModel {
   }
 }
 
-@HiveType(typeId: TypeConstant.MESSAGE_DELIVERY)
 enum Delivery {
-  @HiveField(0)
   @JsonValue('in_progress')
   inProgress,
 
-  @HiveField(1)
   @JsonValue('delivered')
   delivered,
 
-  @HiveField(2)
   @JsonValue('failed')
   failed,
 }
 
-@HiveType(typeId: TypeConstant.MESSAGE_SUBTYPE)
 enum MessageSubtype {
-  @HiveField(0)
   @JsonValue('application')
   application,
 
-  @HiveField(1)
   @JsonValue('deleted')
   deleted,
 
-  @HiveField(2)
   @JsonValue('system')
   system
 }

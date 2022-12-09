@@ -36,7 +36,7 @@ class _InvitationPeopleEmailPageState extends State<InvitationPeopleEmailPage> {
     invitationUrl = Get.arguments;
     _textEditingControllers = [];
     _tooltipControllers = [];
-    WidgetsBinding.instance?.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       invitationEmailCubit.addEmail('');
     });
   }
@@ -62,7 +62,8 @@ class _InvitationPeopleEmailPageState extends State<InvitationPeopleEmailPage> {
                     _textEditingControllers
                         .removeWhere((element) => element.text.trim().isEmpty);
                     _tooltipControllers.clear();
-                  } else if(state.status == InvitationEmailStatus.sendEmailFail) {
+                  } else if (state.status ==
+                      InvitationEmailStatus.sendEmailFail) {
                     Utilities.showSimpleSnackBar(
                       context: context,
                       message: AppLocalizations.of(context)!.somethingWasWrong,
@@ -209,8 +210,8 @@ class _InvitationPeopleEmailPageState extends State<InvitationPeopleEmailPage> {
     if (_isSentEmailSuccessfully(state)) {
       return state.listEmailState.map((emailState) {
         return _buildEmailItem(
-          _textEditingControllers.firstWhere(
-              (controller) => emailState.email.trim() == controller.text.trim()),
+          _textEditingControllers.firstWhere((controller) =>
+              emailState.email.trim() == controller.text.trim()),
           emailState,
           null,
         );
@@ -223,8 +224,8 @@ class _InvitationPeopleEmailPageState extends State<InvitationPeopleEmailPage> {
         return _buildEmailItem(
           controller,
           state.listEmailState.firstWhere(
-              (emailState) => emailState.email.trim() == controller.text.trim(),
-              orElse: () => EmailState.init(),
+            (emailState) => emailState.email.trim() == controller.text.trim(),
+            orElse: () => EmailState.init(),
           ),
           tooltipController,
         );
@@ -238,45 +239,44 @@ class _InvitationPeopleEmailPageState extends State<InvitationPeopleEmailPage> {
     JustTheController? tooltipController,
   ) {
     return Container(
-        margin: const EdgeInsets.only(bottom: 8),
-        child: TextField(
-            controller: editingController,
-            keyboardType: TextInputType.emailAddress,
-            style: Theme.of(context)
-                .textTheme
-                .headline1!
-                .copyWith(fontSize: 17, fontWeight: FontWeight.w400),
-            decoration: InputDecoration(
-                filled: true,
-                isDense: true,
-                contentPadding:
-                    EdgeInsets.only(top: 16, bottom: 16, right: 42, left: 24),
-                fillColor: Theme.of(context).colorScheme.secondaryContainer,
-                errorText: null,
-                hintText: AppLocalizations.of(context)?.addEmailAddress ?? '',
-                hintStyle: Theme.of(context)
-                    .textTheme
-                    .headline2!
-                    .copyWith(fontSize: 15, fontWeight: FontWeight.normal),
-                border: OutlineInputBorder(
-                  borderSide: BorderSide.none,
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
-                suffixIcon: state.status != EmailStatus.init
-                    ? Container(
-                        margin: const EdgeInsets.all(16.0),
-                        child: _buildIconState(tooltipController, state)
-                    )
-                    : SizedBox.shrink())),
-      );
+      margin: const EdgeInsets.only(bottom: 8),
+      child: TextField(
+          controller: editingController,
+          keyboardType: TextInputType.emailAddress,
+          style: Theme.of(context)
+              .textTheme
+              .headline1!
+              .copyWith(fontSize: 17, fontWeight: FontWeight.w400),
+          decoration: InputDecoration(
+              filled: true,
+              isDense: true,
+              contentPadding:
+                  EdgeInsets.only(top: 16, bottom: 16, right: 42, left: 24),
+              fillColor: Theme.of(context).colorScheme.secondaryContainer,
+              errorText: null,
+              hintText: AppLocalizations.of(context)?.addEmailAddress ?? '',
+              hintStyle: Theme.of(context)
+                  .textTheme
+                  .headline2!
+                  .copyWith(fontSize: 15, fontWeight: FontWeight.normal),
+              border: OutlineInputBorder(
+                borderSide: BorderSide.none,
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              suffixIcon: state.status != EmailStatus.init
+                  ? Container(
+                      margin: const EdgeInsets.all(16.0),
+                      child: _buildIconState(tooltipController, state))
+                  : SizedBox.shrink())),
+    );
   }
 
   Widget _buildIconState(JustTheController? controller, EmailState state) {
-    switch(state.status) {
+    switch (state.status) {
       case EmailStatus.valid:
         return Image.asset(imageValid, width: 18, height: 18);
       case EmailStatus.invalid:
-        if(controller != null) {
+        if (controller != null) {
           Future.delayed(const Duration(seconds: 1), () {
             controller.showTooltip(immediately: false, autoClose: true);
           });

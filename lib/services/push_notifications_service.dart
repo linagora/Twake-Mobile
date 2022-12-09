@@ -6,7 +6,7 @@ import 'package:twake/services/service_bundle.dart';
 export 'package:twake/models/push_notification/firebase_notification.dart';
 export 'package:twake/models/push_notification/local_notification.dart';
 
-@pragma('vm:entry-point')
+/*@pragma('vm:entry-point')
 void notificationTapBackground(NotificationResponse notificationResponse) {
   // FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
   print(
@@ -20,7 +20,7 @@ void notificationTapBackground(NotificationResponse notificationResponse) {
     print(
         'notification action tapped with input: ${notificationResponse.input}');
   }
-}
+}*/
 
 class PushNotificationsService {
   static late PushNotificationsService _service;
@@ -55,22 +55,24 @@ class PushNotificationsService {
     );
 
     // Initialize the local notifications plugin with above settings
-    _notificationsPlugin.initialize(initSettings,
-        onDidReceiveNotificationResponse:
-            (NotificationResponse notificationResponse) {
-      switch (notificationResponse.notificationResponseType) {
-        case NotificationResponseType.selectedNotification:
-          if (notificationResponse.payload == null) return;
-          final notification = LocalNotification.fromEncodedString(
-              string: notificationResponse.payload!);
-          _localNotificationClickStream.sink.add(notification);
-          break;
-        case NotificationResponseType.selectedNotificationAction:
-          //   SocketIOService _socketio = SocketIOService.instance;
-          //   _socketio.emitTestEvent();
-          break;
-      }
-    }, onDidReceiveBackgroundNotificationResponse: notificationTapBackground);
+    _notificationsPlugin.initialize(
+      initSettings,
+      onDidReceiveNotificationResponse:
+          (NotificationResponse notificationResponse) {
+        switch (notificationResponse.notificationResponseType) {
+          case NotificationResponseType.selectedNotification:
+            if (notificationResponse.payload == null) return;
+            final notification = LocalNotification.fromEncodedString(
+                string: notificationResponse.payload!);
+            _localNotificationClickStream.sink.add(notification);
+            break;
+          case NotificationResponseType.selectedNotificationAction:
+            //   SocketIOService _socketio = SocketIOService.instance;
+            //   _socketio.emitTestEvent();
+            break;
+        }
+      }, //onDidReceiveBackgroundNotificationResponse: notificationTapBackground);
+    );
   }
 
   static PushNotificationsService get instance => _service;

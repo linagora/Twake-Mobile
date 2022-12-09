@@ -39,7 +39,11 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
               .clearFileUploadingState(needToCancelInProcessingFile: true);
           return false;
         }
-        Get.find<MessageAnimationCubit>().resetAnimation();
+        Get.find<MessageAnimationCubit>().endAnimation();
+        Get.find<ThreadMessagesCubit>().reset();
+        Get.find<PinnedMessageCubit>().init();
+        Get.find<QuoteMessageCubit>().init();
+        Get.find<OnlineStatusCubit>().getOnlineStatusWebSocket();
         return true;
       },
       child: Scaffold(
@@ -61,6 +65,8 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
                             behavior: HitTestBehavior.opaque,
                             onTap: () {
                               popBack();
+                              Get.find<MessageAnimationCubit>()
+                                  .resetAnimation();
                               Get.find<ThreadMessagesCubit>().reset();
                               Get.find<PinnedMessageCubit>().init();
                               Get.find<QuoteMessageCubit>().init();

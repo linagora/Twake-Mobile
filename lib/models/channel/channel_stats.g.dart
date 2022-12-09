@@ -6,12 +6,10 @@ part of 'channel_stats.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-ChannelStats _$ChannelStatsFromJson(Map<String, dynamic> json) {
-  return ChannelStats(
-    members: json['members'] as int,
-    messages: json['messages'] as int,
-  );
-}
+ChannelStats _$ChannelStatsFromJson(Map<String, dynamic> json) => ChannelStats(
+      members: json['members'] as int,
+      messages: json['messages'] as int,
+    );
 
 Map<String, dynamic> _$ChannelStatsToJson(ChannelStats instance) =>
     <String, dynamic>{

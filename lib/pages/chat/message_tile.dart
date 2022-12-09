@@ -1,20 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
+import 'package:twake/models/globals/globals.dart';
 import 'package:twake/models/message/message.dart';
 import 'package:twake/pages/chat/message_content.dart';
 import 'package:twake/services/navigator_service.dart';
 
 class MessageTile<T extends BaseMessagesCubit> extends StatefulWidget {
   final Message message;
-  final bool hideSender;
   final bool isDirect;
   final bool isThread;
   final bool isSenderHidden;
   final bool isHeadInThred;
   MessageTile({
     required this.message,
-    this.hideSender = false,
     this.isDirect = false,
     this.isThread = false,
     this.isSenderHidden = false,
@@ -34,11 +33,12 @@ class _MessageTileState<T extends BaseMessagesCubit>
   }
 
   void onReply(Message message) {
-    NavigatorService.instance.navigate(
-      channelId: message.channelId,
-      threadId: message.id,
-      reloadThreads: false,
-    );
+    if (Globals.instance.channelId != null) {
+      NavigatorService.instance.navigateToThread(
+        channelId: Globals.instance.channelId!,
+        threadId: message.id,
+      );
+    }
   }
 
   @override
@@ -50,47 +50,40 @@ class _MessageTileState<T extends BaseMessagesCubit>
           onReply(widget.message);
         }
       },
-      child: _messagePadding(),
-    );
-  }
-
-  Widget _messagePadding() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: widget.message.isOwnerMessage
-            ? MainAxisAlignment.end
-            : MainAxisAlignment.start,
-        children: [
-          SizedBox(
-            width: widget.message.files == null
-                ? widget.message.isOwnerMessage
-                    ? Dim.widthPercent(3)
-                    : Dim.widthPercent(2)
-                : widget.message.isOwnerMessage
-                    ? Dim.widthPercent(15)
-                    : Dim.widthPercent(1),
-          ),
-          MessageContent(
-            message: widget.message,
-            isThread: widget.isThread,
-            isHeadInThred: widget.isHeadInThred,
-            isDirect: widget.isDirect,
-            isSenderHidden: widget.isSenderHidden,
-            key: ValueKey(widget.message.hashCode),
-          ),
-          SizedBox(
-            width: widget.message.files == null
-                ? widget.message.isOwnerMessage
-                    ? Dim.widthPercent(3)
-                    : Dim.widthPercent(7)
-                : widget.message.isOwnerMessage
-                    ? Dim.widthPercent(3)
-                    : Dim.widthPercent(5),
-          ),
-        ],
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 6),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            SizedBox(
+              width: widget.message.files == null
+                  ? widget.message.isOwnerMessage
+                      ? Dim.widthPercent(3)
+                      : Dim.widthPercent(2)
+                  : widget.message.isOwnerMessage
+                      ? Dim.widthPercent(15)
+                      : Dim.widthPercent(1),
+            ),
+            MessageContent(
+              message: widget.message,
+              isThread: widget.isThread,
+              isHeadInThred: widget.isHeadInThred,
+              isDirect: widget.isDirect,
+              isSenderHidden: widget.isSenderHidden,
+              key: ValueKey(widget.message.hashCode),
+            ),
+            SizedBox(
+              width: widget.message.files == null
+                  ? widget.message.isOwnerMessage
+                      ? Dim.widthPercent(3)
+                      : Dim.widthPercent(7)
+                  : widget.message.isOwnerMessage
+                      ? Dim.widthPercent(3)
+                      : Dim.widthPercent(5),
+            ),
+          ],
+        ),
       ),
     );
   }

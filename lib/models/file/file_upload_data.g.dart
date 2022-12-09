@@ -6,12 +6,11 @@ part of 'file_upload_data.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-FileUploadData _$FileUploadDataFromJson(Map<String, dynamic> json) {
-  return FileUploadData(
-    size: json['size'] as int,
-    chunks: json['chunks'] as int,
-  );
-}
+FileUploadData _$FileUploadDataFromJson(Map<String, dynamic> json) =>
+    FileUploadData(
+      size: json['size'] as int,
+      chunks: json['chunks'] as int,
+    );
 
 Map<String, dynamic> _$FileUploadDataToJson(FileUploadData instance) =>
     <String, dynamic>{

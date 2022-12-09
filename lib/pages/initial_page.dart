@@ -48,15 +48,14 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance!.addObserver(this);
+    WidgetsBinding.instance.addObserver(this);
     connectionStatusSnackBar();
     _handleMagicLinkEvent();
     _handleReceiveSharing();
   }
 
   void _handleMagicLinkEvent() {
-    if (!PlatformDetection.isMagicLinkSupported())
-      return;
+    if (!PlatformDetection.isMagicLinkSupported()) return;
     try {
       _handleIncomingLinkStream();
       _handleIncomingLinkInitial();
@@ -84,13 +83,11 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
   // this should be handled ONLY ONCE in app's lifetime,
   // go to use a flag variable called [Globals.instance.magicLinkInitialUriIsHandled] to check this
   Future<void> _handleIncomingLinkInitial() async {
-
     // Prevent checking incoming url when logout
     final currentAuthState = Get.find<AuthenticationCubit>().state;
-    if(currentAuthState is LogoutInProgress)
-      return;
+    if (currentAuthState is LogoutInProgress) return;
 
-    if(!Globals.instance.magicLinkInitialUriIsHandled) {
+    if (!Globals.instance.magicLinkInitialUriIsHandled) {
       Globals.instance.magicLinkInitialUriIsHandled = true;
       try {
         final uri = await getInitialUri();
@@ -124,11 +121,12 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
       incomingHost = sprintf(Endpoint.httpsScheme, [uri.host]);
     }
     if (token != null && token.isNotEmpty) {
-      Get.find<AuthenticationCubit>().joiningWithMagicLink(token, incomingHost: incomingHost);
+      Get.find<AuthenticationCubit>()
+          .joiningWithMagicLink(token, incomingHost: incomingHost);
     } else if (uri.pathSegments.length == 6) {
       // To handle twake link format:
       // https://{twake_host}/client/{company_id}/w/{workspace_id}/c/{channel_id}
-      if(incomingHost != Globals.instance.host) {
+      if (incomingHost != Globals.instance.host) {
         // TODO: Need to handle new story here when user clicked
         // on other Twake server urls that is not current server.
         return;
@@ -137,8 +135,10 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
         final companyId = translator.toUUID(uri.pathSegments[1]);
         final workspaceId = translator.toUUID(uri.pathSegments[3]);
         final channelId = translator.toUUID(uri.pathSegments[5]);
-        final twakeLinkJoining = TwakeLinkJoining(companyId, workspaceId, channelId);
-        Get.find<AuthenticationCubit>().checkAuthentication(twakeLinkJoining: twakeLinkJoining);
+        final twakeLinkJoining =
+            TwakeLinkJoining(companyId, workspaceId, channelId);
+        Get.find<AuthenticationCubit>()
+            .checkAuthentication(twakeLinkJoining: twakeLinkJoining);
       }
     } else {
       Get.find<AuthenticationCubit>().checkAuthentication();
@@ -146,8 +146,7 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
   }
 
   _handleReceiveSharing() {
-    if (!PlatformDetection.isMobileSupported())
-      return;
+    if (!PlatformDetection.isMobileSupported()) return;
     _receiveSharingFileManager = Get.find<ReceiveSharingFileManager>();
     _receiveSharingFileManager.init();
     _receiveSharingTextManager = Get.find<ReceiveSharingTextManager>();
@@ -256,40 +255,40 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
           return Scaffold(
             resizeToAvoidBottomInset: false,
             body: BlocBuilder<AuthenticationCubit, AuthenticationState>(
-              bloc: Get.find<AuthenticationCubit>(),
-              builder: (ctx, state) {
-                if (state is AuthenticationInProgress) {
-                  return buildSplashScreen();
-                } else if (state is AuthenticationInitial ||
-                    state is AuthenticationFailure ||
-                    state is AuthenticationInvitationPending) {
-                  if (state is AuthenticationInvitationPending) {
-                    return SignFlow(
-                        requestedMagicLinkToken: state.requestedToken);
-                  }
-                  return SignFlow();
-                } else if (state is PostAuthenticationSyncInProgress) {
-                  return SyncingDataScreen(state.progress.toDouble());
-                } else if (state is PostAuthenticationSyncFailed) {
-                  return SyncDataFailed();
-                } else if (state is PostAuthenticationSyncSuccess ||
-                    state is AuthenticationSuccess) {
-                  return _authenticationSucceedWidget(state);
-                } else if (state is JoiningMagicLinkState) {
-                  _popWhenOpenMagicLinkFromChat();
-                  return JoinWorkSpaceMagicLinkPage(
-                    requestedToken: state.requestedToken,
-                    incomingHost: state.incomingHost,
-                  );
-                } else if (state is PostAuthenticationNoCompanyFound ||
+                bloc: Get.find<AuthenticationCubit>(),
+                builder: (ctx, state) {
+                  if (state is AuthenticationInProgress) {
+                    return buildSplashScreen();
+                  } else if (state is AuthenticationInitial ||
+                      state is AuthenticationFailure ||
+                      state is AuthenticationInvitationPending) {
+                    if (state is AuthenticationInvitationPending) {
+                      return SignFlow(
+                          requestedMagicLinkToken: state.requestedToken);
+                    }
+                    return SignFlow();
+                  } else if (state is PostAuthenticationSyncInProgress) {
+                    return SyncingDataScreen(state.progress.toDouble());
+                  } else if (state is PostAuthenticationSyncFailed) {
+                    return SyncDataFailed();
+                  } else if (state is PostAuthenticationSyncSuccess ||
+                      state is AuthenticationSuccess) {
+                    return _authenticationSucceedWidget(state);
+                  } else if (state is JoiningMagicLinkState) {
+                    _popWhenOpenMagicLinkFromChat();
+                    return JoinWorkSpaceMagicLinkPage(
+                      requestedToken: state.requestedToken,
+                      incomingHost: state.incomingHost,
+                    );
+                  } else if (state is PostAuthenticationNoCompanyFound ||
                       (state is PostAuthenticationSyncFailedSomeServices &&
-                          state.syncFailedSource == SyncFailedSource.CompaniesApi)) {
+                          state.syncFailedSource ==
+                              SyncFailedSource.CompaniesApi)) {
                     return _noCompanyBelongToUserWidget(state);
-                } else {
-                  return buildSplashScreen();
-                }
-              }
-            ),
+                  } else {
+                    return buildSplashScreen();
+                  }
+                }),
           );
         },
       ),
@@ -306,7 +305,7 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
       twakeLinkJoining = state.twakeLinkJoining;
     }
     if (magicLinkJoinResponse == null) {
-      if(twakeLinkJoining != null) {
+      if (twakeLinkJoining != null) {
         _goToChannelWithTwakeLink(twakeLinkJoining);
       }
       return HomeWidget();
@@ -335,8 +334,9 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
       if (workspaceJoinResponse?.company.id != null) {
         // fetch and select company
         final result = await Get.find<CompaniesCubit>().fetch();
-        if(!result) return;
-        Get.find<CompaniesCubit>().selectCompany(companyId: workspaceJoinResponse!.company.id!);
+        if (!result) return;
+        Get.find<CompaniesCubit>()
+            .selectCompany(companyId: workspaceJoinResponse!.company.id!);
 
         // fetch and select workspace
         if (workspaceJoinResponse.workspace.id != null) {
@@ -388,8 +388,8 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
         channelId: twakeLinkJoining.channelId,
       );
     } catch (e) {
-      Logger().e('Error occurred during navigation by opening a Twake Link:\n$e');
+      Logger()
+          .e('Error occurred during navigation by opening a Twake Link:\n$e');
     }
   }
-
 }

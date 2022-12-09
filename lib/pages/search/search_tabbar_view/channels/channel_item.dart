@@ -20,7 +20,7 @@ class ChannelItemWidget extends StatelessWidget {
         channel.isDirect ? channel.members.length : channel.stats?.members ?? 0;
     return GestureDetector(
       onTap: () {
-        NavigatorService.instance.navigate(
+        NavigatorService.instance.navigateToChannel(
           channelId: channel.id,
         );
       },

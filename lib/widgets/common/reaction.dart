@@ -15,7 +15,8 @@ class Reaction<T extends BaseMessagesCubit> extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        Get.find<T>().react(message: message, reaction: reaction.name);
+        Get.find<ChannelMessagesCubit>()
+            .react(message: message, reaction: reaction.name);
       },
       child: FittedBox(
         child: Padding(
@@ -24,7 +25,7 @@ class Reaction<T extends BaseMessagesCubit> extends StatelessWidget {
             decoration: BoxDecoration(
               // waiting for accurate colors in the upcoming design
               color: Get.isDarkMode
-                  ?  message.isOwnerMessage
+                  ? message.isOwnerMessage
                       ? Theme.of(context)
                           .colorScheme
                           .primaryContainer
@@ -54,7 +55,7 @@ class Reaction<T extends BaseMessagesCubit> extends StatelessWidget {
                   Text(
                     '${reaction.count}',
                     style: Get.isDarkMode
-                        ?  message.isOwnerMessage
+                        ? message.isOwnerMessage
                             ? Theme.of(context).textTheme.headline1!.copyWith(
                                 fontWeight: FontWeight.w600, fontSize: 12)
                             : Theme.of(context).textTheme.headline1!.copyWith(

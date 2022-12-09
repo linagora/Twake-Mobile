@@ -33,15 +33,16 @@ class JoinWorkSpaceMagicLinkPage extends StatefulWidget {
       _JoinWorkSpaceMagicLinkPageState();
 }
 
-class _JoinWorkSpaceMagicLinkPageState extends State<JoinWorkSpaceMagicLinkPage> {
-
+class _JoinWorkSpaceMagicLinkPageState
+    extends State<JoinWorkSpaceMagicLinkPage> {
   final joiningCubit = Get.find<JoiningCubit>();
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance?.addPostFrameCallback((_) async {
-      await joiningCubit.checkServerDifference(widget.requestedToken, widget.incomingHost);
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await joiningCubit.checkServerDifference(
+          widget.requestedToken, widget.incomingHost);
     });
   }
 
@@ -68,7 +69,7 @@ class _JoinWorkSpaceMagicLinkPageState extends State<JoinWorkSpaceMagicLinkPage>
               BlocConsumer<JoiningCubit, JoiningState>(
                 bloc: joiningCubit,
                 builder: (context, state) {
-                  if(state is JoiningCheckTokenFinished) {
+                  if (state is JoiningCheckTokenFinished) {
                     return state.joinResponse == null
                         ? _buildUnAvailableLayout(state.joinResponse)
                         : _buildAvailableLayout(state.joinResponse);
@@ -76,15 +77,19 @@ class _JoinWorkSpaceMagicLinkPageState extends State<JoinWorkSpaceMagicLinkPage>
                   return _loadingLayout();
                 },
                 listener: (context, state) async {
-                  if(state is JoiningWithDifferenceHost) {
-                    SchedulerBinding.instance?.addPostFrameCallback((timeStamp) async {
-                      await _showConfirmLogoutDialog(currentServerUrl: Globals.instance.host);
+                  if (state is JoiningWithDifferenceHost) {
+                    SchedulerBinding.instance
+                        .addPostFrameCallback((timeStamp) async {
+                      await _showConfirmLogoutDialog(
+                          currentServerUrl: Globals.instance.host);
                     });
                   }
-                  if(state is JoiningStateForceLogout) {
+                  if (state is JoiningStateForceLogout) {
                     Utilities.showSimpleSnackBar(
                       context: context,
-                      message: AppLocalizations.of(context)?.youHaveBeenDisconnected(widget.incomingHost) ?? '',
+                      message: AppLocalizations.of(context)
+                              ?.youHaveBeenDisconnected(widget.incomingHost) ??
+                          '',
                       iconPath: imageInvalid,
                       duration: const Duration(milliseconds: 3000),
                     );
@@ -92,7 +97,7 @@ class _JoinWorkSpaceMagicLinkPageState extends State<JoinWorkSpaceMagicLinkPage>
                 },
                 listenWhen: (previous, current) {
                   // To make sure it will not show too many dialogs
-                  if(previous is JoiningWithDifferenceHost) {
+                  if (previous is JoiningWithDifferenceHost) {
                     if (Navigator.canPop(context)) {
                       Navigator.pop(context);
                     }
@@ -184,13 +189,15 @@ class _JoinWorkSpaceMagicLinkPageState extends State<JoinWorkSpaceMagicLinkPage>
       );
 
   void _handleClickOnJoinButton() async {
-    await joiningCubit.joinWorkspace(widget.requestedToken, needCheckAuthentication: true);
+    await joiningCubit.joinWorkspace(widget.requestedToken,
+        needCheckAuthentication: true);
   }
 
   void _handleClickOnCreateCompanyButton() async {
     try {
-      final isAuthenticated = await Get.find<AuthenticationCubit>().isAuthenticated();
-      if(isAuthenticated) {
+      final isAuthenticated =
+          await Get.find<AuthenticationCubit>().isAuthenticated();
+      if (isAuthenticated) {
         // Open console page in browser
         final consolePage = sprintf(Endpoint.consolePage,
             [Globals.instance.host.split('.').skip(1).join('.')]);
@@ -216,8 +223,9 @@ class _JoinWorkSpaceMagicLinkPageState extends State<JoinWorkSpaceMagicLinkPage>
     );
   }
 
-  Future<void> _showConfirmLogoutDialog({required String currentServerUrl}) async {
-    if(!mounted) return;
+  Future<void> _showConfirmLogoutDialog(
+      {required String currentServerUrl}) async {
+    if (!mounted) return;
     await showDialog(
       context: context,
       barrierDismissible: false,
@@ -226,11 +234,13 @@ class _JoinWorkSpaceMagicLinkPageState extends State<JoinWorkSpaceMagicLinkPage>
           onWillPop: () async => false,
           child: ConfirmDialog(
             body: Text(
-              AppLocalizations.of(context)?.confirmLogoutMagicLink(currentServerUrl) ?? '',
-              style: Theme.of(context).textTheme.headline1?.copyWith(
-                fontSize: 18.0,
-                fontWeight: FontWeight.normal
-              ),
+              AppLocalizations.of(context)
+                      ?.confirmLogoutMagicLink(currentServerUrl) ??
+                  '',
+              style: Theme.of(context)
+                  .textTheme
+                  .headline1
+                  ?.copyWith(fontSize: 18.0, fontWeight: FontWeight.normal),
               textAlign: TextAlign.center,
             ),
             cancelActionTitle: AppLocalizations.of(context)?.cancel ?? '',
@@ -246,8 +256,8 @@ class _JoinWorkSpaceMagicLinkPageState extends State<JoinWorkSpaceMagicLinkPage>
 
   void _handleLogoutAction() {
     joiningCubit.forceLogoutCurrentServer(
-        widget.requestedToken,
-        widget.incomingHost,
+      widget.requestedToken,
+      widget.incomingHost,
     );
   }
 
@@ -255,5 +265,4 @@ class _JoinWorkSpaceMagicLinkPageState extends State<JoinWorkSpaceMagicLinkPage>
     // cancel magic link flow, back to normal authen flow
     Get.find<AuthenticationCubit>().checkAuthentication();
   }
-
 }

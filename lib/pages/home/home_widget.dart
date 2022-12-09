@@ -61,7 +61,7 @@ class _HomeWidgetState extends State<HomeWidget> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance?.addObserver(this);
+    WidgetsBinding.instance.addObserver(this);
 
     PushNotificationsService.instance.requestPermission();
 
@@ -134,7 +134,7 @@ class _HomeWidgetState extends State<HomeWidget> with WidgetsBindingObserver {
 
   @override
   void dispose() {
-    WidgetsBinding.instance?.removeObserver(this);
+    WidgetsBinding.instance.removeObserver(this);
     IsolateNameServer.removePortNameMapping('downloader_send_port');
     _receiveSharingFileSubscription.cancel();
     _receiveSharingFileManager.dispose();
@@ -188,7 +188,7 @@ class _HomeWidgetState extends State<HomeWidget> with WidgetsBindingObserver {
     );
   }
 
-  _buildTabBar() => TabBar(
+  Widget _buildTabBar() => TabBar(
         tabs: [
           BlocBuilder<WorkspacesCubit, WorkspacesState>(
             bloc: Get.find<WorkspacesCubit>(),
