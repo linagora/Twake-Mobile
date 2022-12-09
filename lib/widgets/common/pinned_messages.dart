@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
+import 'package:sticky_grouped_list/sticky_grouped_list.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/blocs/pinned_message_cubit/pinned_messsage_cubit.dart';
 import 'package:twake/config/dimensions_config.dart';
+import 'package:twake/models/message/message.dart';
 import 'package:twake/pages/chat/message_tile.dart';
+import 'package:twake/utils/dateformatter.dart';
 import 'package:twake/utils/utilities.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:twake/widgets/common/highlight_component.dart';
-import 'package:twake/widgets/common/searchable_grouped_listview.dart';
 
 class PinnedMessages extends StatefulWidget {
   const PinnedMessages({Key? key}) : super(key: key);
@@ -18,8 +19,8 @@ class PinnedMessages extends StatefulWidget {
 }
 
 class _PinnedMessagesState extends State<PinnedMessages> {
-  final SearchableGroupChatController _controller =
-      SearchableGroupChatController();
+  final GroupedItemScrollController itemScrollController =
+      GroupedItemScrollController();
 
   @override
   void initState() {
@@ -67,22 +68,55 @@ class _PinnedMessagesState extends State<PinnedMessages> {
               builder: (context, state) {
                 if (state.pinnedMesssageStatus ==
                     PinnedMessageStatus.finished) {
-                  return Expanded(
-                      child: SearchableChatView(
-                          searchableChatController: _controller,
-                          indexedItemBuilder: (_, message, index) {
-                            return HighlightComponent(
-                              component: MessageTile<ChannelMessagesCubit>(
-                                message: message,
-                                key: ValueKey(message.hash),
-                              ),
-                              highlightColor: Theme.of(context).highlightColor,
-                              highlightWhen:
-                                  _controller.highlightMessage != null &&
-                                      _controller.highlightMessage == message,
-                            );
+                  return Flexible(
+                    child: StickyGroupedListView<Message, DateTime>(
+                      elements: state.pinnedMessageList,
+                      reverse: false,
+                      floatingHeader: false,
+                      groupSeparatorBuilder: (Message msg) {
+                        return GestureDetector(
+                          onTap: () {
+                            FocusManager.instance.primaryFocus!.unfocus();
                           },
-                          messages: state.pinnedMessageList));
+                          child: Container(
+                            height: 53.0,
+                            alignment: Alignment.center,
+                            child: Text(
+                              DateFormatter.getVerboseDate(msg.createdAt),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .headline2!
+                                  .copyWith(
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w500),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        );
+                      },
+                      groupBy: (Message m) {
+                        final DateTime dt =
+                            DateTime.fromMillisecondsSinceEpoch(m.createdAt);
+                        return DateTime(dt.year, dt.month, dt.day);
+                      },
+                      groupComparator: (DateTime value1, DateTime value2) =>
+                          value2.compareTo(value1),
+                      itemComparator: (Message m1, Message m2) =>
+                          m2.createdAt.compareTo(m1.createdAt),
+                      separator: SizedBox(height: 1.0),
+                      itemScrollController: itemScrollController,
+                      stickyHeaderBackgroundColor:
+                          Theme.of(context).scaffoldBackgroundColor,
+                      indexedItemBuilder: (itemContext, message, index) {
+                        return MessageTile<ChannelMessagesCubit>(
+                          message: message,
+                          isDirect: false,
+                          key: ValueKey(message.hash),
+                          isSenderHidden: false,
+                        );
+                      },
+                    ),
+                  );
                 } else if (state.pinnedMesssageStatus ==
                     PinnedMessageStatus.init) {
                   return Column(

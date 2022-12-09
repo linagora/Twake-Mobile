@@ -255,7 +255,8 @@ class _MessageContentState<T extends BaseMessagesCubit>
                   style: Theme.of(context).textTheme.headline1!,
                 )
               : TwacodeRenderer(
-                  twacode: TwacodeParser(widget.message.text).message[0]['elements'],
+                  twacode: TwacodeParser(widget.message.text).message[0]
+                      ['elements'],
                   fileIds: widget.message.files,
                   messageLinks: widget.message.links,
                   parentStyle: Theme.of(context).textTheme.headline1!,
@@ -295,10 +296,21 @@ class _MessageContentState<T extends BaseMessagesCubit>
     final List<Avatar> avatars = [];
     if (widget.message.last3Replies != null) {
       widget.message.last3Replies!.forEach((message) {
-        message.picture != null || message.username != null
-            ? avatars.add(Avatar(
-                link: message.picture ?? '', name: message.username ?? ''))
-            : null;
+        if (message.picture != null || message.username != null) {
+          /* if we want to join same user's avatar
+         avatars.isNotEmpty 
+              ? (avatars.last.link != message.picture ||
+                      avatars.last.name != message.username)
+                  ? avatars.add(Avatar(
+                      link: message.picture ?? '',
+                      name: message.username ?? ''))
+                  : null
+              : avatars.add(Avatar(
+                  link: message.picture ?? '', name: message.username ?? ''));*/
+
+          avatars.add(Avatar(
+              link: message.picture ?? '', name: message.username ?? ''));
+        }
       });
     }
     return Padding(
@@ -372,7 +384,7 @@ class _MessageContentState<T extends BaseMessagesCubit>
         textDirection: TextDirection.ltr,
         children: [
           ...widget.message.reactions.map((r) {
-            return Reaction<T>(
+            return Reaction(
               message: widget.message,
               reaction: r,
             );

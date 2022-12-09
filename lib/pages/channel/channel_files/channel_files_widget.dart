@@ -26,8 +26,8 @@ class _ChannelFilesWidgetState extends State<ChannelFilesWidget> {
   void initState() {
     super.initState();
     _currentChannel = Get.arguments;
-    WidgetsBinding.instance?.addPostFrameCallback((_) {
-      if(_currentChannel != null) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_currentChannel != null) {
         channelFileCubit.loadFilesInChannel(_currentChannel!);
       }
     });
@@ -75,8 +75,7 @@ class _ChannelFilesWidgetState extends State<ChannelFilesWidget> {
                 style: Theme.of(context)
                     .textTheme
                     .headline1!
-                    .copyWith(
-                    fontWeight: FontWeight.w600, fontSize: 17),
+                    .copyWith(fontWeight: FontWeight.w600, fontSize: 17),
               ),
             ),
           )
@@ -89,9 +88,9 @@ class _ChannelFilesWidgetState extends State<ChannelFilesWidget> {
     return BlocBuilder<ChannelFileCubit, ChannelFileState>(
       bloc: channelFileCubit,
       builder: (context, state) {
-        if(state.channelFileStatus == ChannelFileStatus.finished) {
+        if (state.channelFileStatus == ChannelFileStatus.finished) {
           final channels = state.listFiles;
-          if(channels.isEmpty) {
+          if (channels.isEmpty) {
             return _buildEmptyNotice();
           }
           return Expanded(
@@ -101,7 +100,8 @@ class _ChannelFilesWidgetState extends State<ChannelFilesWidget> {
                 shrinkWrap: true,
                 itemCount: channels.length,
                 separatorBuilder: (BuildContext context, int index) => Padding(
-                  padding:  EdgeInsets.only(left: Dim.widthPercent(25), top: 6, bottom: 6),
+                  padding: EdgeInsets.only(
+                      left: Dim.widthPercent(25), top: 6, bottom: 6),
                   child: Divider(
                     color: Theme.of(context)
                         .colorScheme
@@ -136,7 +136,10 @@ class _ChannelFilesWidgetState extends State<ChannelFilesWidget> {
       alignment: Alignment.center,
       child: Text(
         AppLocalizations.of(context)!.noFileInChannel,
-        style: Theme.of(context).textTheme.headline1!.copyWith(fontWeight: FontWeight.w500),
+        style: Theme.of(context)
+            .textTheme
+            .headline1!
+            .copyWith(fontWeight: FontWeight.w500),
       ),
     );
   }

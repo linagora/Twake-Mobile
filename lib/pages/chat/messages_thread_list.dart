@@ -1,29 +1,20 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get/get.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+import 'package:sticky_grouped_list/sticky_grouped_list.dart';
 import 'package:twake/blocs/message_animation_cubit/message_animation_cubit.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/config/dimensions_config.dart';
-import 'package:twake/blocs/unread_messages_cubit/unread_messages_cubit.dart';
-import 'package:twake/blocs/unread_messages_cubit/unread_messages_state.dart';
 import 'package:twake/models/channel/channel.dart';
 import 'package:twake/models/message/message.dart';
-import 'package:twake/pages/chat/jumpable_pinned_messages.dart';
 import 'package:twake/pages/chat/message_tile.dart';
-import 'package:twake/widgets/common/highlight_component.dart';
-import 'package:twake/widgets/common/unread_border.dart';
-import 'package:twake/widgets/common/unread_counter.dart';
 
 class ThreadMessagesList<T extends BaseMessagesCubit> extends StatefulWidget {
   final Channel parentChannel;
-  final Message? pinnedMessage;
 
-  const ThreadMessagesList(
-      {required this.parentChannel, this.pinnedMessage});
+  const ThreadMessagesList({required this.parentChannel});
 
   @override
   _ThreadMessagesListState createState() => _ThreadMessagesListState<T>();
@@ -31,10 +22,6 @@ class ThreadMessagesList<T extends BaseMessagesCubit> extends StatefulWidget {
 
 class _ThreadMessagesListState<T extends BaseMessagesCubit>
     extends State<ThreadMessagesList> {
-  List<Message> _messages = <Message>[];
-
-  bool isJump = false;
-
   @override
   Widget build(BuildContext context) {
     return Expanded(
@@ -42,38 +29,49 @@ class _ThreadMessagesListState<T extends BaseMessagesCubit>
         bloc: Get.find<ThreadMessagesCubit>(),
         builder: (ctx, state) {
           if (state is MessagesLoadSuccess) {
-            isJump
-                ? _messages = state.messages.reversed.toList()
-                : _messages = state.messages;
-          }
-          return state is MessagesLoadSuccess && _messages.length != 0
-              ? _buildThredMessages()
-              : SingleChildScrollView(
-                  child: MessageColumn<T>(
-                    message: _messages.first,
+            state.messages
+                .sort((m1, m2) => m2.createdAt.compareTo(m1.createdAt));
+
+            return state.messages.length != 1
+                ? ThreadMessagesScrollView(
+                    messages: state.messages,
                     parentChannel: widget.parentChannel,
-                  ),
-                );
+                  )
+                : SingleChildScrollView(
+                    child: MessageColumn(
+                      message: state.messages.first,
+                      parentChannel: widget.parentChannel,
+                    ),
+                  );
+          } else {
+            return Container();
+          }
         },
       ),
     );
   }
+}
 
-  Widget _buildThredMessages() {
+class ThreadMessagesScrollView extends StatelessWidget {
+  final List<Message> messages;
+  final Channel parentChannel;
+  const ThreadMessagesScrollView(
+      {Key? key, required this.messages, required this.parentChannel})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
     return Column(
       children: [
         SingleChildScrollView(
-          child: MessageColumn<T>(
-            message: isJump ? _messages.last : _messages.first,
-            parentChannel: widget.parentChannel,
+          child: MessageColumn(
+            message: messages.last,
+            parentChannel: parentChannel,
           ),
         ),
-        Expanded(
-          child: _ScrollableMessagesList(
-            messages: _messages,
-            isDirect: widget.parentChannel.isDirect,
-            isJump: isJump,
-          ),
+        _ScrollableMessagesList(
+          messages: messages.getRange(0, messages.length - 1).toList(),
+          parentChannel: parentChannel,
         ),
       ],
     );
@@ -82,134 +80,62 @@ class _ThreadMessagesListState<T extends BaseMessagesCubit>
 
 class _ScrollableMessagesList extends StatefulWidget {
   final List<Message> messages;
-  final bool isDirect;
-  final bool isJump;
+  final Channel parentChannel;
 
-  _ScrollableMessagesList(
-      {required this.messages, this.isDirect = false, this.isJump = false});
+  _ScrollableMessagesList({
+    required this.messages,
+    required this.parentChannel,
+  });
 
   @override
   State<StatefulWidget> createState() => _ScrollableMessagesListState();
 }
 
 class _ScrollableMessagesListState extends State<_ScrollableMessagesList> {
-  ItemPositionsListener _itemPositionsListener = ItemPositionsListener.create();
-  ScrollPhysics _physics = ClampingScrollPhysics();
-  ItemScrollController _jumpController = ItemScrollController();
-
-  late List<Message> _messages;
-  late bool isJump;
-  int _highlightIndex = -1;
+  final ItemPositionsListener _itemPositionsListener =
+      ItemPositionsListener.create();
+  final GroupedItemScrollController itemScrollController =
+      GroupedItemScrollController();
 
   @override
   void initState() {
-    _messages = widget.messages;
-    isJump = widget.isJump;
-
-    if (Get.arguments[0] != null) {
-      // jump to selected pinned message
-      Message pinnedMessage = Get.arguments[0];
-
-      isJump = true;
-      SchedulerBinding.instance?.addPostFrameCallback((_) {
-        _highlightIndex =
-            _messages.length - 1 - _messages.indexOf(pinnedMessage);
-        // i don't know why scrollTo animation work not correctly, so i use jumpTo
-        _jumpController.jumpTo(index: _highlightIndex);
-      });
-    }
-
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return JumpablePinnedMessages(
-      jumpToMessage: ((messages, jumpedMessage) {
-        _jumpController.jumpTo(index: _highlightIndex);
-      }),
-      messages: _messages,
-      isDirect: widget.isDirect,
-      child: BlocBuilder<ThreadUnreadMessagesCubit, UnreadMessagesState>(
-        bloc: Get.find<ThreadUnreadMessagesCubit>(),
-        builder: (context, state) {
-          int? unreadCounter;
-          if (state is! UnreadMessagesThreadFound) {
-            unreadCounter = null;
-          } else {
-            unreadCounter = state.unreadCounter;
-          }
-
-          return Scaffold(
-            floatingActionButton: UnreadCounter(
-                counter: unreadCounter ?? 0,
+    return Flexible(
+      child: ScrollablePositionedList.builder(
+        itemPositionsListener: _itemPositionsListener,
+        itemCount: widget.messages.length,
+        itemScrollController: itemScrollController,
+        reverse: true,
+        shrinkWrap: true,
+        physics: ClampingScrollPhysics(),
+        itemBuilder: (context, index) {
+          return GestureDetector(
+            onLongPress: () {
+              Get.find<MessageAnimationCubit>().startAnimation(
+                messagesListContext: context,
+                longPressMessage: widget.messages[index],
+                longPressIndex: index, // because the replied message
                 itemPositionsListener: _itemPositionsListener,
-                onPressed: () {
-                  // scroll to latest message
-                  final latestMessage = _messages.reduce((value, element) =>
-                      value.createdAt > element.createdAt ? value : element);
-                  _jumpController.jumpTo(
-                      index: isJump
-                          ? _messages.indexOf(latestMessage)
-                          : _messages.length -
-                              1 -
-                              _messages.indexOf(latestMessage));
-                }),
-            body: ScrollablePositionedList.builder(
-              initialScrollIndex:
-                  unreadCounter != null ? max(0, unreadCounter - 1) : 0,
-              itemPositionsListener: _itemPositionsListener,
-              itemCount: _messages.length,
-              itemScrollController: _jumpController,
-              physics: _physics,
-              reverse: isJump ? false : true,
-              shrinkWrap: isJump ? false : true,
-              itemBuilder: (itemContext, index) {
-                return HighlightComponent(
-                    component: unreadCounter != null &&
-                            unreadCounter > 0 &&
-                            index == unreadCounter - 1
-                        ? Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              const UnreadBorder(),
-                              _buildIndexedMessage(context, index),
-                            ],
-                          )
-                        : _buildIndexedMessage(context, index),
-                    highlightColor: Theme.of(itemContext).backgroundColor,
-                    highlightWhen: _highlightIndex == index);
-              },
+              );
+            },
+            child: MessageTile<ChannelMessagesCubit>(
+              message: widget.messages[index],
+              isDirect: widget.parentChannel.isDirect,
+              key: ValueKey(widget.messages[index].hash),
+              isThread: true,
             ),
           );
         },
       ),
     );
   }
-
-  Widget _buildIndexedMessage(BuildContext context, int index) {
-    if ((index == 0 && isJump) || (index == _messages.length - 1 && !isJump)) {
-      return SizedBox.shrink();
-    } else {
-      return GestureDetector(
-        child: MessageTile<ThreadMessagesCubit>(
-          message: _messages[_messages.length - 1 - index],
-          key: ValueKey(_messages[_messages.length - 1 - index].hash),
-          isThread: true,
-          isDirect: widget.isDirect,
-        ),
-        onLongPress: () => Get.find<MessageAnimationCubit>().startAnimation(
-          messagesListContext: context,
-          longPressMessage: _messages[_messages.length - 1 - index],
-          longPressIndex: index, // because the replied message
-          itemPositionsListener: _itemPositionsListener,
-        ),
-      );
-    }
-  }
 }
 
-class MessageColumn<T extends BaseMessagesCubit> extends StatelessWidget {
+class MessageColumn extends StatelessWidget {
   final Message message;
   final Channel parentChannel;
 
@@ -223,7 +149,7 @@ class MessageColumn<T extends BaseMessagesCubit> extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         Container(
-          constraints: BoxConstraints(maxHeight: Dim.heightPercent(45)),
+          constraints: BoxConstraints(maxHeight: Dim.heightPercent(35)),
           child: SingleChildScrollView(
             child: Column(
               children: [
@@ -266,7 +192,7 @@ class MessageColumn<T extends BaseMessagesCubit> extends StatelessWidget {
         Divider(
           thickness: 5.0,
           height: 2.0,
-          color: Theme.of(ctx).colorScheme.secondaryContainer,
+          color: Theme.of(ctx).colorScheme.secondary.withOpacity(0.7),
         ),
         SizedBox(
           height: 4.0,
@@ -275,3 +201,68 @@ class MessageColumn<T extends BaseMessagesCubit> extends StatelessWidget {
     );
   }
 }
+/* If we need groupBy in the future
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: StickyGroupedListView<Message, DateTime>(
+        elements: widget.messages,
+        floatingHeader: false,
+        reverse: true,
+        shrinkWrap: true,
+        physics: ClampingScrollPhysics(),
+        itemPositionsListener: _itemPositionsListener,
+        groupSeparatorBuilder: (Message msg) {
+          return GestureDetector(
+            onTap: () {
+              FocusManager.instance.primaryFocus!.unfocus();
+            },
+            child: Container(
+              height: 53.0,
+              alignment: Alignment.center,
+              child: Text(
+                DateFormatter.getVerboseDate(msg.createdAt),
+                style: Theme.of(context)
+                    .textTheme
+                    .headline2!
+                    .copyWith(fontSize: 11, fontWeight: FontWeight.w500),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          );
+        },
+        groupBy: (Message m) {
+          final DateTime dt = DateTime.fromMillisecondsSinceEpoch(m.createdAt);
+          return DateTime(dt.year, dt.month, dt.day);
+        },
+        groupComparator: (DateTime value1, DateTime value2) =>
+            value2.compareTo(value1),
+        itemComparator: (Message m1, Message m2) =>
+            m2.createdAt.compareTo(m1.createdAt),
+        separator: SizedBox(height: 1.0),
+        itemScrollController: itemScrollController,
+        stickyHeaderBackgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        indexedItemBuilder: (itemContext, message, index) {
+          return GestureDetector(
+            onLongPress: () {
+              Get.find<MessageAnimationCubit>().startAnimation(
+                messagesListContext: context,
+                longPressMessage: message,
+                longPressIndex: index, // because the replied message
+                itemPositionsListener: _itemPositionsListener,
+              );
+            },
+            child: MessageTile<ChannelMessagesCubit>(
+              message: message,
+              isDirect: widget.parentChannel.isDirect,
+              key: ValueKey(message.hash),
+              isSenderHidden: false,
+              isHeadInThred: true,
+              isThread: true,
+            ),
+          );
+        },
+      ),
+    );
+  }
+}*/

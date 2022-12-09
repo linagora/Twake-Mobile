@@ -29,6 +29,8 @@ class Endpoint {
   // API Endpoint for working with the members of workspace
   static const workspaceMembers =
       '/internal/services/workspaces/v1/companies/%s/workspaces/%s/users';
+  static const notificationsAcknowledge =
+      '/internal/services/notifications/v1/badges/:company_id/acknowledge';
   // API Endpoint for working with user's channels in a workspace
   static const channels =
       '/internal/services/channels/v1/companies/%s/workspaces/%s/channels';

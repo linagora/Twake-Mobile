@@ -88,11 +88,12 @@ class LongPressMessageAnimation<T extends BaseMessagesCubit>
       Duration(milliseconds: 50),
       FocusManager.instance.primaryFocus?.unfocus,
     );
+    Get.find<MessageAnimationCubit>().endAnimation();
   }
 
   // because currently we cant get the size of this widget when it's not build,
   // so we have to precalculate height of this widget first
-  _getHeightMenuBar(Message message) {
+  double _getHeightMenuBar(Message message) {
     int countDropDown = 2;
     if (message.subtype != MessageSubtype.deleted && !message.inThread) {
       countDropDown++;
@@ -132,10 +133,9 @@ class LongPressMenuBar<T extends BaseMessagesCubit> extends StatelessWidget {
               Get.find<MessageAnimationCubit>().endAnimation();
               isDirect
                   ? Get.find<QuoteMessageCubit>().addQuoteMessage(message)
-                  : await NavigatorService.instance.navigate(
+                  : await NavigatorService.instance.navigateToThread(
                       channelId: message.channelId,
                       threadId: message.id,
-                      reloadThreads: false,
                     );
             },
           ),

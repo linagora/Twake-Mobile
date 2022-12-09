@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:twake/blocs/message_animation_cubit/message_animation_cubit.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
+import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/models/message/message.dart';
 import 'package:twake/pages/chat/message_tile.dart';
 
@@ -68,8 +69,8 @@ class _MenuMessageDropDownState<T extends BaseMessagesCubit>
 
   @override
   void didChangeDependencies() {
-    screenWidth = MediaQuery.of(context).size.width;
-    screenHeight = MediaQuery.of(context).size.height;
+    screenWidth = Dim.maxScreenWidth!;
+    screenHeight = Dim.maxScreenHeight!;
     super.didChangeDependencies();
   }
 
@@ -124,8 +125,8 @@ class _MenuMessageDropDownState<T extends BaseMessagesCubit>
         // is the dy of widget that contains upper widget, item and lower widget
         double topOfComponents = itemLeadingEdge * messageListHeight +
             topLeftListY -
-            upperWidgetHeight -
-            MediaQuery.of(context).viewPadding.top;
+            upperWidgetHeight;
+        // - MediaQuery.of(context).viewPadding.top;
 
         double itemScale = 1;
         double itemTranslateY = 0;
@@ -142,7 +143,7 @@ class _MenuMessageDropDownState<T extends BaseMessagesCubit>
             itemTranslateY = upperWidgetHeight -
                 itemLeadingEdge * messageListHeight -
                 topLeftListY;
-          // when a part of item is partial obscured in bottom of messages list
+            // when a part of item is partial obscured in bottom of messages list
           } else if (itemTrailingEdge * messageListHeight + topLeftListY >
               screenHeight - dropMenuHeight) {
             itemTranslateY = screenHeight -

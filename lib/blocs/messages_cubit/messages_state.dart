@@ -15,12 +15,10 @@ class MessagesInitial extends MessagesState {
 class MessagesLoadSuccess extends MessagesState {
   final List<Message> messages;
   final int hash; // sum of hash of all messages in the list
-  final bool endOfHistory;
 
   const MessagesLoadSuccess({
     required this.messages,
     required this.hash,
-    this.endOfHistory: false,
   });
 
   @override
@@ -34,12 +32,11 @@ class MessageSendInProgress extends MessagesLoadSuccess {
   const MessageSendInProgress({
     required this.messages,
     required this.hash,
-    required bool endOfHistory,
-  }) : super(messages: messages, hash: hash, endOfHistory: endOfHistory);
+  }) : super(messages: messages, hash: hash);
 }
 
 class NoMessagesFound extends MessagesLoadSuccess {
-  NoMessagesFound() : super(messages: <Message>[], hash: 0, endOfHistory: true);
+  NoMessagesFound() : super(messages: <Message>[], hash: 0);
 
   @override
   List<Object?> get props => const [];
@@ -52,9 +49,8 @@ class MessageEditInProgress extends MessagesLoadSuccess {
     required this.message,
     required List<Message> messages,
     required int hash,
-    required bool endOfHistory,
     Message? parentMessage,
-  }) : super(messages: messages, hash: hash, endOfHistory: endOfHistory);
+  }) : super(messages: messages, hash: hash);
 
   @override
   List<Object?> get props => [message];
@@ -71,35 +67,6 @@ class MessagesBeforeLoadInProgress extends MessagesLoadSuccess {
   const MessagesBeforeLoadInProgress({
     required List<Message> messages,
     required int hash,
-    required bool endOfHistory,
     Message? parentMessage,
-  }) : super(messages: messages, hash: hash, endOfHistory: endOfHistory);
-}
-
-class MessagesAroundPinnedLoadSuccess extends MessagesLoadSuccess {
-  final Message pinnedMessage;
-
-  MessagesAroundPinnedLoadSuccess(
-      {required List<Message> messages,
-      required int hash,
-      required bool endOfHistory,
-      required this.pinnedMessage})
-      : super(messages: messages, hash: hash);
-
-  @override
-  List<Object?> get props => [pinnedMessage];
-}
-
-class MessageLatestSuccess extends MessagesLoadSuccess {
-  final Message latestMessage;
-
-  MessageLatestSuccess({
-    required List<Message> messages,
-    required int hash,
-    required this.latestMessage,
-    required bool endOfHistory,
-  }) : super(messages: messages, hash: hash, endOfHistory: endOfHistory);
-
-  @override
-  List<Object?> get props => [latestMessage];
+  }) : super(messages: messages, hash: hash);
 }

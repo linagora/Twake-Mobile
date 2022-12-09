@@ -1,14 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:twake/models/channel/channel.dart';
-import 'package:twake/utils/emojis.dart';
-
-import 'image_widget.dart';
 
 class ChannelFirstMessage extends StatelessWidget {
-  final String icon;
   final Channel channel;
-  const ChannelFirstMessage({required this.channel, required this.icon});
+  const ChannelFirstMessage({required this.channel});
 
   @override
   Widget build(BuildContext context) {
@@ -17,42 +13,17 @@ class ChannelFirstMessage extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          channel.isDirect
-              ? icon == ""
-                  ? Container(
-                      width: 100,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(150),
-                        border: Border.all(
-                          style: BorderStyle.solid,
-                          width: 2,
-                          color: Colors.grey.shade300,
-                        ),
-                      ),
-                      child: Image.asset('assets/images/3.0x/rocket.png'))
-                  : ImageWidget(
-                      imageType: ImageType.common,
-                      imageUrl: icon,
-                      size: 120,
-                    )
-              : channel.icon == ""
-                  ? Container(
-                      width: 100,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(150),
-                        border: Border.all(
-                          style: BorderStyle.solid,
-                          width: 2,
-                          color: Colors.grey.shade300,
-                        ),
-                      ),
-                      child: Image.asset('assets/images/3.0x/rocket.png'))
-                  : ImageWidget(
-                      imageType: ImageType.channel,
-                      imageUrl: Emojis.getByName(channel.icon ?? ""),
-                      size: 120,
-                      backgroundColor: Colors.white,
-                    ),
+          Container(
+              width: 100,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(150),
+                border: Border.all(
+                  style: BorderStyle.solid,
+                  width: 2,
+                  color: Colors.grey.shade300,
+                ),
+              ),
+              child: Image.asset('assets/images/3.0x/rocket.png')),
           SizedBox(
             height: 12,
           ),

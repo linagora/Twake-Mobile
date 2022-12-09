@@ -106,7 +106,7 @@ class _FilePreviewState<T extends BaseChannelsCubit>
     );
   }
 
-  _buildBottomLayout() {
+  Widget _buildBottomLayout() {
     return Container(
       color: Colors.black,
       padding: const EdgeInsets.all(8.0),
@@ -146,7 +146,7 @@ class _FilePreviewState<T extends BaseChannelsCubit>
     );
   }
 
-  _buildDownloadIcon(
+  Widget _buildDownloadIcon(
       File? file, MessageFile? messageFile, FileDownloading? fileDownloading) {
     if (fileDownloading == null) {
       return _initDownloadIcon(file, messageFile);
@@ -159,7 +159,7 @@ class _FilePreviewState<T extends BaseChannelsCubit>
     }
   }
 
-  _initDownloadIcon(File? file, MessageFile? messageFile) {
+  Widget _initDownloadIcon(File? file, MessageFile? messageFile) {
     return GestureDetector(
       onTap: () => _handleDownloadFile(file, messageFile),
       child: Container(
@@ -176,7 +176,7 @@ class _FilePreviewState<T extends BaseChannelsCubit>
     );
   }
 
-  _downloadInProgressIcon(FileDownloading fileDownloading) {
+  Widget _downloadInProgressIcon(FileDownloading fileDownloading) {
     return GestureDetector(
       onTap: () => _handleCancelDownloadFile(fileDownloading),
       child: Container(
@@ -202,12 +202,12 @@ class _FilePreviewState<T extends BaseChannelsCubit>
     );
   }
 
-  _handleDownloadFile(File? file, MessageFile? messageFile) {
+  void _handleDownloadFile(File? file, MessageFile? messageFile) {
     Get.find<FileDownloadCubit>()
         .download(context: context, file: file, messageFile: messageFile);
   }
 
-  _handleCancelDownloadFile(FileDownloading fileDownloading) {
+  void _handleCancelDownloadFile(FileDownloading fileDownloading) {
     if (fileDownloading.downloadTaskId != null) {
       Get.find<FileDownloadCubit>().cancelDownloadingFile(
           downloadTaskId: fileDownloading.downloadTaskId!);
@@ -295,7 +295,7 @@ class _FilePreviewState<T extends BaseChannelsCubit>
     }
   }
 
-  _handleCanNotOpenFile() {
+  void _handleCanNotOpenFile() {
     Utilities.showSimpleSnackBar(
       context: context,
       message: AppLocalizations.of(context)!.cantOpenFile,

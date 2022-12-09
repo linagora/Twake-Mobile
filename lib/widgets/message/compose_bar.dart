@@ -362,7 +362,7 @@ class _TextInputState extends State<TextInput> {
     );
   }
 
-  _buildAttachment() {
+  Widget _buildAttachment() {
     return IconButton(
       constraints: const BoxConstraints(
         maxHeight: 24.0,
@@ -370,12 +370,12 @@ class _TextInputState extends State<TextInput> {
       ),
       padding: EdgeInsets.zero,
       icon: Image.asset(imageAddFile),
-      onPressed: () => _handleOpenGallery(),
+      onPressed: () {}, //=> _handleOpenGallery(),
       color: Theme.of(context).colorScheme.surface,
     );
   }
 
-  _buildMessageContent() {
+  Widget _buildMessageContent() {
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.secondaryContainer,
@@ -397,14 +397,14 @@ class _TextInputState extends State<TextInput> {
     );
   }
 
-  _buildMessageTextField() {
+  Widget _buildMessageTextField() {
     return ClipRRect(
       borderRadius: BorderRadius.circular(17),
       child: _buildTextField(),
     );
   }
 
-  _buildTextField() {
+  Widget _buildTextField() {
     return SizedBox(
       height: widget.controller!.text.isNotEmpty ? null : 38,
       child: TextField(
@@ -453,7 +453,7 @@ class _TextInputState extends State<TextInput> {
     );
   }
 
-  _buildSendButton() {
+  Widget _buildSendButton() {
     return GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: widget.canSend
@@ -492,7 +492,7 @@ class _TextInputState extends State<TextInput> {
         ));
   }
 
-  _handleOpenGallery() async {
+  void _handleOpenGallery() async {
     final fileLen = Get.find<FileUploadCubit>().state.listFileUploading.length;
     if (fileLen == MAX_FILE_UPLOADING) {
       displayLimitationAlertDialog();

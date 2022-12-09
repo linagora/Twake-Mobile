@@ -6,11 +6,11 @@ part of 'workspace_invite_token.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-WorkspaceInviteToken _$WorkspaceInviteTokenFromJson(Map<String, dynamic> json) {
-  return WorkspaceInviteToken(
-    json['token'] as String,
-  );
-}
+WorkspaceInviteToken _$WorkspaceInviteTokenFromJson(
+        Map<String, dynamic> json) =>
+    WorkspaceInviteToken(
+      json['token'] as String,
+    );
 
 Map<String, dynamic> _$WorkspaceInviteTokenToJson(
         WorkspaceInviteToken instance) =>

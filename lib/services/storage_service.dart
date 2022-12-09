@@ -7,11 +7,9 @@ import 'package:twake/models/base_model/base_model.dart';
 import 'package:twake/services/service_bundle.dart';
 import 'package:twake/sql/migrations.dart';
 import 'package:twake/utils/platform_detection.dart';
-import 'package:twake/services/hive_storage.dart' deferred as hiveStorage;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 part 'sqlite_storage_service.dart';
-part 'hive_storage_service.dart';
 
 abstract class StorageService {
   static late final StorageService _service;
@@ -19,9 +17,8 @@ abstract class StorageService {
   factory StorageService({required reset}) {
     if (reset) {
       Get.find<PlatformDetection>().dbLayerByPlatform(
-        webImpl: () {
-          _service = HiveStorageService._();
-        },
+        webImpl:
+            () {}, // We had Hive but now it is not there due to uselessness if you need to add Hive again see the commit
         linuxImpl: () {
           _service = SqliteStorageService._(useSqlFFI: true);
         },

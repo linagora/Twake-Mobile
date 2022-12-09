@@ -29,29 +29,24 @@ class MessagesRepository {
     String? threadId,
     bool? withExistedFiles = false,
   }) async* {
-    var messages = await fetchLocal(
-      channelId: channelId,
-      threadId: threadId,
-      withExistedFiles: withExistedFiles,
-    );
-
-    if (!Globals.instance.isNetworkConnected) return;
+    if (!Globals.instance.isNetworkConnected) {
+      var messages = await fetchLocal(
+        channelId: channelId,
+        threadId: threadId,
+        withExistedFiles: withExistedFiles,
+      );
+      yield messages;
+      return;
+    }
 
     final remoteMessages = await fetchRemote(
       companyId: companyId,
       workspaceId: workspaceId,
       channelId: channelId,
       threadId: threadId,
-      afterMessageId: messages.isNotEmpty ? messages.last.id : null,
       withExistedFiles: withExistedFiles,
     );
 
-    if (remoteMessages.isNotEmpty) {
-      // add old messages to remoteMessages, so that old message which have old response count will be replaced by new message
-      remoteMessages.addAll(
-          messages.where((element) => !remoteMessages.contains(element)));
-      remoteMessages.sort((m1, m2) => m1.createdAt.compareTo(m2.createdAt));
-    }
     yield remoteMessages;
   }
 
@@ -69,9 +64,12 @@ class MessagesRepository {
     if (withExistedFiles == true) {
       where += ' AND files <> ?';
     }
+
     final localResult = await _storage.select(
       table: Table.message,
       where: where,
+      limit: threadId == null ? 25 : 9999,
+      orderBy: 'created_at DESC',
       whereArgs: [
         channelId,
         if (threadId != null) threadId,
@@ -80,8 +78,6 @@ class MessagesRepository {
     );
     final messages =
         localResult.map((entry) => Message.fromJson(entry)).toList();
-
-    messages.sort((m1, m2) => m1.createdAt.compareTo(m2.createdAt));
 
     return messages;
   }
@@ -99,6 +95,7 @@ class MessagesRepository {
       'include_users': 1,
       'emoji': false,
       'direction': 'history',
+      'limit': 25,
     };
 
     if (afterMessageId != null) {
@@ -119,7 +116,11 @@ class MessagesRepository {
         key: 'resources',
       );
     } else {
-      queryParameters['limit'] = 1000;
+      final queryParameters = <String, dynamic>{
+        'include_users': 1,
+        'emoji': false,
+        'direction': 'history',
+      };
 
       remoteResult = await _api.get(
         endpoint: sprintf(Endpoint.threadMessages, [
@@ -145,12 +146,13 @@ class MessagesRepository {
             ));
 
     await _storage.multiInsert(table: Table.message, data: remoteMessages);
-
-    return await fetchLocal(
+    final data = await fetchLocal(
       channelId: channelId,
       threadId: threadId,
       withExistedFiles: withExistedFiles,
     );
+
+    return data;
   }
 
   Future<List<Message>> fetchAroundMessage({
@@ -216,7 +218,7 @@ class MessagesRepository {
               channelId: channelId,
             ));
 
-    await _storage.multiInsert(table: Table.message, data: remoteMessages);
+    // await _storage.multiInsert(table: Table.message, data: remoteMessages);
 
     return remoteMessages.toList();
   }
