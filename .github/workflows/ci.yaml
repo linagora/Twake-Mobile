@@ -83,7 +83,7 @@ jobs:
           echo -n "$CERTIFICATE_BASE64" | base64 --decode --output cert.p12
           echo -n "$PROVISION_PROFILE_BASE64" | base64 --decode --output buildpp.mobileprovision
           echo -n "$SHAREEXT_PROVISION_PROFILE_BASE64" | base64 --decode --output shareextpp.mobileprovision
-          flutter pub get && pod install
+          flutter pub get && pod update && pod install
         working-directory: ${{ matrix.os }}
 
       - name: Setup Fastlane
