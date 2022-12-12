@@ -85,7 +85,7 @@ jobs:
           echo -n "$PROVISION_PROFILE_BASE64" | base64 --decode --output buildpp.mobileprovision
           echo -n "$SHAREEXT_PROVISION_PROFILE_BASE64" | base64 --decode --output shareextpp.mobileprovision
           echo -n "$APPLE_API_KEY_BASE64" | base64 --decode --output apiKey.p8
-          flutter pub get && pod install
+          flutter pub get && pod update && pod install
         working-directory: ${{ matrix.os }}
 
       - name: Setup Fastlane
