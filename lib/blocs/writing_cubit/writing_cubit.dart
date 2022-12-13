@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:get/get.dart';
@@ -87,9 +86,17 @@ class WritingCubit extends Cubit<WritingState> {
   }
 
   void runTimer() {
-    timer = Timer.periodic(Duration(milliseconds: 1000), (Timer t) {
+    timer = Timer.periodic(Duration(seconds: 1), (Timer t) {
       emit(state.copyWith(newTimerVal: state.timerVal + 1));
       if (state.timerVal > 2 && state.thisWritingData.isNotEmpty) {
+        emit(state.copyWith(newTimerVal: 0));
+        state.thisWritingData[0].event.isWriting = false;
+        SynchronizationService.instance
+            .emitWritingEvent(state.thisWritingData[0]);
+        stopTimer();
+      }
+      // just in case stop when more than 7 secs
+      if (state.timerVal > 7) {
         emit(state.copyWith(newTimerVal: 0));
         state.thisWritingData[0].event.isWriting = false;
         SynchronizationService.instance
