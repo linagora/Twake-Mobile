@@ -621,11 +621,18 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
         continue;
       }
       if (state is MessagesLoadSuccess) {
-        final currentState = state as MessagesLoadSuccess;
-        if (connect)
-          fetch(
-              channelId: currentState.messages.first.channelId,
-              isDirect: isDirect);
+        if (connect) {
+          if (Globals.instance.channelId != null &&
+              Globals.instance.threadId != null) {
+            NavigatorService.instance.navigateToThread(
+              channelId: Globals.instance.channelId!,
+              threadId: Globals.instance.threadId!,
+            );
+          } else if (Globals.instance.channelId != null) {
+            NavigatorService.instance
+                .navigateToChannel(channelId: Globals.instance.channelId!);
+          }
+        }
       }
     }
   }

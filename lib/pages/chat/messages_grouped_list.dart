@@ -155,7 +155,7 @@ class _ChatViewState extends State<_ChatView> {
           return SwipeActionCell(
             controller: _swipeActionController,
             key: ObjectKey(messages[index]),
-            fullSwipeFactor: 0.1,
+            fullSwipeFactor: 0.15,
             trailingActions: <SwipeAction>[
               SwipeAction(
                   performsFirstActionWithFullSwipe: true,

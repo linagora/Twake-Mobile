@@ -24,9 +24,7 @@ class PinnedMessageCubit extends Cubit<PinnedMessageState> {
   }
 
   Future<void> init() async {
-    emit(state.copyWith(
-      newPinnedMesssageStatus: PinnedMessageStatus.init,
-    ));
+    emit(PinnedMessageState(pinnedMesssageStatus: PinnedMessageStatus.init));
   }
 
   Future<bool> unpinAllMessages() async {
