@@ -326,7 +326,9 @@ class _MessageContentState<T extends BaseMessagesCubit>
                     avatars: avatars,
                     size: avatars.length == 1
                         ? 28
-                        : (22 * avatars.length).toDouble(),
+                        : avatars.length == 2
+                            ? 23 * 2
+                            : (22 * avatars.length).toDouble(),
                     stackSize: 28,
                     stackNumLimit: 3,
                   )

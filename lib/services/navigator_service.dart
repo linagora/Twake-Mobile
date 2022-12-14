@@ -134,7 +134,7 @@ class NavigatorService {
     required String channelId,
   }) async {
     final channel = await directsCubit.getChannel(channelId: channelId);
-
+    pinnedMessageCubit.init();
     channelMessagesCubit.reset();
 
     channelMessagesCubit.fetch(
@@ -164,7 +164,7 @@ class NavigatorService {
       {required String channelId, required String threadId}) async {
     if (threadId.isNotEmpty) {
       Globals.instance.threadIdSet = threadId;
-      //  channelMessagesCubit.selectThread(messageId: threadId);
+
       final channel = await directsCubit.getChannel(channelId: channelId);
 
       threadMessagesCubit.fetch(
@@ -181,6 +181,7 @@ class NavigatorService {
 
       Get.toNamed(path)?.then((_) {
         threadMessagesCubit.reset();
+        Globals.instance.threadIdSet = null;
       });
     }
   }
