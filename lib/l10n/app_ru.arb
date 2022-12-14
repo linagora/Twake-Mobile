@@ -632,5 +632,11 @@
   "searchChatsRecentHeader": "Последние каналы и контакты",
   "@searchChatsRecentHeader": {},
   "searchEmptyResults": "Результатов не найдено",
-  "@searchEmptyResults": {}
+  "@searchEmptyResults": {},
+  "deleteAccount": "Удалить аккаунт",
+  "@deleteAccount": {},
+  "deleteAccountDescription": "Для удаления воспользуйтесь панелью администратора",
+  "@deleteAccountDescription": {},
+  "adminPannel": "Перейти к панели администратора",
+  "@adminPannel": {}
 }
