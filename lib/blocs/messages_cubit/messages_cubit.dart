@@ -10,6 +10,8 @@ import 'package:twake/utils/twacode.dart';
 
 export 'messages_state.dart';
 
+const String endOfHistory = 'endOfHistory';
+
 abstract class BaseMessagesCubit extends Cubit<MessagesState> {
   late final MessagesRepository _repository;
 
@@ -117,7 +119,7 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
     final oldestMessage = state.messages.last;
 
     //last message will be first message
-    var messages = await _repository.fetchBefore(
+    List<Message> messages = await _repository.fetchBefore(
       channelId: channelId,
       threadId: threadId,
       beforeMessageId: oldestMessage.id,
@@ -129,15 +131,14 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
     // and just ignore the result
     if (channelId != Globals.instance.channelId) return;
 
-    final endOfHistory = messages.length < 1;
+    final endOfHist = messages.length < 1;
 
-    if (endOfHistory) {
+    if (endOfHist) {
       // insert the dummy message to the list if not already inserted
-      final myListFiltered =
-          state.messages.where((m) => m.id == 'endOfHistory');
+      final myListFiltered = state.messages.where((m) => m.id == endOfHistory);
       if (myListFiltered.length == 0)
         messages.insert(
-            0, dummy(date: oldestMessage.createdAt - 1, id: 'endOfHistory'));
+            0, dummy(date: oldestMessage.createdAt - 1, id: endOfHistory));
     }
 
     state.messages
@@ -225,6 +226,7 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
     if (messages.isEmpty) {
       return [];
     } else {
+      messages.sort((m1, m2) => m2.createdAt.compareTo(m1.createdAt));
       emit(MessagesLoadSuccess(
         messages: messages,
         hash: messages.fold(0, (acc, m) => acc + m.hash),
@@ -563,13 +565,10 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
           if (state is MessagesLoadSuccess) {
             final messages = (state as MessagesLoadSuccess).messages;
             final hash = (state as MessagesLoadSuccess).hash;
-            //  final endOfHistory = (state as MessagesLoadSuccess).endOfHistory;
             messages.removeWhere((m) => m.id == change.resource['id']);
             emit(MessagesLoadSuccess(
               messages: messages,
               hash: hash - 1,
-              //    endOfHistory:
-              //        endOfHistory, // we only need to update hash in someway
             ));
           }
           break;

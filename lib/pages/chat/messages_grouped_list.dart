@@ -186,7 +186,7 @@ class _ChatViewState extends State<_ChatView> {
                   },
                   color: Colors.transparent),
             ],
-            child: message.id == 'endOfHistory'
+            child: message.id == endOfHistory
                 ? ChannelFirstMessage(
                     channel: widget.parentChannel,
                   )
