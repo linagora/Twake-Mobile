@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:mutex/mutex.dart';
+import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/models/account/account.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/models/message/message.dart';
@@ -163,6 +164,7 @@ class MessagesRepository {
     required String direction,
     int? limit,
   }) async {
+    if (messageId == endOfHistory) return [];
     List<dynamic> remoteResult = [];
     final queryParameters = {
       'include_users': 1,

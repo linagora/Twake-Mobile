@@ -100,7 +100,7 @@ class PinnedMessageCubit extends Cubit<PinnedMessageState> {
             newPinnedMesssageStatus: state.pinnedMesssageStatus));
       } else {
         // if message is not in the state, need to fetch it
-/*
+
         final messagesAround = await Get.find<ChannelMessagesCubit>()
             .getMessagesAroundSelectedMessage(
                 message: message, isDirect: false);
@@ -119,9 +119,7 @@ class PinnedMessageCubit extends Cubit<PinnedMessageState> {
             emit(state.copyWith(
                 newSelectedChatMessageIndex: res,
                 newPinnedMesssageStatus: state.pinnedMesssageStatus));
-
-          //return stateMessagesCubit.messages.indexOf(messageRes);
-        }*/
+        }
       }
     }
   }
