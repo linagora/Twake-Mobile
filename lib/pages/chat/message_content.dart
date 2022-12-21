@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get/get.dart';
+import 'package:lottie/lottie.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/config/image_path.dart';
@@ -93,7 +94,8 @@ class _MessageContentState<T extends BaseMessagesCubit>
             _buildUserName(),
             Container(
               decoration: BoxDecoration(
-                border: (widget.message.responsesCount > 0 ||
+                border: (widget.message.subtype != MessageSubtype.deleted &&
+                                widget.message.responsesCount > 0 ||
                             widget.message.reactions.length != 0) &&
                         !widget.isThread
                     ? Border(
@@ -187,17 +189,17 @@ class _MessageContentState<T extends BaseMessagesCubit>
   }
 
   Widget _buildMessageSentStatus() {
+    // TODO: use all imageMessageDeliveryDelivered message statuses are not fully done yet
     return widget.message.isOwnerMessage == true
         ? widget.message.delivery == Delivery.inProgress
             ? Get.isDarkMode
-                ? Image.asset(
-                    imageMessageDeliveryInprogress,
+                ? Lottie.asset(
+                    'assets/animations/clock_loading_dark.json',
                     height: 18,
                     width: 18,
-                    color: Colors.white.withOpacity(0.6),
                   )
-                : Image.asset(
-                    imageMessageDeliveryInprogress,
+                : Lottie.asset(
+                    'assets/animations/clock_loading.json',
                     height: 18,
                     width: 18,
                   )
@@ -313,46 +315,42 @@ class _MessageContentState<T extends BaseMessagesCubit>
         }
       });
     }
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12, left: 12, right: 6),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(right: 6),
-            child: avatars.isNotEmpty
-                ? ImageWidget(
-                    imageType: ImageType.common,
-                    avatars: avatars,
-                    size: avatars.length == 1
-                        ? 28
-                        : avatars.length == 2
-                            ? 23 * 2
-                            : (22 * avatars.length).toDouble(),
-                    stackSize: 28,
-                    stackNumLimit: 3,
-                  )
-                : SizedBox.shrink(),
-          ),
-          Text(
-              '${AppLocalizations.of(context)!.replyPlural(widget.message.responsesCount)}',
-              style: Get.isDarkMode
-                  ? widget.message.isOwnerMessage
-                      ? Theme.of(context)
-                          .textTheme
-                          .headline1!
-                          .copyWith(fontSize: 17, fontWeight: FontWeight.w400)
-                      : Theme.of(context)
-                          .textTheme
-                          .headline4!
-                          .copyWith(fontSize: 17, fontWeight: FontWeight.w400)
-                  : Theme.of(context)
-                      .textTheme
-                      .headline4!
-                      .copyWith(fontSize: 17, fontWeight: FontWeight.w400)),
-        ],
-      ),
-    );
+    return widget.message.subtype != MessageSubtype.deleted
+        ? Padding(
+            padding: const EdgeInsets.only(bottom: 12, left: 12, right: 6),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(right: 6),
+                  child: avatars.isNotEmpty
+                      ? ImageWidget(
+                          imageType: ImageType.common,
+                          avatars: avatars,
+                          size: avatars.length == 1
+                              ? 28
+                              : avatars.length == 2
+                                  ? 23 * 2
+                                  : (22 * avatars.length).toDouble(),
+                          stackSize: 28,
+                          stackNumLimit: 3,
+                        )
+                      : SizedBox.shrink(),
+                ),
+                Text(
+                    '${AppLocalizations.of(context)!.replyPlural(widget.message.responsesCount)}',
+                    style: Get.isDarkMode
+                        ? widget.message.isOwnerMessage
+                            ? Theme.of(context).textTheme.headline1!.copyWith(
+                                fontSize: 17, fontWeight: FontWeight.w400)
+                            : Theme.of(context).textTheme.headline4!.copyWith(
+                                fontSize: 17, fontWeight: FontWeight.w400)
+                        : Theme.of(context).textTheme.headline4!.copyWith(
+                            fontSize: 17, fontWeight: FontWeight.w400)),
+              ],
+            ),
+          )
+        : SizedBox.shrink();
   }
 
   Widget _buildUserName() {
