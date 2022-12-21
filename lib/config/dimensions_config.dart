@@ -175,6 +175,11 @@ class Dim {
     return _blockHeight * 9;
   }
 
+  /// Convenience method for getting multiple of width multiplier
+  static double get hm10 {
+    return _blockHeight * 10;
+  }
+
   /// Convenience method for getting multiple of text multiplier
   /// [decimal] parameter is there for adjustments and should not exceed 1
   static double tm2({double decimal: 0}) {
