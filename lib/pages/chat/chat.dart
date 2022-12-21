@@ -14,6 +14,7 @@ import 'package:twake/blocs/writing_cubit/writing_cubit.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/models/file/file.dart';
 import 'package:twake/models/file/message_file.dart';
+import 'package:twake/models/globals/globals.dart';
 import 'package:twake/pages/chat/message_animation.dart';
 import 'package:twake/pages/chat/pinned_message_sheet.dart';
 import 'package:twake/pages/chat/quote_message.dart';
@@ -50,6 +51,33 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
         body: Stack(
           children: [
             Scaffold(
+              floatingActionButton:
+                  BlocBuilder<ChannelMessagesCubit, MessagesState>(
+                bloc: Get.find<ChannelMessagesCubit>(),
+                builder: (context, state) {
+                  if (state is MessagesLoadSuccess) {
+                    return state.isInHistory
+                        ? Align(
+                            alignment: Alignment(1, 0.8),
+                            child: FloatingActionButton(
+                              onPressed: () => NavigatorService.instance
+                                  .navigateToChannel(
+                                      channelId: Globals.instance.channelId!),
+                              backgroundColor: Theme.of(context)
+                                  .colorScheme
+                                  .secondaryContainer,
+                              child: Icon(
+                                Icons.arrow_downward_rounded,
+                                size: 35,
+                                color: Theme.of(context).colorScheme.surface,
+                              ),
+                            ),
+                          )
+                        : SizedBox.shrink();
+                  } else
+                    return SizedBox.shrink();
+                },
+              ),
               appBar: AppBar(
                 backgroundColor: Theme.of(context).scaffoldBackgroundColor,
                 titleSpacing: 0.0,
@@ -146,7 +174,7 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
   }
 
   Widget _buildChatContent(
-      messagesState, Channel channel, BuildContext context) {
+      MessagesState messagesState, Channel channel, BuildContext context) {
     return Flexible(
         child: Column(
       mainAxisSize: MainAxisSize.min,
@@ -178,20 +206,23 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
     );
   }
 
-  Widget _buildLoading(messagesState) {
+  Widget _buildLoading(MessagesState messagesState) {
     if (messagesState is MessagesBeforeLoadInProgress)
-      SizedBox(
+      return SizedBox(
         height: Dim.hm4,
         width: Dim.hm4,
         child: Padding(
           padding: EdgeInsets.all(Dim.widthMultiplier),
-          child: CircularProgressIndicator(),
+          child: CircularProgressIndicator(
+            color: Get.theme.colorScheme.surface,
+          ),
         ),
       );
     return SizedBox.shrink();
   }
 
-  Widget _composeBar(messagesState, String? draft, Channel channel) {
+  Widget _composeBar(
+      MessagesState messagesState, String? draft, Channel channel) {
     return ComposeBar(
       autofocus: messagesState is MessageEditInProgress,
       initialText: (messagesState is MessageEditInProgress)

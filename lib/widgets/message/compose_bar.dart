@@ -370,7 +370,7 @@ class _TextInputState extends State<TextInput> {
       ),
       padding: EdgeInsets.zero,
       icon: Image.asset(imageAddFile),
-      onPressed: () {}, //=> _handleOpenGallery(),
+      onPressed: () => _handleOpenGallery(),
       color: Theme.of(context).colorScheme.surface,
     );
   }

@@ -89,6 +89,12 @@ class PinnedMessageCubit extends Cubit<PinnedMessageState> {
   void jumpToPinnedMessage(Message message) async {
     final stateMessagesCubit = Get.find<ChannelMessagesCubit>().state;
     if (stateMessagesCubit is MessagesLoadSuccess) {
+      // set isInHistory to false
+      Get.find<ChannelMessagesCubit>().emit(MessagesLoadSuccess(
+          messages: stateMessagesCubit.messages,
+          hash: stateMessagesCubit.hash,
+          isInHistory: false));
+
       // if message is in the state
       final messageRes = stateMessagesCubit.messages.firstWhereOrNull(
         (m) => m.id == message.id,
@@ -99,62 +105,24 @@ class PinnedMessageCubit extends Cubit<PinnedMessageState> {
             newSelectedChatMessageIndex: res,
             newPinnedMesssageStatus: state.pinnedMesssageStatus));
       } else {
-        // if message is not in the state, need to fetch it
+        // if the message is not in the state, we need to fetch it
 
         final messagesAround = await Get.find<ChannelMessagesCubit>()
             .getMessagesAroundSelectedMessage(
                 message: message, isDirect: false);
-        messagesAround.forEach((m) {
-          print(m.text);
-        });
-        final stateMessagesCubitr =
+        final messagesCubit =
             Get.find<ChannelMessagesCubit>().state as MessagesLoadSuccess;
-        final messageRes = stateMessagesCubitr.messages.firstWhereOrNull(
+        final messageRes = messagesCubit.messages.firstWhereOrNull(
           (m) => m.id == message.id,
         );
         if (messageRes != null) {
           final res = messagesAround.indexOf(messageRes);
-          print(res);
           if (res != -1)
             emit(state.copyWith(
                 newSelectedChatMessageIndex: res,
                 newPinnedMesssageStatus: state.pinnedMesssageStatus));
         }
       }
-    }
-  }
-
-  Future<List<Message>> getMessagesAroundSelectedMessage(
-      {required Message message,
-      String? threadId,
-      required bool isDirect}) async {
-    final messages = await _messageRepository.fetchBefore(
-        channelId: message.channelId,
-        beforeMessageId: message.id,
-        threadId: threadId,
-        workspaceId: isDirect ? 'direct' : null);
-    if (messages.isNotEmpty) {
-      messages.removeLast();
-    }
-    messages.addAll(await _messageRepository.fetchAfter(
-        channelId: message.channelId,
-        afterMessageId: message.id,
-        workspaceId: isDirect ? 'direct' : null));
-
-    if (messages.isEmpty) {
-      emit(MessagesAroundSelectedMessageFailed(
-          pinnedMessageList: state.pinnedMessageList,
-          pinnedMesssageStatus: PinnedMessageStatus.finished));
-      return [];
-    } else {
-      emit(MessagesAroundSelectecMessageSuccess(
-          pinnedMesssageStatus: PinnedMessageStatus.finished,
-          pinnedMessageList: state.pinnedMessageList,
-          selected: state.selected,
-          selectedChatMessageIndex: state.selectedChatMessageIndex,
-          messagesAround: messages,
-          isUnpinAll: state.isUnpinAll));
-      return messages;
     }
   }
 
