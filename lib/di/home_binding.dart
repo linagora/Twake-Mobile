@@ -45,17 +45,13 @@ class HomeBinding implements Bindings {
     final workspacesCubit = WorkspacesCubit();
     Get.put(workspacesCubit, permanent: true);
 
-    final mentionsCubit = MentionsCubit();
-    Get.put(mentionsCubit, permanent: true);
+    Get.put(MentionsCubit(), permanent: true);
 
-    final fileCubit = FileCubit();
-    Get.put(fileCubit, permanent: true);
+    Get.put(FileCubit(), permanent: true);
 
-    final fileUploadCubit = FileUploadCubit();
-    Get.put(fileUploadCubit, permanent: true);
+    Get.put(FileUploadCubit(), permanent: true);
 
-    final fileDownloadCubit = FileDownloadCubit();
-    Get.put(fileDownloadCubit, permanent: true);
+    Get.put(FileDownloadCubit(), permanent: true);
 
     final channelsCubit = ChannelsCubit();
     Get.put(channelsCubit, permanent: true);
@@ -83,7 +79,7 @@ class HomeBinding implements Bindings {
     Get.put(threadMessagesCubit, permanent: true);
 
     final pinnedMessagesCubit = PinnedMessageCubit();
-    Get.put(pinnedMessagesCubit, permanent: true);
+    Get.put(PinnedMessageCubit(), permanent: true);
 
     final accountCubit = AccountCubit();
     Get.put(accountCubit, permanent: true);
@@ -94,53 +90,38 @@ class HomeBinding implements Bindings {
     final registratCubit = RegistrationCubit();
     Get.put(registratCubit, permanent: true);
 
-    final languageCubit = LanguageCubit();
-    Get.put(languageCubit, permanent: true);
+    Get.put(LanguageCubit(), permanent: true);
 
-    final invitationCubit = InvitationCubit();
-    Get.put(invitationCubit, permanent: true);
+    Get.put(InvitationCubit(), permanent: true);
 
-    final cacheInChatCubit = CacheInChatCubit();
-    Get.put(cacheInChatCubit, permanent: true);
+    Get.put(CacheInChatCubit(), permanent: true);
 
-    final themeCubit = ThemeCubit();
-    Get.put(themeCubit, permanent: true);
+    Get.put(ThemeCubit(), permanent: true);
 
-    final joiningCubit = JoiningCubit();
-    Get.put(joiningCubit, permanent: true);
+    Get.put(JoiningCubit(), permanent: true);
 
-    final receiveFileCubit = ReceiveFileCubit();
-    Get.put(receiveFileCubit, permanent: true);
+    Get.put(ReceiveFileCubit(), permanent: true);
 
-    final receiveFileSharingManager = ReceiveSharingFileManager();
-    Get.put(receiveFileSharingManager, permanent: true);
+    Get.put(ReceiveSharingFileManager(), permanent: true);
 
-    final receiveTextSharingManager = ReceiveSharingTextManager();
-    Get.put(receiveTextSharingManager, permanent: true);
+    Get.put(ReceiveSharingTextManager(), permanent: true);
 
-    final cameraCubit = CameraCubit();
-    Get.put(cameraCubit, permanent: true);
+    Get.put(CameraCubit(), permanent: true);
 
-    final galleryCubit = GalleryCubit();
-    Get.put(galleryCubit, permanent: true);
+    Get.put(GalleryCubit(), permanent: true);
 
     final companyFileCubit = CompanyFileCubit(accountCubit: accountCubit);
     Get.put(companyFileCubit, permanent: true);
 
-    final fileUploadTransitionCubit = FileTransitionCubit();
-    Get.put(fileUploadTransitionCubit, permanent: true);
+    Get.put(FileTransitionCubit(), permanent: true);
 
-    final messageAnimationCubit = MessageAnimationCubit();
-    Get.put(messageAnimationCubit, permanent: true);
+    Get.put(MessageAnimationCubit(), permanent: true);
 
-    final quoteMessageCubitCubit = QuoteMessageCubit();
-    Get.put(quoteMessageCubitCubit, permanent: true);
+    Get.put(QuoteMessageCubit(), permanent: true);
 
-    final writingCubit = WritingCubit();
-    Get.put(writingCubit, permanent: true);
+    Get.put(WritingCubit(), permanent: true);
 
-    final onlineStatusCubit = OnlineStatusCubit();
-    Get.put(onlineStatusCubit, permanent: true);
+    Get.put(OnlineStatusCubit(), permanent: true);
 
     final searchCubit = SearchCubit.initWithRepository();
     Get.put(searchCubit, permanent: true);
