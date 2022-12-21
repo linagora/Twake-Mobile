@@ -55,7 +55,6 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
     required String channelId,
     String? threadId,
     isDirect: false,
-    bool empty: false,
   }) async {
     this.isDirect = isDirect;
     if (isDirect) {
@@ -63,13 +62,6 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
     } else {
       _baseChannelsCubit = _channelsCubit;
     }
-
-    if (empty) {
-      emit(NoMessagesFound());
-      return;
-    }
-
-    if (threadId == null) emit(MessagesLoadInProgress());
 
     final stream = _repository.fetch(
       channelId: channelId,
@@ -152,9 +144,9 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
     });
 
     emit(MessagesLoadSuccess(
-      messages: newMessages,
-      hash: messages.fold(0, (acc, m) => acc + m.hash),
-    ));
+        messages: newMessages,
+        hash: messages.fold(0, (acc, m) => acc + m.hash),
+        isInHistory: endOfHist));
   }
 
   Future<void> fetchAfter({
@@ -210,6 +202,13 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
       {required Message message,
       String? threadId,
       required bool isDirect}) async {
+    final state = this.state as MessagesLoadSuccess;
+
+    emit(MessagesBeforeLoadInProgress(
+      messages: state.messages,
+      hash: state.hash,
+    ));
+
     final messages = await _repository.fetchBefore(
         channelId: message.channelId,
         beforeMessageId: message.id,
@@ -228,9 +227,9 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
     } else {
       messages.sort((m1, m2) => m2.createdAt.compareTo(m1.createdAt));
       emit(MessagesLoadSuccess(
-        messages: messages,
-        hash: messages.fold(0, (acc, m) => acc + m.hash),
-      ));
+          messages: messages,
+          hash: messages.fold(0, (acc, m) => acc + m.hash),
+          isInHistory: true));
 
       return messages;
     }
@@ -628,8 +627,8 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
               threadId: Globals.instance.threadId!,
             );
           } else if (Globals.instance.channelId != null) {
-            NavigatorService.instance
-                .navigateToChannel(channelId: Globals.instance.channelId!);
+            NavigatorService.instance.navigateToChannel(
+                channelId: Globals.instance.channelId!, isReconnection: true);
           }
         }
       }
