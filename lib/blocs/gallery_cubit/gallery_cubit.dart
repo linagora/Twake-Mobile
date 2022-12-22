@@ -55,7 +55,10 @@ class GalleryCubit extends Cubit<GalleryState> {
         type: RequestType.common,
         filterOption:
             FilterOptionGroup(imageOption: FilterOption(needTitle: true)));
-
+    if (albums.length == 0) {
+      emit(GalleryState(galleryStateStatus: GalleryStateStatus.loading));
+      return;
+    }
     // we can go through all albums to get all AssetEntity
     final recentAlbum = albums[0];
     final recentAsset = await recentAlbum.getAssetListRange(

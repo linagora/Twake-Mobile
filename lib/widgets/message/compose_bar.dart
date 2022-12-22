@@ -31,11 +31,12 @@ class ComposeBar extends StatefulWidget {
   final String? initialText;
 
   ComposeBar({
+    Key? key,
     required this.onMessageSend,
     required this.onTextUpdated,
     this.autofocus = false,
     this.initialText = '',
-  });
+  }) : super(key: key);
 
   @override
   _ComposeBar createState() => _ComposeBar();
