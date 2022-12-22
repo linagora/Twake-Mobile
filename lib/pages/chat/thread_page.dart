@@ -163,6 +163,7 @@ class _ThreadPageState<T extends BaseChannelsCubit>
                                   ThreadMessagesList<ThreadMessagesCubit>(
                                       parentChannel: channel),
                                   ComposeBar(
+                                      key: ValueKey('composeBarThread'),
                                       autofocus: autofocus ||
                                           messagesState
                                               is MessageEditInProgress,

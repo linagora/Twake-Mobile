@@ -224,6 +224,7 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
   Widget _composeBar(
       MessagesState messagesState, String? draft, Channel channel) {
     return ComposeBar(
+      key: ValueKey("composeBarChat"),
       autofocus: messagesState is MessageEditInProgress,
       initialText: (messagesState is MessageEditInProgress)
           ? messagesState.message.text

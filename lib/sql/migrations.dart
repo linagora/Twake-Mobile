@@ -8,12 +8,20 @@ import 'package:twake/sql/v8.dart';
 import 'package:twake/sql/v9.dart';
 import 'package:twake/sql/v12.dart';
 
-// Base curent migration
+// Base curent migration, it is needed to add the changes here too
 const CURRENT_MIGRATION = DDL_V6;
 // The latest versions
 const DBVER = DB_V14;
 // Add latest needed changes
-const List<int> DB_VERSIONS = [DB_V8, DB_V9, DB_V10, DB_V11, DB_V12, DB_V13, DB_V14];
+const List<int> DB_VERSIONS = [
+  DB_V8,
+  DB_V9,
+  DB_V10,
+  DB_V11,
+  DB_V12,
+  DB_V13,
+  DB_V14
+];
 const List<List<String>> MIGRATIONS = [
   MIGRATION_8,
   MIGRATION_9,
