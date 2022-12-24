@@ -348,6 +348,7 @@ class _PicturesListViewState extends State<PicturesListView>
 
   Widget _assetThumbnail(Uint8List data, int index, BuildContext context) {
     return GestureDetector(
+      behavior: HitTestBehavior.opaque,
       onTap: () async {
         Get.find<GalleryCubit>().addFileIndex(index);
         final fileLen =
