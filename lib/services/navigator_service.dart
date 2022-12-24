@@ -82,7 +82,7 @@ class NavigatorService {
     final local = await _pushNotifications.checkLocalNotificationClick;
     if (local != null) {
       final data = NotificationPayload.fromJson(json: local.payload);
-      navigate(
+      navigateNotification(
         companyId: data.companyId,
         workspaceId: data.workspaceId,
         channelId: data.channelId,
@@ -93,7 +93,7 @@ class NavigatorService {
     final remote = await _pushNotifications.checkRemoteNotificationClick;
     if (remote != null) {
       final data = remote.payload;
-      navigate(
+      navigateNotification(
         companyId: data.companyId,
         workspaceId: data.workspaceId,
         channelId: data.channelId,
@@ -107,7 +107,7 @@ class NavigatorService {
       if (local.type != LocalNotificationType.message) continue;
       final data = NotificationPayload.fromJson(json: local.payload);
       Get.back(closeOverlays: true);
-      navigate(
+      navigateNotification(
         companyId: data.companyId,
         workspaceId: data.workspaceId,
         channelId: data.channelId,
@@ -121,7 +121,7 @@ class NavigatorService {
       final data = remote.payload;
 
       Get.back(closeOverlays: true);
-      navigate(
+      navigateNotification(
         companyId: data.companyId,
         workspaceId: data.workspaceId,
         channelId: data.channelId,
@@ -180,92 +180,33 @@ class NavigatorService {
 
       Get.toNamed(path)?.then((_) {
         threadMessagesCubit.reset();
-        Globals.instance.threadIdSet = null;
       });
     }
   }
 
-  Future<void> navigate({
-    String? companyId,
-    String? workspaceId,
+  void navigateNotification({
+    required String companyId,
+    required String workspaceId,
     required String channelId,
-    String? threadId,
-    bool reloadThreads: false,
-    Message? pinnedMessage,
-    int? userLastAccessFromChat, // when user first enter the chat
+    required String? threadId,
   }) async {
-    if (companyId != null && companyId != Globals.instance.companyId) {
-      companiesCubit.selectCompany(companyId: companyId);
-
-      workspacesCubit.fetch(companyId: companyId, localOnly: true);
-
-      await directsCubit.fetch(
-        companyId: companyId,
-        workspaceId: 'direct',
-        localOnly: true,
-      );
-    }
-
-    if (workspaceId != null &&
-        workspaceId != 'direct' &&
-        workspaceId != Globals.instance.workspaceId) {
+    companiesCubit.selectCompany(companyId: companyId);
+    await workspacesCubit.fetch(companyId: companyId, localOnly: true);
+    await directsCubit.fetch(
+      companyId: companyId,
+      workspaceId: 'direct',
+      localOnly: true,
+    );
+    if (workspaceId != 'direct')
       workspacesCubit.selectWorkspace(workspaceId: workspaceId);
+    await channelsCubit.fetch(
+        companyId: companyId, workspaceId: workspaceId, localOnly: true);
+    if (workspaceId != 'direct')
       companiesCubit.selectWorkspace(workspaceId: workspaceId);
 
-      await channelsCubit.fetch(workspaceId: workspaceId, localOnly: true);
-
-      SynchronizationService.instance.subscribeToBadges();
-    }
-
-    final channel = await directsCubit.getChannel(channelId: channelId);
-
-    if (reloadThreads) {
-      channelMessagesCubit.reset();
-      channelMessagesCubit.fetch(
-          channelId: channelId, isDirect: channel.isDirect);
-      pinnedMessageCubit.getPinnedMessages(channelId, channel.isDirect);
-
-      if (channel.isDirect) {
-        channelsCubit.clearSelection();
-        directsCubit.selectChannel(channelId: channelId);
-
-        Get.toNamed(RoutePaths.directMessages.path)?.then((_) {
-          directsCubit.clearSelection();
-        });
-      } else {
-        channelsCubit.selectChannel(channelId: channelId);
-
-        Get.toNamed(RoutePaths.channelMessages.path)?.then((_) {
-          channelsCubit.clearSelection();
-        });
-      }
-
-      badgesCubit.reset(channelId: channelId);
-    }
-
-    if (threadId != null && threadId.isNotEmpty) {
-      channelMessagesCubit.selectThread(messageId: threadId);
-      pinnedMessageCubit.getPinnedMessages(channelId, channel.isDirect);
-      threadMessagesCubit.fetch(
-        channelId: channelId,
-        threadId: threadId,
-        isDirect: channel.isDirect,
-      );
-
-      final path = channel.isDirect
-          ? RoutePaths.directMessageThread.path
-          : RoutePaths.channelMessageThread.path;
-
-      Get.toNamed(path, arguments: [pinnedMessage, userLastAccessFromChat])
-          ?.then((_) {
-        channelMessagesCubit.clearSelectedThread();
-        threadMessagesCubit.reset();
-      });
-    }
-  }
-
-  bool get isInThread {
-    return Get.currentRoute.endsWith('thread');
+    threadId == null
+        ? navigateToChannel(channelId: channelId)
+        : navigateToThread(channelId: channelId, threadId: threadId);
   }
 
   void pop<T>({
