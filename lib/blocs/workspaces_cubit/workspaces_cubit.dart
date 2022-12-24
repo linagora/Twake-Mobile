@@ -81,13 +81,14 @@ class WorkspacesCubit extends Cubit<WorkspacesState> {
 
     if (members != null && members.isNotEmpty) {
       await _repository.inviteUser(
-        workspace.companyId,
-        workspace.id,
-        members.map((member) => EmailInvitation(
-            email: member,
-            workspaceRole: WorkspaceRole.member,
-            companyRole: CompanyRole.member))
-          .toList());
+          workspace.companyId,
+          workspace.id,
+          members
+              .map((member) => EmailInvitation(
+                  email: member,
+                  workspaceRole: WorkspaceRole.member,
+                  companyRole: CompanyRole.member))
+              .toList());
     }
 
     final workspaces = (state as WorkspacesLoadSuccess).workspaces;

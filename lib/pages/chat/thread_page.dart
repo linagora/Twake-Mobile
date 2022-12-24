@@ -26,15 +26,12 @@ class ThreadPage<T extends BaseChannelsCubit> extends StatefulWidget {
 
 class _ThreadPageState<T extends BaseChannelsCubit>
     extends State<ThreadPage<T>> {
-  bool autofocus = false;
-
   bool isDirect = false;
-
+  String name = '';
   late MessageAnimationCubit messageAnimationCubit;
 
   @override
   void initState() {
-    autofocus = widget.autofocus;
     messageAnimationCubit = MessageAnimationCubit();
     super.initState();
   }
@@ -44,6 +41,7 @@ class _ThreadPageState<T extends BaseChannelsCubit>
     final channel = (Get.find<T>().state as ChannelsLoadedSuccess).selected!;
     return WillPopScope(
       onWillPop: () async {
+        Globals.instance.threadIdSet = null;
         final uploadState = Get.find<FileUploadCubit>().state;
         if (uploadState.fileUploadStatus == FileUploadStatus.inProcessing) {
           Get.find<FileUploadCubit>()
@@ -53,212 +51,163 @@ class _ThreadPageState<T extends BaseChannelsCubit>
         Get.find<MessageAnimationCubit>().resetAnimation();
         return true;
       },
-      child: BlocBuilder<ThreadMessagesCubit, MessagesState>(
-          bloc: Get.find<ThreadMessagesCubit>(),
-          builder: (ctx, messagesState) {
-            if (messagesState is MessagesLoadSuccess &&
-                messagesState.messages.isNotEmpty) {
-              String name = messagesState.messages[0].firstName ??
-                  '${messagesState.messages[0].username}';
-              if (name.length > 20) {
-                name = name.substring(0, 12) +
-                    '...' +
-                    name.substring(name.length - 3);
-              }
-              return Scaffold(
-                body: Stack(children: [
-                  BlocBuilder<FileUploadCubit, FileUploadState>(
-                      bloc: Get.find<FileUploadCubit>(),
-                      builder: (context, state) {
-                        return Scaffold(
-                          appBar: state.fileUploadStatus !=
-                                  FileUploadStatus.inProcessing
-                              ? AppBar(
-                                  titleSpacing: 0.0,
-                                  backgroundColor:
-                                      Theme.of(context).scaffoldBackgroundColor,
-                                  elevation: 0,
-                                  toolbarHeight: Dim.heightPercent(
-                                      (kToolbarHeight * 0.15).round()),
-                                  leading: GestureDetector(
-                                    behavior: HitTestBehavior.opaque,
-                                    onTap: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                    child: Padding(
-                                      padding: const EdgeInsets.fromLTRB(
-                                          20, 20, 10, 20),
-                                      child: Icon(
-                                        Icons.arrow_back_ios,
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .surface,
-                                      ),
-                                    ),
-                                  ),
-                                  title: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: [
-                                          Row(
-                                            children: [
-                                              Text(
-                                                  AppLocalizations.of(context)!
-                                                      .someonesMessages(name),
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .headline1!
-                                                      .copyWith(
-                                                          fontSize: 17,
-                                                          fontWeight:
-                                                              FontWeight.w800)),
-                                              SizedBox(
-                                                width: 44,
-                                              ),
-                                            ],
-                                          ),
-                                          SizedBox(height: 5.0),
-                                          Row(
-                                            children: [
-                                              Text(
-                                                channel.isDirect
-                                                    ? AppLocalizations.of(
-                                                            context)!
-                                                        .threadReplies
-                                                    : channel.name,
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .headline2!
-                                                    .copyWith(
-                                                        fontSize: 13,
-                                                        fontWeight:
-                                                            FontWeight.w400),
-                                                overflow: TextOverflow.ellipsis,
-                                                maxLines: 1,
-                                              ),
-                                              SizedBox(
-                                                width: 50,
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                )
-                              : null,
-                          body: SafeArea(
-                            child: Container(
-                              child: Column(
-                                mainAxisSize: MainAxisSize.max,
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  PinnedMessageSheet(),
-                                  ThreadMessagesList<ThreadMessagesCubit>(
-                                      parentChannel: channel),
-                                  ComposeBar(
-                                      key: ValueKey('composeBarThread'),
-                                      autofocus: autofocus ||
-                                          messagesState
-                                              is MessageEditInProgress,
-                                      initialText: (messagesState
-                                              is MessageEditInProgress)
-                                          ? messagesState.message.text
-                                          : '',
-                                      onMessageSend: (content, context) async {
-                                        final uploadState =
-                                            Get.find<FileUploadCubit>().state;
-                                        List<dynamic> attachments = const [];
-                                        if (uploadState
-                                            .listFileUploading.isNotEmpty) {
-                                          attachments = uploadState
-                                              .listFileUploading
-                                              .where((fileUploading) =>
-                                                  fileUploading.file != null)
-                                              .map(
-                                                  (e) => e.file!.toAttachment())
-                                              .toList();
-                                        }
-                                        if (messagesState
-                                            is MessageEditInProgress) {
-                                          Get.find<ThreadMessagesCubit>().edit(
-                                              message: messagesState.message,
-                                              editedText: content,
-                                              newAttachments: attachments);
-                                        } else {
-                                          isDirect = channel.isDirect;
-                                          Get.find<ThreadMessagesCubit>().send(
-                                            originalStr: content,
-                                            attachments: attachments,
-                                            threadId: Globals.instance.threadId,
-                                            isDirect: channel.isDirect,
-                                          );
-                                        }
-                                        // reset thread draft
-                                        Get.find<ThreadMessagesCubit>()
-                                            .saveDraft(draft: null);
-                                      },
-                                      onTextUpdated: (text, ctx) {
-                                        Get.find<ThreadMessagesCubit>()
-                                            .saveDraft(draft: text);
-                                      }),
-                                ],
-                              ),
-                            ),
+      child: Stack(children: [
+        Scaffold(
+          appBar: AppBar(
+            titleSpacing: 0.0,
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+            elevation: 0,
+            toolbarHeight: Dim.heightPercent((kToolbarHeight * 0.15).round()),
+            leading: GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: () {
+                Globals.instance.threadIdSet = null;
+                Navigator.of(context).pop();
+              },
+              child: BlocBuilder<FileUploadCubit, FileUploadState>(
+                bloc: Get.find<FileUploadCubit>(),
+                builder: (context, state) {
+                  return state.fileUploadStatus != FileUploadStatus.inProcessing
+                      ? Padding(
+                          padding: const EdgeInsets.fromLTRB(20, 20, 10, 20),
+                          child: Icon(
+                            Icons.arrow_back_ios,
+                            color: Theme.of(context).colorScheme.surface,
                           ),
-                        );
-                      }),
-                  LongPressMessageAnimation<ThreadMessagesCubit>(
-                      isDirect: isDirect),
-                ]),
-              );
-            } else {
-              return Scaffold(
-                appBar: AppBar(
-                  titleSpacing: 0.0,
-                  backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-                  elevation: 0,
-                  toolbarHeight:
-                      Dim.heightPercent((kToolbarHeight * 0.15).round()),
-                  leading: GestureDetector(
-                    behavior: HitTestBehavior.opaque,
-                    onTap: () {
-                      Navigator.of(context).pop();
+                        )
+                      : SizedBox.shrink();
+                },
+              ),
+            ),
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                BlocBuilder<ThreadMessagesCubit, MessagesState>(
+                  bloc: Get.find<ThreadMessagesCubit>(),
+                  builder: (context, state) {
+                    if (state is MessagesLoadSuccess &&
+                        state.messages.isNotEmpty) {
+                      name = state.messages[0].firstName ??
+                          '${state.messages[0].username}';
+                      if (name.length > 20) {
+                        name = name.substring(0, 12) +
+                            '...' +
+                            name.substring(name.length - 3);
+                      }
+
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Row(
+                            children: [
+                              Text(
+                                  AppLocalizations.of(context)!
+                                      .someonesMessages(name),
+                                  overflow: TextOverflow.ellipsis,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .headline1!
+                                      .copyWith(
+                                          fontSize: 17,
+                                          fontWeight: FontWeight.w800)),
+                              SizedBox(
+                                width: 44,
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 5.0),
+                          Row(
+                            children: [
+                              Text(
+                                channel.isDirect
+                                    ? AppLocalizations.of(context)!
+                                        .threadReplies
+                                    : channel.name,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headline2!
+                                    .copyWith(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w400),
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
+                              ),
+                              SizedBox(
+                                width: 50,
+                              ),
+                            ],
+                          ),
+                        ],
+                      );
+                    } else {
+                      return SizedBox.shrink();
+                    }
+                  },
+                ),
+              ],
+            ),
+          ),
+          body: SafeArea(
+            child: Container(
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  PinnedMessageSheet(),
+                  ThreadMessagesList<ThreadMessagesCubit>(
+                      parentChannel: channel),
+                  BlocBuilder<ThreadMessagesCubit, MessagesState>(
+                    bloc: Get.find<ThreadMessagesCubit>(),
+                    builder: (context, messagesState) {
+                      return ComposeBar(
+                          key: ValueKey('composeBarThread'),
+                          autofocus: widget.autofocus ||
+                              messagesState is MessageEditInProgress,
+                          initialText: (messagesState is MessageEditInProgress)
+                              ? messagesState.message.text
+                              : '',
+                          onMessageSend: (content, context) async {
+                            final uploadState =
+                                Get.find<FileUploadCubit>().state;
+                            List<dynamic> attachments = const [];
+                            if (uploadState.listFileUploading.isNotEmpty) {
+                              attachments = uploadState.listFileUploading
+                                  .where((fileUploading) =>
+                                      fileUploading.file != null)
+                                  .map((e) => e.file!.toAttachment())
+                                  .toList();
+                            }
+                            if (messagesState is MessageEditInProgress) {
+                              Get.find<ThreadMessagesCubit>().edit(
+                                  message: messagesState.message,
+                                  editedText: content,
+                                  newAttachments: attachments);
+                            } else {
+                              isDirect = channel.isDirect;
+                              Get.find<ThreadMessagesCubit>().send(
+                                originalStr: content,
+                                attachments: attachments,
+                                threadId: Globals.instance.threadId,
+                                isDirect: channel.isDirect,
+                              );
+                            }
+                            // reset thread draft
+                            Get.find<ThreadMessagesCubit>()
+                                .saveDraft(draft: null);
+                          },
+                          onTextUpdated: (text, ctx) {
+                            Get.find<ThreadMessagesCubit>()
+                                .saveDraft(draft: text);
+                          });
                     },
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(20, 20, 10, 20),
-                      child: Icon(
-                        Icons.arrow_back_ios,
-                        color: Theme.of(context).colorScheme.surface,
-                      ),
-                    ),
                   ),
-                ),
-                body: SafeArea(
-                  child: Container(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        PinnedMessageSheet(),
-                        Spacer(),
-                        ComposeBar(
-                          onMessageSend: (_, conext) => {},
-                          onTextUpdated: (_, conext) => {},
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              );
-            }
-          }),
+                ],
+              ),
+            ),
+          ),
+        ),
+        LongPressMessageAnimation<ThreadMessagesCubit>(isDirect: isDirect),
+      ]),
     );
   }
 }
