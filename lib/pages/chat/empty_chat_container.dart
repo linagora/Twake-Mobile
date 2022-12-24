@@ -1,7 +1,10 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:get/get.dart';
+import 'package:skeleton_text/skeleton_text.dart';
 import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/config/image_path.dart';
 
@@ -102,35 +105,82 @@ class MessagesLoadingAnimation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        children: [
-          SizedBox(
-            height: 50,
-          ),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(35),
+    return ListView.separated(
+        reverse: true,
+        shrinkWrap: true,
+        itemCount: 20,
+        separatorBuilder: (context, index) => const SizedBox(height: 10),
+        itemBuilder: (context, index) {
+          final height = (Random().nextInt(50) + 80).toDouble();
+          final width = (index.isOdd
+                  ? (Random().nextInt(200) + 50)
+                  : Dim.widthPercent(76))
+              .toDouble();
+          return Container(
+            height: width < 200 ? 70 : height,
+            constraints: BoxConstraints(
+                maxWidth: Dim.widthPercent(90),
+                maxHeight: Dim.heightPercent(50)),
+            alignment: Alignment.bottomCenter,
             child: SizedBox(
-              height: 150,
-              width: 150,
-              child: Image.asset('assets/animations/messages_loading.gif',
-                  colorBlendMode: BlendMode.multiply,
-                  color: Get.isDarkMode
-                      ? Theme.of(context).colorScheme.secondary
-                      : Theme.of(context).colorScheme.secondaryContainer),
+              height: height,
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  emptyAvatar(context: context),
+                  emptyMessage(
+                      height: width < 200 ? 70 : height,
+                      width: width.toDouble(),
+                      context: context)
+                ],
+              ),
             ),
+          );
+        });
+  }
+
+  Widget emptyMessage(
+      {required double height,
+      required double width,
+      required BuildContext context}) {
+    return Container(
+      alignment: Alignment.bottomCenter,
+      width: width,
+      height: height,
+      child: SkeletonAnimation(
+        shimmerColor: Colors.grey,
+        borderRadius: BorderRadius.circular(18),
+        shimmerDuration: 1000,
+        child: Container(
+          decoration: BoxDecoration(
+            color: Get.isDarkMode
+                ? Theme.of(context).colorScheme.secondary
+                : Theme.of(context).colorScheme.secondary.withOpacity(0.3),
+            borderRadius: BorderRadius.circular(18),
           ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              AppLocalizations.of(context)!.chatLoading,
-              style: Theme.of(context)
-                  .textTheme
-                  .headline1!
-                  .copyWith(fontSize: 18, fontWeight: FontWeight.w700),
-            ),
+        ),
+      ),
+    );
+  }
+
+  Widget emptyAvatar({required BuildContext context}) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 5, right: 8, left: 8),
+      child: Container(
+        height: 36,
+        width: 36,
+        child: SkeletonAnimation(
+          shimmerColor: Colors.grey,
+          borderRadius: BorderRadius.circular(20),
+          shimmerDuration: 1000,
+          child: Container(
+            decoration: BoxDecoration(
+                color: Get.isDarkMode
+                    ? Theme.of(context).colorScheme.secondary
+                    : Theme.of(context).colorScheme.secondary.withOpacity(0.3),
+                shape: BoxShape.circle),
           ),
-        ],
+        ),
       ),
     );
   }
