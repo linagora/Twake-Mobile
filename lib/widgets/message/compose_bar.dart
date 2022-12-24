@@ -146,6 +146,7 @@ class _ComposeBar extends State<ComposeBar> {
                 isDirect: channel == null ? true : channel.isDirect,
               )
             : Get.find<ThreadMessagesCubit>().send(
+                threadId: Globals.instance.threadId,
                 originalStr: "",
                 attachments: attachments,
                 isDirect: channel == null ? true : channel.isDirect,
@@ -214,10 +215,6 @@ class _ComposeBar extends State<ComposeBar> {
     }
   }
 
-  void swipeRequestFocus(bool _focus) {
-    _focus ? _focusNode.requestFocus() : _focusNode.unfocus();
-  }
-
   void mentionReplace(String username) async {
     String text = _controller.text;
     text = text.substring(0, _controller.selection.base.offset);
@@ -249,62 +246,56 @@ class _ComposeBar extends State<ComposeBar> {
   Widget build(BuildContext context) {
     return Column(children: [
       LinkContentPreviewInput(controller: _controller),
-      BlocListener<ThreadMessagesCubit, MessagesState>(
-        bloc: Get.find<ThreadMessagesCubit>(),
-        listener: (context, state) {
-          swipeRequestFocus(false);
-        },
-        child: WillPopScope(
-          onWillPop: onBackPress,
-          child: Column(
-            children: [
-              MentionSheet(onTapMention: mentionReplace),
-              TextInput(
-                controller: _controller,
-                scrollController: _scrollController,
-                focusNode: _focusNode,
-                autofocus: widget.autofocus,
-                toggleEmojiBoard: toggleEmojiBoard,
-                emojiVisible: _emojiVisible,
-                onMessageSend: widget.onMessageSend,
-                canSend: _canSend,
-              ),
-              Offstage(
-                offstage: !_emojiVisible,
-                child: Container(
-                  height: 250,
-                  child: EmojiPicker(
-                    onEmojiSelected: (cat, emoji) {
-                      _controller.text += emoji.emoji;
-                      _setSendButtonState(stateWithoutFileUploading: true);
-                    },
-                    config: Config(
-                      columns: 7,
-                      emojiSizeMax: 32.0,
-                      verticalSpacing: 0,
-                      horizontalSpacing: 0,
-                      initCategory: Category.RECENT,
-                      bgColor: Theme.of(context).colorScheme.secondaryContainer,
-                      indicatorColor: Theme.of(context).colorScheme.surface,
-                      iconColor: Theme.of(context).colorScheme.secondary,
-                      iconColorSelected: Theme.of(context).colorScheme.surface,
-                      progressIndicatorColor:
-                          Theme.of(context).colorScheme.surface,
-                      showRecentsTab: true,
-                      recentsLimit: 28,
-                      noRecentsText: AppLocalizations.of(context)!.noRecents,
-                      noRecentsStyle: Theme.of(context)
-                          .textTheme
-                          .headline3!
-                          .copyWith(fontSize: 20),
-                      categoryIcons: const CategoryIcons(),
-                      buttonMode: ButtonMode.MATERIAL,
-                    ),
+      WillPopScope(
+        onWillPop: onBackPress,
+        child: Column(
+          children: [
+            MentionSheet(onTapMention: mentionReplace),
+            TextInput(
+              controller: _controller,
+              scrollController: _scrollController,
+              focusNode: _focusNode,
+              autofocus: widget.autofocus,
+              toggleEmojiBoard: toggleEmojiBoard,
+              emojiVisible: _emojiVisible,
+              onMessageSend: widget.onMessageSend,
+              canSend: _canSend,
+            ),
+            Offstage(
+              offstage: !_emojiVisible,
+              child: Container(
+                height: 250,
+                child: EmojiPicker(
+                  onEmojiSelected: (cat, emoji) {
+                    _controller.text += emoji.emoji;
+                    _setSendButtonState(stateWithoutFileUploading: true);
+                  },
+                  config: Config(
+                    columns: 7,
+                    emojiSizeMax: 32.0,
+                    verticalSpacing: 0,
+                    horizontalSpacing: 0,
+                    initCategory: Category.RECENT,
+                    bgColor: Theme.of(context).colorScheme.secondaryContainer,
+                    indicatorColor: Theme.of(context).colorScheme.surface,
+                    iconColor: Theme.of(context).colorScheme.secondary,
+                    iconColorSelected: Theme.of(context).colorScheme.surface,
+                    progressIndicatorColor:
+                        Theme.of(context).colorScheme.surface,
+                    showRecentsTab: true,
+                    recentsLimit: 28,
+                    noRecentsText: AppLocalizations.of(context)!.noRecents,
+                    noRecentsStyle: Theme.of(context)
+                        .textTheme
+                        .headline3!
+                        .copyWith(fontSize: 20),
+                    categoryIcons: const CategoryIcons(),
+                    buttonMode: ButtonMode.MATERIAL,
                   ),
                 ),
-              )
-            ],
-          ),
+              ),
+            )
+          ],
         ),
       ),
     ]);
