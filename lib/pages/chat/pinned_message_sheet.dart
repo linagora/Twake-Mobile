@@ -156,7 +156,7 @@ class _PinnedMessageSheetState extends State<PinnedMessageSheet> {
                 constraints: BoxConstraints(
                     maxWidth: Dim.widthPercent(85), maxHeight: 22),
                 child: Text(
-                  '${message.text}',
+                  '${message.text == "" && message.files != null ? "The message contains only file data" : message.text}',
                   style: Get.theme.textTheme.headline1,
                   overflow: TextOverflow.ellipsis,
                 ),

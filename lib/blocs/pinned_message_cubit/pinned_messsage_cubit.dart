@@ -147,6 +147,7 @@ class PinnedMessageCubit extends Cubit<PinnedMessageState> {
           await _messageRepository.fetchPinnedMesssages(isDirect: isDirect);
 
       emit(state.copyWith(
+          newSelectedChatMessageIndex: state.selectedChatMessageIndex,
           newPinnedMesssageStatus: PinnedMessageStatus.finished,
           newPinnedMessageList:
               newMessages.isNotEmpty ? newMessages : state.pinnedMessageList,

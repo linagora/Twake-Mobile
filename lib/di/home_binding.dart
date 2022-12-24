@@ -79,7 +79,7 @@ class HomeBinding implements Bindings {
     Get.put(threadMessagesCubit, permanent: true);
 
     final pinnedMessagesCubit = PinnedMessageCubit();
-    Get.put(PinnedMessageCubit(), permanent: true);
+    Get.put(pinnedMessagesCubit, permanent: true);
 
     final accountCubit = AccountCubit();
     Get.put(accountCubit, permanent: true);
