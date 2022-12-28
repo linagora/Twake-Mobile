@@ -49,7 +49,8 @@ class HomeBinding implements Bindings {
 
     Get.put(FileCubit(), permanent: true);
 
-    Get.put(FileUploadCubit(), permanent: true);
+    final fileUploadCubit = FileUploadCubit();
+    Get.put(fileUploadCubit, permanent: true);
 
     Get.put(FileDownloadCubit(), permanent: true);
 
@@ -113,7 +114,10 @@ class HomeBinding implements Bindings {
     final companyFileCubit = CompanyFileCubit(accountCubit: accountCubit);
     Get.put(companyFileCubit, permanent: true);
 
-    Get.put(FileTransitionCubit(), permanent: true);
+    Get.put(
+        FileTransitionCubit(
+            channelMessagesCubit, threadMessagesCubit, fileUploadCubit),
+        permanent: true);
 
     Get.put(MessageAnimationCubit(), permanent: true);
 
