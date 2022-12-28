@@ -86,7 +86,8 @@ class PinnedMessageCubit extends Cubit<PinnedMessageState> {
     return false;
   }
 
-  void jumpToPinnedMessage(Message message) async {
+  void jumpToPinnedMessage(
+      {required Message message, required bool isDirect}) async {
     final stateMessagesCubit = Get.find<ChannelMessagesCubit>().state;
     if (stateMessagesCubit is MessagesLoadSuccess) {
       // set isInHistory to false
@@ -102,14 +103,15 @@ class PinnedMessageCubit extends Cubit<PinnedMessageState> {
       if (messageRes != null) {
         final res = stateMessagesCubit.messages.indexOf(messageRes);
         emit(state.copyWith(
-            newSelectedChatMessageIndex: res,
-            newPinnedMesssageStatus: state.pinnedMesssageStatus));
+          newSelectedChatMessageIndex: res,
+          newPinnedMesssageStatus: PinnedMessageStatus.jumpToPin,
+        ));
       } else {
         // if the message is not in the state, we need to fetch it
 
         final messagesAround = await Get.find<ChannelMessagesCubit>()
             .getMessagesAroundSelectedMessage(
-                message: message, isDirect: false);
+                message: message, isDirect: isDirect);
         final messagesCubit =
             Get.find<ChannelMessagesCubit>().state as MessagesLoadSuccess;
         final messageRes = messagesCubit.messages.firstWhereOrNull(
@@ -120,13 +122,14 @@ class PinnedMessageCubit extends Cubit<PinnedMessageState> {
           if (res != -1)
             emit(state.copyWith(
                 newSelectedChatMessageIndex: res,
-                newPinnedMesssageStatus: state.pinnedMesssageStatus));
+                newPinnedMesssageStatus: PinnedMessageStatus.jumpToPin));
         }
       }
     }
   }
 
-  Future<bool> pinMessage({required Message message, bool? isDirect}) async {
+  Future<bool> pinMessage(
+      {required Message message, required bool isDirect}) async {
     List<Message> messages = [];
 
     if (state.pinnedMesssageStatus == PinnedMessageStatus.finished) {
@@ -189,6 +192,10 @@ class PinnedMessageCubit extends Cubit<PinnedMessageState> {
       return false;
     }
     return false;
+  }
+
+  void emitFinishedState() {
+    emit(state.copyWith(newPinnedMesssageStatus: PinnedMessageStatus.finished));
   }
 
   Future<void> unpinAllReset() async {

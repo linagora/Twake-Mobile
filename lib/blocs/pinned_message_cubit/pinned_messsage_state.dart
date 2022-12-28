@@ -1,8 +1,13 @@
 part of 'pinned_messsage_cubit.dart';
 
-enum PinnedMessageStatus { init, loading, finished, selected, failed }
-
-const int initPinValue = 000;
+enum PinnedMessageStatus {
+  init,
+  loading,
+  finished,
+  jumpToPin,
+  selected,
+  failed
+}
 
 class PinnedMessageState extends Equatable {
   final PinnedMessageStatus pinnedMesssageStatus;
@@ -15,7 +20,7 @@ class PinnedMessageState extends Equatable {
     this.pinnedMesssageStatus = PinnedMessageStatus.init,
     this.pinnedMessageList = const [],
     this.selected = 0,
-    this.selectedChatMessageIndex = initPinValue,
+    this.selectedChatMessageIndex = -1,
     this.isUnpinAll = false,
   });
 

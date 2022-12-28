@@ -6,13 +6,15 @@ import 'package:twake/blocs/pinned_message_cubit/pinned_messsage_cubit.dart';
 import 'package:twake/config/dimensions_config.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:twake/config/image_path.dart';
+import 'package:twake/models/channel/channel.dart';
 import 'package:twake/models/message/message.dart';
 import 'package:twake/routing/app_router.dart';
 import 'package:twake/routing/route_paths.dart';
 import 'package:twake/utils/utilities.dart';
 
 class PinnedMessageSheet extends StatefulWidget {
-  const PinnedMessageSheet({Key? key}) : super(key: key);
+  final Channel channel;
+  const PinnedMessageSheet({required this.channel, Key? key}) : super(key: key);
 
   @override
   State<PinnedMessageSheet> createState() => _PinnedMessageSheetState();
@@ -47,8 +49,9 @@ class _PinnedMessageSheetState extends State<PinnedMessageSheet> {
           index: selected,
           duration: Duration(milliseconds: 700),
           curve: Curves.linear);
-    Get.find<PinnedMessageCubit>()
-        .jumpToPinnedMessage(state.pinnedMessageList[selected]);
+    Get.find<PinnedMessageCubit>().jumpToPinnedMessage(
+        message: state.pinnedMessageList[selected],
+        isDirect: widget.channel.isDirect);
   }
 
   @override
