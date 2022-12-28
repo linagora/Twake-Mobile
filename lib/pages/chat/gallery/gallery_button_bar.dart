@@ -48,7 +48,7 @@ class GalleryButtonBar extends StatelessWidget {
           : Get.find<ThreadMessagesCubit>().send(
               originalStr: _controller.text,
               isDirect: channel == null ? true : channel.isDirect,
-            );
+              threadId: Globals.instance.threadId);
     } else {
       Globals.instance.threadId == null
           ? Get.find<ChannelMessagesCubit>().sendLocal()

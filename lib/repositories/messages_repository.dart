@@ -157,11 +157,11 @@ class MessagesRepository {
   }
 
   Future<List<Message>> fetchAroundMessage({
-    String? workspaceId,
     required String channelId,
-    String? threadId,
     required String messageId,
     required String direction,
+    String? workspaceId,
+    String? threadId,
     int? limit,
   }) async {
     if (messageId == endOfHistory) return [];
@@ -226,10 +226,10 @@ class MessagesRepository {
   }
 
   Future<List<Message>> fetchBefore({
-    String? workspaceId,
     required String channelId,
-    String? threadId,
     required String beforeMessageId,
+    String? threadId,
+    String? workspaceId,
   }) {
     return fetchAroundMessage(
         channelId: channelId,
@@ -239,10 +239,10 @@ class MessagesRepository {
   }
 
   Future<List<Message>> fetchAfter({
-    String? workspaceId,
     required String channelId,
-    String? threadId,
     required String afterMessageId,
+    String? workspaceId,
+    String? threadId,
   }) {
     return fetchAroundMessage(
         channelId: channelId,
