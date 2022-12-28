@@ -156,7 +156,9 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
                   builder: (_, messagesState) => Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      PinnedMessageSheet(),
+                      PinnedMessageSheet(
+                          channel: channel,
+                          key: ValueKey("pinnedMessageSheet")),
                       _buildChatContent(messagesState, channel, context),
                       _buildQuoteMessage(),
                       _composeBar(messagesState, draft, channel)
@@ -191,6 +193,9 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
       children: [
         BlocBuilder<QuoteMessageCubit, QuoteMessageState>(
           bloc: Get.find<QuoteMessageCubit>(),
+          buildWhen: (previousState, _) =>
+              previousState.quoteMessageStatus !=
+              QuoteMessageStatus.jumpToQuote,
           builder: (context, state) {
             return state.quoteMessageStatus == QuoteMessageStatus.quoteDone
                 ? QuoteMessage(

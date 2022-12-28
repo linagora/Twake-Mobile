@@ -55,7 +55,9 @@ class QuoteMessage extends StatelessWidget {
           )
         : GestureDetector(
             behavior: HitTestBehavior.opaque,
-            onTap: () => Get.find<QuoteMessageCubit>().jumpToMessage(message),
+            onTap: () => Get.find<QuoteMessageCubit>().jumpToMessage(
+                message: message,
+                isDirect: true), // for now QuoteMessages only for direct
             child: Padding(
               padding: EdgeInsets.only(
                   left: paddingLeft,
@@ -158,13 +160,15 @@ class QuoteMessage extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 2),
       child: Text(
         message.sender,
-        style: Get.isDarkMode? Theme.of(context)
-            .textTheme
-            .headline1!
-            .copyWith(fontSize: 13, fontWeight: FontWeight.w400):Theme.of(context)
-            .textTheme
-            .headline4!
-            .copyWith(fontSize: 13, fontWeight: FontWeight.w400),
+        style: Get.isDarkMode
+            ? Theme.of(context)
+                .textTheme
+                .headline1!
+                .copyWith(fontSize: 13, fontWeight: FontWeight.w400)
+            : Theme.of(context)
+                .textTheme
+                .headline4!
+                .copyWith(fontSize: 13, fontWeight: FontWeight.w400),
       ),
     );
   }
