@@ -148,7 +148,7 @@ class MessagesLoadingAnimation extends StatelessWidget {
       width: width,
       height: height,
       child: SkeletonAnimation(
-        shimmerColor: Colors.grey,
+        shimmerColor: Colors.grey.withOpacity(0.4),
         borderRadius: BorderRadius.circular(18),
         shimmerDuration: 1000,
         child: Container(
@@ -170,7 +170,7 @@ class MessagesLoadingAnimation extends StatelessWidget {
         height: 36,
         width: 36,
         child: SkeletonAnimation(
-          shimmerColor: Colors.grey,
+          shimmerColor: Colors.grey.withOpacity(0.4),
           borderRadius: BorderRadius.circular(20),
           shimmerDuration: 1000,
           child: Container(

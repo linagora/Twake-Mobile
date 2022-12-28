@@ -70,12 +70,12 @@ class _FilesListViewState extends State<FilesListView>
         // if local file have thumbnail then file_tile.dart will display it
         localFile = localFile.copyWith(thumbnail: thumbnail);
       }
-
+      Get.find<FileUploadCubit>().initFileUploadingStream();
       Get.find<FileUploadCubit>().upload(
         sourceFile: localFile,
         sourceFileUploading: SourceFileUploading.InChat,
       );
-      Get.find<FileUploadCubit>().initFileUploadingStream();
+
       Get.find<FileTransitionCubit>().fileLoadingMessageEmpty();
     }
 
