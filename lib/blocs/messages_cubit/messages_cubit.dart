@@ -151,8 +151,8 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
 
   Future<void> fetchAfter({
     required String channelId,
-    String? threadId,
     required bool isDirect,
+    String? threadId,
   }) async {
     if (this.state is! MessagesLoadSuccess) return;
     final state = this.state as MessagesLoadSuccess;
@@ -198,10 +198,11 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
     }
   }
 
-  Future<List<Message>> getMessagesAroundSelectedMessage(
-      {required Message message,
-      String? threadId,
-      required bool isDirect}) async {
+  Future<List<Message>> getMessagesAroundSelectedMessage({
+    required Message message,
+    required bool isDirect,
+    String? threadId,
+  }) async {
     final state = this.state as MessagesLoadSuccess;
 
     emit(MessagesBeforeLoadInProgress(
@@ -210,7 +211,9 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
     ));
 
     final messages = await _repository.fetchBefore(
-        channelId: message.channelId,
+        channelId: message.channelId == ""
+            ? Globals.instance.channelId!
+            : message.channelId,
         beforeMessageId: message.id,
         threadId: threadId,
         workspaceId: isDirect ? 'direct' : null);
@@ -218,7 +221,9 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
       messages.removeLast();
     }
     messages.addAll(await _repository.fetchAfter(
-        channelId: message.channelId,
+        channelId: message.channelId == ""
+            ? Globals.instance.channelId!
+            : message.channelId,
         afterMessageId: message.id,
         workspaceId: isDirect ? 'direct' : null));
 
@@ -308,9 +313,16 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
       Message? quoteMessage}) async {
     final prepared = TwacodeParser(originalStr ?? '').message;
     final fakeId = DateTime.now().millisecondsSinceEpoch.toString();
+    final state = this.state as MessagesLoadSuccess;
+
     Message message;
 
     _sendInProgress += 1;
+
+    final int now = // if the time on the device lags behind
+        state.messages.first.updatedAt > DateTime.now().millisecondsSinceEpoch
+            ? state.messages.first.updatedAt + 1
+            : DateTime.now().millisecondsSinceEpoch;
 
     final sendStream = _repository.send(
         id: fakeId,
@@ -319,11 +331,10 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
         originalStr: originalStr,
         threadId: threadId ?? fakeId,
         isDirect: isDirect,
-        now: DateTime.now().millisecondsSinceEpoch,
+        now: now,
         files: attachments,
         quoteMessage: quoteMessage);
 
-    final state = this.state as MessagesLoadSuccess;
     emit(MessageSendInProgress(messages: state.messages, hash: state.hash));
 
     await for (message in sendStream) {
