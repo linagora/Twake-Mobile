@@ -153,7 +153,9 @@ class _ThreadPageState<T extends BaseChannelsCubit>
                 mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  PinnedMessageSheet(),
+                  PinnedMessageSheet(
+                      channel: channel,
+                      key: ValueKey('pinnedMessageSheetThread')),
                   ThreadMessagesList<ThreadMessagesCubit>(
                       parentChannel: channel),
                   BlocBuilder<ThreadMessagesCubit, MessagesState>(

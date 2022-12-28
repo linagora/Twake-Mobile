@@ -32,7 +32,7 @@ class FileTransitionCubit extends Cubit<FileTransitionState> {
       if (channelMState is MessageEditInProgress &&
           state.fileTransitionStatus ==
               FileTransitionStatus.messageSentFileLoading) {
-        // attacing the file to the message when it is well uploaded
+        // attaching the file to the message when it is well uploaded
         List<dynamic> attachments = uploadState.listFileUploading
             .where((fileUploading) => (fileUploading.file != null ||
                 fileUploading.messageFile != null))
@@ -105,7 +105,7 @@ class FileTransitionCubit extends Cubit<FileTransitionState> {
                 attachments: attachments,
                 isDirect: channel == null ? true : channel.isDirect,
               );
-        // start cleari
+        // start clearing
         if (hasUploadedFileInStack) {
           Globals.instance.threadId == null
               ? Get.find<ChannelMessagesCubit>().removeFromState(dummyId)
