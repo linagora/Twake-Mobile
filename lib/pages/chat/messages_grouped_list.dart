@@ -73,7 +73,7 @@ class _ChatView extends StatefulWidget {
 }
 
 class _ChatViewState extends State<_ChatView> {
-  int pinnedMessageIndex = -11;
+  int highlightMessageIndex = -11;
   final ItemPositionsListener _itemPositionsListener =
       ItemPositionsListener.create();
   final GroupedItemScrollController itemScrollController =
@@ -103,17 +103,33 @@ class _ChatViewState extends State<_ChatView> {
   }
 
   Widget _stickyGroupedListView(List<Message> messages) {
-    return BlocListener<PinnedMessageCubit, PinnedMessageState>(
-      bloc: Get.find<PinnedMessageCubit>(),
-      listener: (context, state) {
-        if (state.pinnedMesssageStatus == PinnedMessageStatus.finished &&
-            state.selectedChatMessageIndex != initPinValue) {
-          pinnedMessageIndex = state.selectedChatMessageIndex;
-          itemScrollController.scrollTo(
-              index: state.selectedChatMessageIndex - 1,
-              duration: Duration(seconds: 1));
-        }
-      },
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<PinnedMessageCubit, PinnedMessageState>(
+          bloc: Get.find<PinnedMessageCubit>(),
+          listener: (context, state) {
+            if (state.pinnedMesssageStatus == PinnedMessageStatus.jumpToPin) {
+              highlightMessageIndex = state.selectedChatMessageIndex;
+              itemScrollController.scrollTo(
+                  index: state.selectedChatMessageIndex - 1,
+                  duration: Duration(seconds: 1));
+              Get.find<PinnedMessageCubit>().emitFinishedState();
+            }
+          },
+        ),
+        BlocListener<QuoteMessageCubit, QuoteMessageState>(
+          bloc: Get.find<QuoteMessageCubit>(),
+          listener: (context, state) {
+            if (state.quoteMessageStatus == QuoteMessageStatus.jumpToQuote) {
+              highlightMessageIndex = state.quoteMessageIndex;
+              itemScrollController.scrollTo(
+                  index: state.quoteMessageIndex - 1,
+                  duration: Duration(seconds: 1));
+              Get.find<QuoteMessageCubit>().emitQuoteDoneState();
+            }
+          },
+        ),
+      ],
       child: StickyGroupedListView<Message, DateTime>(
         initialScrollIndex: 0,
         initialAlignment: 0,
@@ -200,7 +216,7 @@ class _ChatViewState extends State<_ChatView> {
                         itemPositionsListener: _itemPositionsListener,
                       );
                     },
-                    child: index == pinnedMessageIndex
+                    child: index == highlightMessageIndex
                         ? HighlightComponent(
                             component: MessageTile<ChannelMessagesCubit>(
                               message: message,
