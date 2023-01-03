@@ -173,6 +173,7 @@ class NavigatorService {
       );
 
       pinnedMessageCubit.getPinnedMessages(channelId, channel.isDirect);
+      channelsCubit.selectChannel(channelId: channelId);
 
       final path = channel.isDirect
           ? RoutePaths.directMessageThread.path
