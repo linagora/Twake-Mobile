@@ -320,8 +320,11 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
     _sendInProgress += 1;
 
     final int now = // if the time on the device lags behind
-        state.messages.first.updatedAt > DateTime.now().millisecondsSinceEpoch
-            ? state.messages.first.updatedAt + 1
+        state.messages.isNotEmpty
+            ? state.messages.first.updatedAt >
+                    DateTime.now().millisecondsSinceEpoch
+                ? state.messages.first.updatedAt + 1
+                : DateTime.now().millisecondsSinceEpoch
             : DateTime.now().millisecondsSinceEpoch;
 
     final sendStream = _repository.send(
