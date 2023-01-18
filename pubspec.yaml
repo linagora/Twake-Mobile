@@ -46,6 +46,7 @@ dependencies:
   firebase_messaging: 14.0.4
   equatable: ^2.0.2
   flutter_bloc: ^8.1.1
+  bloc_concurrency: ^0.2.0
   connectivity: ^3.0.4
   sliding_up_panel: ^2.0.0+1
   socket_io_client: ^1.0.1
