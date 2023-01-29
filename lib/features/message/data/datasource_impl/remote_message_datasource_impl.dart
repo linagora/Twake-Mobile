@@ -1,4 +1,5 @@
 import 'package:sprintf/sprintf.dart';
+import 'package:twake/core/network/model/query/query_parameter.dart';
 import 'package:twake/features/message/data/datasource/message_datasource.dart';
 import 'package:twake/features/message/data/model/message/response/message.dart';
 import 'package:twake/models/base_model/base_model.dart';
@@ -18,19 +19,24 @@ class RemoteMessageDataSourceImpl extends MessageDataSource {
       String? afterMessageId,
       bool? withExistedFiles = false}) async {
     List<dynamic> remoteResult;
-    final queryParameters = <String, dynamic>{
-      'include_users': 1,
-      'emoji': false,
-      'direction': 'history',
-      'limit': 25,
-    };
+
+    final queryParameters = <QueryParameter?>[
+      IntQueryParameter('include_users', 1),
+      BooleanQueryParameter('emoji', false),
+      StringQueryParameter('direction', 'history'),
+      IntQueryParameter('limit', 25),
+    ];
 
     if (afterMessageId != null) {
-      queryParameters['page_token'] = afterMessageId;
-      queryParameters['direction'] = 'future';
+      queryParameters.addAll([
+        StringQueryParameter('page_token', afterMessageId),
+        StringQueryParameter('direction', 'future'),
+      ]);
     }
     if (withExistedFiles == true) {
-      queryParameters['filter'] = 'files';
+      queryParameters.add(
+        StringQueryParameter('filter', 'files'),
+       );
     }
     if (threadId == null) {
       remoteResult = await _api.get(
@@ -39,22 +45,22 @@ class RemoteMessageDataSourceImpl extends MessageDataSource {
           workspaceId ?? Globals.instance.workspaceId,
           channelId
         ]),
-        queryParameters: queryParameters,
+        queryParameters: queryParameters.toMap(),
         key: 'resources',
       );
     } else {
-      final queryParameters = <String, dynamic>{
-        'include_users': 1,
-        'emoji': false,
-        'direction': 'history',
-      };
+      final queryParameters = <QueryParameter?>[
+        IntQueryParameter('include_users', 1),
+        BooleanQueryParameter('emoji', false),
+        StringQueryParameter('direction', 'history'),
+      ];
 
       remoteResult = await _api.get(
         endpoint: sprintf(Endpoint.threadMessages, [
           companyId ?? Globals.instance.companyId,
           threadId,
         ]),
-        queryParameters: queryParameters,
+        queryParameters: queryParameters.toMap(),
         key: 'resources',
       );
     }

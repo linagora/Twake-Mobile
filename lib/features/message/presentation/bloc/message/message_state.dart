@@ -1,22 +1,22 @@
-part of 'base_message_bloc.dart';
+part of 'message_bloc.dart';
 
-abstract class BaseMessageState extends Equatable {
-  const BaseMessageState();
+abstract class MessageState extends Equatable {
+  const MessageState();
 }
 
-class BaseMessageInitial extends BaseMessageState {
+class MessageInitial extends MessageState {
   @override
   List<Object> get props => [];
 }
 
-class MessagesInitial extends BaseMessageState {
+class MessagesInitial extends MessageState {
   const MessagesInitial();
 
   @override
   List<Object?> get props => [];
 }
 
-class MessagesLoadSuccess extends BaseMessageState {
+class MessagesLoadSuccess extends MessageState {
   final List<Message> messages;
   final int hash; // sum of hash of all messages in the list
 
@@ -60,7 +60,7 @@ class MessageEditInProgress extends MessagesLoadSuccess {
   List<Object?> get props => [message];
 }
 
-class MessagesLoadInProgress extends BaseMessageState {
+class MessagesLoadInProgress extends MessageState {
   const MessagesLoadInProgress();
 
   @override

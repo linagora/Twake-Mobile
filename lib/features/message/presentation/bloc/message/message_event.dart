@@ -1,10 +1,10 @@
-part of 'base_message_bloc.dart';
+part of 'message_bloc.dart';
 
-abstract class BaseMessageEvent extends Equatable {
-  const BaseMessageEvent();
+abstract class MessageEvent extends Equatable {
+  const MessageEvent();
 }
 
-class FetchMessageEvent extends BaseMessageEvent {
+class FetchMessageEvent extends MessageEvent {
   final String channelId;
   final String? threadId;
   final bool isDirect;

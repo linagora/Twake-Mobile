@@ -8,7 +8,7 @@ class Reaction {
 
   final List<String> users;
 
-  int count;
+  final int count;
 
   Reaction({
     required this.name,

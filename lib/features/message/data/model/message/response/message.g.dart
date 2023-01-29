@@ -31,19 +31,18 @@ Message _$MessageFromJson(Map<String, dynamic> json) => Message(
       quoteMessage: json['quote_message'] == null
           ? null
           : Message.fromJson(json['quote_message'] as Map<String, dynamic>),
-      lastReplies: (json['last_replies'] as List<dynamic>?)
-              ?.map((e) => Message.fromJson(e as Map<String, dynamic>))
-              .toList() ??
-          const <Message>[],
+      subtype: $enumDecodeNullable(_$MessageSubtypeEnumMap, json['subtype']),
+      pinnedInfo: json['pinned_info'] == null
+          ? null
+          : PinnedInfo.fromJson(json['pinned_info'] as Map<String, dynamic>),
       links: (json['links'] as List<dynamic>?)
               ?.map((e) => MessageLink.fromJson(e as Map<String, dynamic>))
               .toList() ??
           const <MessageLink>[],
-    )
-      ..subtype = $enumDecodeNullable(_$MessageSubtypeEnumMap, json['subtype'])
-      ..pinnedInfo = json['pinned_info'] == null
-          ? null
-          : PinnedInfo.fromJson(json['pinned_info'] as Map<String, dynamic>);
+    )..lastReplies1 = (json['last_replies'] as List<dynamic>?)
+            ?.map((e) => Message.fromJson(e as Map<String, dynamic>))
+            .toList() ??
+        [];
 
 Map<String, dynamic> _$MessageToJson(Message instance) => <String, dynamic>{
       'id': instance.id,
@@ -65,8 +64,8 @@ Map<String, dynamic> _$MessageToJson(Message instance) => <String, dynamic>{
       'picture': instance.picture,
       'draft': instance.draft,
       'delivery': _$DeliveryEnumMap[instance.delivery],
+      'last_replies': instance.lastReplies1?.map((e) => e.toJson()).toList(),
       'quote_message': instance.quoteMessage?.toJson(),
-      'last_replies': instance.lastReplies?.map((e) => e.toJson()).toList(),
       'links': instance.links?.map((e) => e.toJson()).toList(),
     };
 

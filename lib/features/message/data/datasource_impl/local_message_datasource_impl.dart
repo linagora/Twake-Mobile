@@ -1,6 +1,5 @@
 import 'package:twake/features/message/data/datasource/message_datasource.dart';
 import 'package:twake/features/message/data/model/message/response/message.dart';
-import 'package:twake/models/base_model/base_model.dart';
 import 'package:twake/services/storage_service.dart';
 
 class LocalMessageDataSourceImpl extends MessageDataSource {
@@ -42,7 +41,7 @@ class LocalMessageDataSourceImpl extends MessageDataSource {
   }
 
   @override
-  Future<void> multiInsert({required Iterable<BaseModel> data}) async {
+  Future<void> multiInsert({required Iterable<Message> data}) async {
     await _storage.multiInsert(table: Table.message, data: data);
   }
 }

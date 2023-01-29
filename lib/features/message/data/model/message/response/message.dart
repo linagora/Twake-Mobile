@@ -29,54 +29,53 @@ class Message extends BaseModel {
   final String channelId;
   final String userId;
 
-  int createdAt;
-  int updatedAt;
+  final int createdAt;
+  final int updatedAt;
 
   @JsonKey(defaultValue: 0)
-  int responsesCount;
+  final int responsesCount;
 
   @JsonKey(defaultValue: '')
-  String text;
+  final String text;
 
-  List<dynamic> blocks;
+  final List<dynamic> blocks;
 
-  List<dynamic>? files;
+  final List<dynamic>? files;
 
-  MessageSubtype? subtype;
+  final MessageSubtype? subtype;
 
   @JsonKey(defaultValue: const [])
-  List<Reaction> reactions;
+  final List<Reaction> reactions;
 
   @JsonKey(name: 'pinned_info')
-  PinnedInfo? pinnedInfo;
+  final PinnedInfo? pinnedInfo;
 
-  String? username;
-  String? firstName;
-  String? lastName;
-  String? picture;
-  String? draft;
+  final String? username;
+  final String? firstName;
+  final String? lastName;
+  final String? picture;
+  final String? draft;
 
   @JsonKey(defaultValue: 1, name: 'is_read')
   int _isRead = 1;
 
   @JsonKey(defaultValue: Delivery.delivered)
-  Delivery delivery;
+  final Delivery delivery;
 
   @JsonKey(defaultValue: const [], name: 'last_replies')
   List<Message>? lastReplies1;
 
   @JsonKey(name: 'quote_message')
-  Message? quoteMessage;
-
-  List<Message>? get lastReplies => lastReplies1;
+  final Message? quoteMessage;
 
   Message? get lastReply => lastReplies1 != null && lastReplies1!.isNotEmpty
       ? lastReplies1![lastReplies1!.length - 1]
       : null;
+
   List<Message>? get last3Replies {
-    if (lastReplies != null && lastReplies!.isNotEmpty) {
-      return lastReplies!
-          .getRange(responsesCount < 3 ? 1 : 0, lastReplies!.length)
+    if (lastReplies1 != null && lastReplies1!.isNotEmpty) {
+      return lastReplies1!
+          .getRange(responsesCount < 3 ? 1 : 0, lastReplies1!.length)
           .toList();
     }
     return null;
@@ -176,6 +175,8 @@ class Message extends BaseModel {
     this.picture,
     this.draft,
     this.quoteMessage,
+    this.subtype,
+    this.pinnedInfo,
     List<Message>? lastReplies = const <Message>[],
     List<MessageLink>? links = const <MessageLink>[],
   }) {
@@ -229,10 +230,8 @@ class Message extends BaseModel {
 enum Delivery {
   @JsonValue('in_progress')
   inProgress,
-
   @JsonValue('delivered')
   delivered,
-
   @JsonValue('failed')
   failed,
 }
@@ -240,10 +239,8 @@ enum Delivery {
 enum MessageSubtype {
   @JsonValue('application')
   application,
-
   @JsonValue('deleted')
   deleted,
-
   @JsonValue('system')
   system
 }

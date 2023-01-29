@@ -1,5 +1,4 @@
 import 'package:twake/features/message/data/model/message/response/message.dart';
-import 'package:twake/models/base_model/base_model.dart';
 
 abstract class MessageDataSource {
   Future<List<Message>> fetch({
@@ -12,6 +11,6 @@ abstract class MessageDataSource {
   });
 
   Future<void> multiInsert({
-    required Iterable<BaseModel> data,
+    required Iterable<Message> data,
   });
 }
