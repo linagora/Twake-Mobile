@@ -51,9 +51,11 @@ class MessageBloc extends Bloc<MessageEvent, MessageState> {
     if (event.threadId == null) emit(MessagesLoadInProgress());
 
     final result = _fetchMessageUseCase.execute(
-      channelId: event.channelId,
-      threadId: event.threadId,
-      workspaceId: event.isDirect ? 'direct' : null,
+      input: FetchMessageUseCaseInput(
+        channelId: event.channelId,
+        threadId: event.threadId,
+        workspaceId: event.isDirect ? 'direct' : null,
+      ),
     );
     result.fold((l) {}, (r) async {
       final threadId = event.threadId ?? Globals.instance.threadId;

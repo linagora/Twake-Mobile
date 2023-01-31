@@ -1,8 +1,7 @@
 import 'package:sprintf/sprintf.dart';
-import 'package:twake/core/network/model/query/query_parameter.dart';
+import 'package:twake/core/data/model/query/query_parameter.dart';
 import 'package:twake/features/message/data/datasource/message_datasource.dart';
 import 'package:twake/features/message/data/model/message/response/message.dart';
-import 'package:twake/models/base_model/base_model.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/services/api_service.dart';
 import 'package:twake/services/endpoints.dart';
@@ -81,7 +80,7 @@ class RemoteMessageDataSourceImpl extends MessageDataSource {
   }
 
   @override
-  Future<void> multiInsert({required Iterable<BaseModel> data}) {
+  Future<void> multiInsert({required Iterable<Message> data}) {
     // TODO: implement multiInsert
     throw UnimplementedError();
   }
