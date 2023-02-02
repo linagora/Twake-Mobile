@@ -2,6 +2,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:logger/logger.dart';
 import 'package:twake/models/channel/channel.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/utils/extensions.dart';
@@ -39,9 +40,10 @@ class ImageWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Logger().d('[ImageWidget]::build() type: $imageType - url: $imageUrl');
     if (imageType == ImageType.channel) {
       if (imageUrl != null && imageUrl != "") {
-        return channelImage(imageUrl, isPrivate, backgroundColor, fontSize);
+        return roundImage(imageUrl, isPrivate, size, fontSize);
       } else
         return namedAvatar(name, size, backgroundColor, borderRadius);
     }
@@ -98,15 +100,9 @@ class ImageWidget extends StatelessWidget {
     );
   }
 
-  Widget roundImage(
-      String? imageUrl, bool isPrivate, double size, double borderRadius) {
-    if (imageUrl == null) {
-      imageUrl = "";
-    }
+  Widget roundImage(String? imageUrl, bool isPrivate, double size, double borderRadius) {
+    final iconUrl = _normalizeImageUrl(imageUrl);
 
-    imageUrl = imageUrl.contains('http')
-        ? imageUrl
-        : Globals.instance.host + "/$imageUrl";
     return Container(
       width: size,
       height: size,
@@ -130,7 +126,7 @@ class ImageWidget extends StatelessWidget {
           child: CachedNetworkImage(
             // Loading from network.
             fit: BoxFit.cover,
-            imageUrl: imageUrl,
+            imageUrl: iconUrl,
             progressIndicatorBuilder: (context, url, downloadProgress) {
               return ShimmerLoading(
                 isLoading: true,
@@ -256,6 +252,17 @@ class ImageWidget extends StatelessWidget {
               1, (name.hashCode % 360 - 60).toDouble().abs(), 0.9, 0.7)
           .toColor()
     ];
+  }
+
+  String _normalizeImageUrl(String? imageUrl) {
+    if (imageUrl == null) {
+      return '';
+    }
+    if (imageUrl.startsWith(RegExp(r'^/internal/services/'))) {
+      return Globals.instance.host + imageUrl;
+    } else {
+      return imageUrl;
+    }
   }
 }
 
