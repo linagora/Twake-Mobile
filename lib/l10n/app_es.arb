@@ -19,7 +19,7 @@
   "@reply": {},
   "newReply": "Respuesta nueva...",
   "@newReply": {},
-  "someonesMessages": "Mensajes de {alguien}",
+  "someonesMessages": "Mensajes de {someone}",
   "@someonesMessages": {
     "description": "Possessive case for someone's messages",
     "placeholders": {
@@ -111,7 +111,7 @@
   "@language": {},
   "noConversationInChannel": "¡No hay mensajes en\neste canal! Inicie la conversación\nenviando algún texto, imagen o documento",
   "@noConversationInChannel": {},
-  "noConversationInChat": "¡No hay mensajes en\neste chat! Inicia una conversación\ncon {nombre de usuario} enviando\nalgún texto, imagen o documento",
+  "noConversationInChat": "No hay mensajes en\neste chat! Inicia una conversación\ncon {username} enviando\nalgún texto, imagen o documento",
   "@noConversationInChat": {
     "description": "Info message to indicate there're no messages",
     "placeholders": {
