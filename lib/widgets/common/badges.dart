@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/badges_cubit/badges_cubit.dart';
 import 'package:twake/blocs/badges_cubit/badges_state.dart';
-import 'package:twake/models/badge/badge.dart';
+import 'package:twake/models/badge/badge.dart' as twake;
 
 class BadgesCount extends StatelessWidget {
-  final BadgeType type;
+  final twake.BadgeType type;
   final String id;
   final bool isInDirects;
   final bool isTitleVisible;
@@ -41,7 +41,7 @@ class BadgesCount extends StatelessWidget {
                   : state.badges
                       .firstWhere(
                         (b) => b.matches(type: type, id: id),
-                        orElse: () => Badge(type: BadgeType.none, id: ''),
+                        orElse: () => twake.Badge(type: twake.BadgeType.none, id: ''),
                       )
                       .count;
 
