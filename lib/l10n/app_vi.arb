@@ -5,7 +5,7 @@
   "@organisationSwitch": {},
   "messageDeleted": "Tin nhắn đã bị xóa",
   "@messageDeleted": {},
-  "newReply": "Trả lời mới ...",
+  "newReply": "Aa",
   "@newReply": {},
   "addEmail": "Thêm email",
   "@addEmail": {},
@@ -202,7 +202,7 @@
   "@channelName": {},
   "noConversationInChannel": "Không có tin nhắn nào trong    \nkênh này! Bắt đầu cuộc trò chuyện bằng     \ngửi một số văn bản, hình ảnh hoặc tài liệu",
   "@noConversationInChannel": {},
-  "noConversationInChat": "Không có tin nhắn nào trong    \ncuộc trò chuyện này! Bắt đầu cuộc trò chuyện    \nvới {tên người dùng} bằng cách gửi     \nmột số văn bản, hình ảnh hoặc tài liệu",
+  "noConversationInChat": "Không có tin nhắn nào trong\ncuộc trò chuyện này! Bắt đầu cuộc trò chuyện\nvới {username} bằng cách gửi\nmột số văn bản, hình ảnh hoặc tài liệu",
   "@noConversationInChat": {
     "description": "Info message to indicate there're no messages",
     "placeholders": {
@@ -247,7 +247,7 @@
       "count": {}
     }
   },
-  "search": "Tìm kiếm kênh",
+  "search": "Tìm kiếm",
   "@search": {},
   "email": "Email",
   "@email": {},
