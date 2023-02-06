@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/authentication_cubit/sync_data_state.dart';
 import 'package:twake/blocs/magic_link_cubit/joining_cubit/joining_cubit.dart';
@@ -17,6 +17,7 @@ part 'authentication_state.dart';
 class AuthenticationCubit extends Cubit<AuthenticationState> {
   late final AuthenticationRepository _repository;
   late final StreamSubscription _networkSubscription;
+  final InitService _initService = Get.find<InitService>();
 
   AuthenticationCubit({AuthenticationRepository? repository})
       : super(AuthenticationInitial()) {
@@ -86,7 +87,7 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
     final start = DateTime.now();
 
     try {
-      final progress = InitService.syncData();
+      final progress = _initService.syncData();
       await for (final p in progress) {
         Logger().i("Sync data: $p");
         if(p is SyncDataSuccessState) {
