@@ -18,15 +18,6 @@ class LogoutInProgress extends AuthenticationState {
   List<Object?> get props => const [];
 }
 
-class AuthenticationSuccess extends AuthenticationState {
-  final WorkspaceJoinResponse? magicLinkJoinResponse;
-  final TwakeLinkJoining? twakeLinkJoining;
-  const AuthenticationSuccess({this.magicLinkJoinResponse, this.twakeLinkJoining});
-
-  @override
-  List<Object?> get props => [magicLinkJoinResponse, twakeLinkJoining];
-}
-
 class AuthenticationFailure extends AuthenticationState {
   final String username;
   final String password;
@@ -60,15 +51,6 @@ class PostAuthenticationSyncFailed extends AuthenticationState {
 
   @override
   List<Object?> get props => const [];
-}
-
-class PostAuthenticationSyncSuccess extends AuthenticationState {
-  final WorkspaceJoinResponse? magicLinkJoinResponse;
-
-  const PostAuthenticationSyncSuccess({this.magicLinkJoinResponse});
-
-  @override
-  List<Object?> get props => [magicLinkJoinResponse];
 }
 
 class PostAuthenticationNoCompanyFound extends AuthenticationState {

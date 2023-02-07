@@ -9,6 +9,7 @@ import 'package:twake/models/deeplink/join/workspace_join_response.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/models/twakelink/twake_link_joining.dart';
 import 'package:twake/repositories/authentication_repository.dart';
+import 'package:twake/routing/app_navigator.dart';
 import 'package:twake/services/service_bundle.dart';
 import 'package:twake/utils/twake_exception.dart';
 
@@ -18,6 +19,7 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
   late final AuthenticationRepository _repository;
   late final StreamSubscription _networkSubscription;
   final InitService _initService = Get.find<InitService>();
+  final AppNavigator _appNavigator = Get.find<AppNavigator>();
 
   AuthenticationCubit({AuthenticationRepository? repository})
       : super(AuthenticationInitial()) {
@@ -41,10 +43,10 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
     bool authenticated = await _repository.isAuthenticated();
 
     if (authenticated) {
-      emit(AuthenticationSuccess(
+      _authenticationSucceed(
         magicLinkJoinResponse: workspaceJoinResponse,
         twakeLinkJoining: twakeLinkJoining,
-      ));
+      );
       _repository.startTokenValidator();
       await NavigatorService.instance.navigateOnNotificationLaunch();
     } else if(workspaceJoinResponse != null) {
@@ -68,9 +70,9 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
         _repository.startTokenValidator();
         SocketIOService.instance.connect();
         await syncData(magicLinkJoinResponse: joinResponse);
-        emit(AuthenticationSuccess(magicLinkJoinResponse: joinResponse));
+        _authenticationSucceed(magicLinkJoinResponse: joinResponse);
       } else {
-        emit(AuthenticationSuccess());
+        _authenticationSucceed();
         _repository.startTokenValidator();
         SocketIOService.instance.connect();
         await syncData();
@@ -96,7 +98,7 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
           emit(PostAuthenticationSyncFailedSomeServices(syncFailedSource: p.failedSource));
         }
       }
-      emit(PostAuthenticationSyncSuccess(magicLinkJoinResponse: magicLinkJoinResponse));
+      _authenticationSucceed(magicLinkJoinResponse: magicLinkJoinResponse);
     } catch (e, stt) {
       Logger().e('Error occurred during initial data sync:\n$e\n$stt');
       if(e is SyncFailedException) {
@@ -152,6 +154,69 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
 
   Future<void> notifyNoCompanyBelongToUser({WorkspaceJoinResponse? magicLinkJoinResponse}) async {
     emit(PostAuthenticationNoCompanyFound(magicLinkJoinResponse: magicLinkJoinResponse));
+  }
+
+  void _authenticationSucceed({WorkspaceJoinResponse? magicLinkJoinResponse, TwakeLinkJoining? twakeLinkJoining}) {
+    if (magicLinkJoinResponse == null) {
+      if (twakeLinkJoining != null) {
+        _goToChannelWithTwakeLink(twakeLinkJoining);
+      }
+      _appNavigator.navigateToHome();
+    } else {
+      _selectWorkspaceAfterJoin(magicLinkJoinResponse);
+      _appNavigator.navigateToHome(magicLinkJoinResponse: magicLinkJoinResponse);
+    }
+  }
+
+  void _goToChannelWithTwakeLink(TwakeLinkJoining twakeLinkJoining) async {
+    try {
+      //todo [7 Feb] handle Twake link
+      // await _navigatorService.navigateToChannelAfterSharedFile(
+      //   companyId: twakeLinkJoining.companyId,
+      //   workspaceId: twakeLinkJoining.workspaceId,
+      //   channelId: twakeLinkJoining.channelId,
+      // );
+    } catch (e) {
+      Logger()
+          .e('Error occurred during navigation by opening a Twake Link:\n$e');
+    }
+  }
+
+  void _selectWorkspaceAfterJoin(
+      WorkspaceJoinResponse? workspaceJoinResponse) async {
+    //todo [7 Feb] handle join workspace
+    // try {
+    //   if (workspaceJoinResponse?.company.id != null) {
+    //     // fetch and select company
+    //     final result = await Get.find<CompaniesCubit>().fetch();
+    //     if (!result) return;
+    //     Get.find<CompaniesCubit>()
+    //         .selectCompany(companyId: workspaceJoinResponse!.company.id!);
+    //
+    //     // fetch and select workspace
+    //     if (workspaceJoinResponse.workspace.id != null) {
+    //       await Get.find<WorkspacesCubit>()
+    //           .fetch(companyId: workspaceJoinResponse.company.id);
+    //       Get.find<WorkspacesCubit>().selectWorkspace(
+    //           workspaceId: workspaceJoinResponse.workspace.id!);
+    //       Get.find<CompaniesCubit>().selectWorkspace(
+    //           workspaceId: workspaceJoinResponse.workspace.id!);
+    //     }
+    //
+    //     // fetch channel and direct
+    //     await Get.find<ChannelsCubit>().fetch(
+    //       workspaceId: workspaceJoinResponse.workspace.id!,
+    //       companyId: workspaceJoinResponse.company.id!,
+    //     );
+    //     await Get.find<DirectsCubit>().fetch(
+    //       workspaceId: 'direct',
+    //       companyId: workspaceJoinResponse.company.id!,
+    //     );
+    //   }
+    // } catch (e) {
+    //   Logger().e(
+    //       'Error occurred during select workspace after joining from Magic Link:\n$e');
+    // }
   }
 
   @override

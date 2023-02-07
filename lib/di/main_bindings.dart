@@ -13,7 +13,7 @@ class MainBindings extends Bindings {
 
     Get.put(PlatformDetection());
 
-    LocalBinding().dependencies();
+    await LocalBinding().dependencies();
 
     Get.put(LanguageRepository());
     Get.put(ThemeRepository());

@@ -36,8 +36,6 @@ import 'package:twake/utils/receive_sharing_text_manager.dart';
 class HomeBinding implements Bindings {
   @override
   void dependencies() {
-    final authenticationCubit = AuthenticationCubit();
-    Get.put(authenticationCubit, permanent: true);
 
     final companiesCubit = CompaniesCubit();
     Get.put(companiesCubit, permanent: true);
@@ -131,10 +129,10 @@ class HomeBinding implements Bindings {
     Get.put(searchCubit, permanent: true);
 
     Future.delayed(Duration(seconds: 5), () {
-      if (Globals.instance.token != null) authenticationCubit.registerDevice();
+      if (Globals.instance.token != null) Get.find<AuthenticationCubit>().registerDevice();
     });
 
-    NavigatorService(
+    Get.put(NavigatorService(
       accountCubit: accountCubit,
       companiesCubit: companiesCubit,
       workspacesCubit: workspacesCubit,
@@ -144,6 +142,6 @@ class HomeBinding implements Bindings {
       threadMessagesCubit: threadMessagesCubit,
       pinnedMessageCubit: pinnedMessagesCubit,
       badgesCubit: badgesCubit,
-    );
+    ));
   }
 }
