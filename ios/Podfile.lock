@@ -2,7 +2,7 @@ PODS:
   - Amplitude (8.14.0):
     - AnalyticsConnector (~> 1.0.0)
   - Analytics (4.1.6)
-  - AnalyticsConnector (1.0.0)
+  - AnalyticsConnector (1.0.1)
   - AppAuth (1.4.0):
     - AppAuth/Core (= 1.4.0)
     - AppAuth/ExternalUserAgent (= 1.4.0)
@@ -54,30 +54,30 @@ PODS:
   - file_picker (0.0.1):
     - DKImagePickerController/PhotoGallery
     - Flutter
-  - Firebase/CoreOnly (10.1.0):
-    - FirebaseCore (= 10.1.0)
-  - Firebase/Messaging (10.1.0):
+  - Firebase/CoreOnly (10.0.0):
+    - FirebaseCore (= 10.0.0)
+  - Firebase/Messaging (10.0.0):
     - Firebase/CoreOnly
-    - FirebaseMessaging (~> 10.1.0)
-  - firebase_core (2.2.0):
-    - Firebase/CoreOnly (= 10.1.0)
+    - FirebaseMessaging (~> 10.0.0)
+  - firebase_core (2.1.1):
+    - Firebase/CoreOnly (= 10.0.0)
     - Flutter
-  - firebase_messaging (14.1.0):
-    - Firebase/Messaging (= 10.1.0)
+  - firebase_messaging (14.0.4):
+    - Firebase/Messaging (= 10.0.0)
     - firebase_core
     - Flutter
-  - FirebaseCore (10.1.0):
+  - FirebaseCore (10.0.0):
     - FirebaseCoreInternal (~> 10.0)
     - GoogleUtilities/Environment (~> 7.8)
     - GoogleUtilities/Logger (~> 7.8)
-  - FirebaseCoreInternal (10.2.0):
+  - FirebaseCoreInternal (10.4.0):
     - "GoogleUtilities/NSData+zlib (~> 7.8)"
-  - FirebaseInstallations (10.2.0):
+  - FirebaseInstallations (10.4.0):
     - FirebaseCore (~> 10.0)
     - GoogleUtilities/Environment (~> 7.8)
     - GoogleUtilities/UserDefaults (~> 7.8)
     - PromisesObjC (~> 2.1)
-  - FirebaseMessaging (10.1.0):
+  - FirebaseMessaging (10.0.0):
     - FirebaseCore (~> 10.0)
     - FirebaseInstallations (~> 10.0)
     - GoogleDataTransport (~> 9.2)
@@ -106,26 +106,26 @@ PODS:
   - FMDB/standard (2.7.5)
   - gallery_saver (0.0.1):
     - Flutter
-  - GoogleDataTransport (9.2.0):
+  - GoogleDataTransport (9.2.1):
     - GoogleUtilities/Environment (~> 7.7)
     - nanopb (< 2.30910.0, >= 2.30908.0)
     - PromisesObjC (< 3.0, >= 1.2)
-  - GoogleUtilities/AppDelegateSwizzler (7.10.0):
+  - GoogleUtilities/AppDelegateSwizzler (7.11.0):
     - GoogleUtilities/Environment
     - GoogleUtilities/Logger
     - GoogleUtilities/Network
-  - GoogleUtilities/Environment (7.10.0):
+  - GoogleUtilities/Environment (7.11.0):
     - PromisesObjC (< 3.0, >= 1.2)
-  - GoogleUtilities/Logger (7.10.0):
+  - GoogleUtilities/Logger (7.11.0):
     - GoogleUtilities/Environment
-  - GoogleUtilities/Network (7.10.0):
+  - GoogleUtilities/Network (7.11.0):
     - GoogleUtilities/Logger
     - "GoogleUtilities/NSData+zlib"
     - GoogleUtilities/Reachability
-  - "GoogleUtilities/NSData+zlib (7.10.0)"
-  - GoogleUtilities/Reachability (7.10.0):
+  - "GoogleUtilities/NSData+zlib (7.11.0)"
+  - GoogleUtilities/Reachability (7.11.0):
     - GoogleUtilities/Logger
-  - GoogleUtilities/UserDefaults (7.10.0):
+  - GoogleUtilities/UserDefaults (7.11.0):
     - GoogleUtilities/Logger
   - image_picker_ios (0.0.1):
     - Flutter
@@ -149,9 +149,9 @@ PODS:
   - Reachability (3.2)
   - receive_sharing_intent (0.0.1):
     - Flutter
-  - SDWebImage (5.14.2):
-    - SDWebImage/Core (= 5.14.2)
-  - SDWebImage/Core (5.14.2)
+  - SDWebImage (5.15.1):
+    - SDWebImage/Core (= 5.15.1)
+  - SDWebImage/Core (5.15.1)
   - Segment-Amplitude (3.3.2):
     - Amplitude (~> 8.3)
     - Analytics
@@ -161,11 +161,11 @@ PODS:
   - segment-appsflyer-ios/Main (6.8.0):
     - Analytics
     - AppsFlyerFramework (~> 6.8.0)
-  - Sentry/HybridSDK (7.30.2)
+  - Sentry/HybridSDK (7.31.2)
   - sentry_flutter (0.0.1):
     - Flutter
     - FlutterMacOS
-    - Sentry/HybridSDK (= 7.30.2)
+    - Sentry/HybridSDK (= 7.31.2)
   - share (0.0.1):
     - Flutter
   - shared_preferences_ios (0.0.1):
@@ -173,7 +173,7 @@ PODS:
   - sqflite (0.0.2):
     - Flutter
     - FMDB (>= 2.7.5)
-  - SwiftyGif (5.4.3)
+  - SwiftyGif (5.4.4)
   - uni_links (0.0.1):
     - Flutter
   - url_launcher_ios (0.0.1):
@@ -303,7 +303,7 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   Amplitude: bff4ceaad2a79e908682134d75dc862960594ea6
   Analytics: eefe524436f904b8bb3f8c8c3425280e43b34efc
-  AnalyticsConnector: 4c386d5972ac9da86e22d668564dbbac97558754
+  AnalyticsConnector: eccd7e1cd3dd18e6bd09ac2506e37d4ed43ba3f4
   AppAuth: 31bcec809a638d7bd2f86ea8a52bd45f6e81e7c7
   AppsFlyerFramework: a664325124485223296354b4eec335f5340a6df8
   camera_avfoundation: 07c77549ea54ad95d8581be86617c094a46280d9
@@ -313,23 +313,23 @@ SPEC CHECKSUMS:
   DKPhotoGallery: fdfad5125a9fdda9cc57df834d49df790dbb4179
   emoji_picker_flutter: 4f9a1ac31d355e1bf9622a1e821a809149130127
   file_picker: 3e6c3790de664ccf9b882732d9db5eaf6b8d4eb1
-  Firebase: 444b35a9c568a516666213c2f6cccd10cb12559f
-  firebase_core: d2242c6f318db1d0dcecfbfa491e943337b0d755
-  firebase_messaging: 59f435c4cd0d5448e7268a7f70bce9b1287c1742
-  FirebaseCore: 55e7ae35991ccca4db03ff8d8df6ed5f17a3e4c7
-  FirebaseCoreInternal: 091bde13e47bb1c5e9fe397634f3593dc390430f
-  FirebaseInstallations: 004915af170935e3a583faefd5f8bc851afc220f
-  FirebaseMessaging: 4487bbff9b9b927ba1dd3ea40d1ceb58e4ee3cb5
+  Firebase: 1b810f3d0c0532e27a48f1961f8c0400a668a2cf
+  firebase_core: 5c0bb0ca7d0e70480a68a6e9ad9bf55d1edd5305
+  firebase_messaging: bf848602391fa6ee68d86e337f81be14be120aaf
+  FirebaseCore: 97f48a3a567a72b8d4daa0f03c3aadb78df4e995
+  FirebaseCoreInternal: e301297f4c15a17489e48ed722d733b1578e0c02
+  FirebaseInstallations: 36b38c733fd37e50857e5e8d74138648f466f18c
+  FirebaseMessaging: 8916bf5edb1dbfac74665a181e4d1ab3a78a08a2
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
   flutter_appauth: 05c3778a1e4ae23364dd2ef37cbae14b244f646b
   flutter_contacts: edb1c5ce76aa433e20e6cb14c615f4c0b66e0983
-  flutter_downloader: 058b9c41564a90500f67f3e432e3524613a7fd83
+  flutter_downloader: b7301ae057deadd4b1650dc7c05375f10ff12c39
   flutter_local_notifications: 0c0b1ae97e741e1521e4c1629a459d04b9aec743
   flutter_segment: 367b7d9f7d74b3875198524ff4d24c381d93e317
   FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
   gallery_saver: 9fc173c9f4fcc48af53b2a9ebea1b643255be542
-  GoogleDataTransport: 1c8145da7117bd68bbbed00cf304edb6a24de00f
-  GoogleUtilities: bad72cb363809015b1f7f19beb1f1cd23c589f95
+  GoogleDataTransport: ea169759df570f4e37bdee1623ec32a7e64e67c4
+  GoogleUtilities: c2bdc4cf2ce786c4d2e6b3bcfd599a25ca78f06f
   image_picker_ios: b786a5dcf033a8336a657191401bfdf12017dabb
   nanopb: b552cce312b6c8484180ef47159bc0f65a1f0431
   open_file_safe: 84c01ac91378bd9166ab570d7f22f4fb3532141a
@@ -340,20 +340,20 @@ SPEC CHECKSUMS:
   PromisesObjC: ab77feca74fa2823e7af4249b8326368e61014cb
   Reachability: 33e18b67625424e47b6cde6d202dce689ad7af96
   receive_sharing_intent: c0d87310754e74c0f9542947e7cbdf3a0335a3b1
-  SDWebImage: b9a731e1d6307f44ca703b3976d18c24ca561e84
+  SDWebImage: a254f2c53b46e3fba7946b1f8b8b3eaf00413b92
   Segment-Amplitude: 6c1e59c8c278a21029ba7a6a788fcb31b9233a2c
   segment-appsflyer-ios: 9b84c1b7f94bb7a3c5826c9214cd0630b831e208
-  Sentry: 9be48e341494bc976c963b05aa4a8ca48308c684
-  sentry_flutter: 544e6376e35b00eef9f0864f8bb7f10a0e204993
+  Sentry: b15765d11769852fe78c9add942f7df60ed5dbf5
+  sentry_flutter: 8ef5e68ee2d301805279ed134b3b38dbe9e090f0
   share: 0b2c3e82132f5888bccca3351c504d0003b3b410
   shared_preferences_ios: 548a61f8053b9b8a49ac19c1ffbc8b92c50d68ad
   sqflite: 6d358c025f5b867b29ed92fc697fd34924e11904
-  SwiftyGif: 6c3eafd0ce693cad58bb63d2b2fb9bacb8552780
+  SwiftyGif: 93a1cc87bf3a51916001cf8f3d63835fb64c819f
   uni_links: d97da20c7701486ba192624d99bffaaffcfc298a
   url_launcher_ios: 839c58cdb4279282219f5e248c3321761ff3c4de
   webview_cookie_manager: eaf920722b493bd0f7611b5484771ca53fed03f7
   webview_flutter_wkwebview: b7e70ef1ddded7e69c796c7390ee74180182971f
 
-PODFILE CHECKSUM: eff7955bbae5109b25f810f402ca18d30643d604
+PODFILE CHECKSUM: ef19549a9bc3046e7bb7d2fab4d021637c0c58a3
 
-COCOAPODS: 1.11.2
+COCOAPODS: 1.11.3

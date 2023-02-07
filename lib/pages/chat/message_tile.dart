@@ -11,13 +11,13 @@ class MessageTile<T extends BaseMessagesCubit> extends StatefulWidget {
   final bool isDirect;
   final bool isThread;
   final bool isSenderHidden;
-  final bool isHeadInThred;
+  final bool isHeadInThread;
   MessageTile({
     required this.message,
     this.isDirect = false,
     this.isThread = false,
     this.isSenderHidden = false,
-    this.isHeadInThred = false,
+    this.isHeadInThread = false,
     Key? key,
   }) : super(key: key);
 
@@ -68,7 +68,7 @@ class _MessageTileState<T extends BaseMessagesCubit>
             MessageContent(
               message: widget.message,
               isThread: widget.isThread,
-              isHeadInThred: widget.isHeadInThred,
+              isHeadInThread: widget.isHeadInThread,
               isDirect: widget.isDirect,
               isSenderHidden: widget.isSenderHidden,
               key: ValueKey(widget.message.hashCode),

@@ -159,7 +159,7 @@ class MessageColumn extends StatelessWidget {
                     message: message,
                     isDirect: parentChannel.isDirect,
                     isThread: true,
-                    isHeadInThred: true,
+                    isHeadInThread: true,
                     key: ValueKey(message.hash),
                   ),
                 ),
@@ -181,7 +181,7 @@ class MessageColumn extends StatelessWidget {
                         .replyPlural(state.messages.length - 1),
                     style: Theme.of(ctx)
                         .textTheme
-                        .headline2!
+                        .displayMedium!
                         .copyWith(fontWeight: FontWeight.normal, fontSize: 15)),
               ),
             ],
