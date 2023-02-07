@@ -120,7 +120,7 @@ class QuoteMessage extends StatelessWidget {
     return message.subtype == MessageSubtype.deleted
         ? Text(
             AppLocalizations.of(context)!.messageDeleted,
-            style: Theme.of(context).textTheme.headline1!,
+            style: Theme.of(context).textTheme.displayLarge!,
           )
         : Container(
             constraints: BoxConstraints(
@@ -135,7 +135,7 @@ class QuoteMessage extends StatelessWidget {
                     twacode: [''],
                     isLimitedSize: true,
                     fileIds: message.files,
-                    parentStyle: Theme.of(context).textTheme.headline1!,
+                    parentStyle: Theme.of(context).textTheme.displayLarge!,
                     userUniqueColor: message.username.hashCode % 360,
                     messageLinks: message.links,
                   ).message,
@@ -146,7 +146,7 @@ class QuoteMessage extends StatelessWidget {
                         : message.blocks,
                     isLimitedSize: true,
                     fileIds: [],
-                    parentStyle: Theme.of(context).textTheme.headline1!,
+                    parentStyle: Theme.of(context).textTheme.displayLarge!,
                     userUniqueColor: message.username.hashCode % 360,
                     messageLinks: message.links,
                   ).message,
@@ -163,11 +163,11 @@ class QuoteMessage extends StatelessWidget {
         style: Get.isDarkMode
             ? Theme.of(context)
                 .textTheme
-                .headline1!
+                .displayLarge!
                 .copyWith(fontSize: 13, fontWeight: FontWeight.w400)
             : Theme.of(context)
                 .textTheme
-                .headline4!
+                .headlineMedium!
                 .copyWith(fontSize: 13, fontWeight: FontWeight.w400),
       ),
     );
@@ -187,6 +187,7 @@ class QuoteMessage extends StatelessWidget {
                   onTap: () => Get.find<QuoteMessageCubit>().init(),
                   child: Icon(
                     CupertinoIcons.clear,
+                    size: 20,
                     color: Theme.of(context).colorScheme.surface,
                   ),
                 ),
