@@ -14,6 +14,7 @@ import 'package:twake/pages/chat/message_tile.dart';
 import 'package:twake/services/navigator_service.dart';
 import 'package:flutter_swipe_action_cell/flutter_swipe_action_cell.dart';
 import 'package:twake/utils/dateformatter.dart';
+import 'package:twake/widgets/common/animated_bounce.dart';
 import 'package:twake/widgets/common/channel_first_message.dart';
 import 'package:twake/widgets/common/highlight_component.dart';
 
@@ -149,7 +150,7 @@ class _ChatViewState extends State<_ChatView> {
                 DateFormatter.getVerboseDate(msg.createdAt),
                 style: Theme.of(context)
                     .textTheme
-                    .headline2!
+                    .displayMedium!
                     .copyWith(fontSize: 11, fontWeight: FontWeight.w500),
                 textAlign: TextAlign.center,
               ),
@@ -206,7 +207,7 @@ class _ChatViewState extends State<_ChatView> {
                 ? ChannelFirstMessage(
                     channel: widget.parentChannel,
                   )
-                : GestureDetector(
+                : Bounce(
                     onLongPress: () {
                       Get.find<MessageAnimationCubit>().startAnimation(
                         messagesListContext: context,
@@ -216,6 +217,7 @@ class _ChatViewState extends State<_ChatView> {
                         itemPositionsListener: _itemPositionsListener,
                       );
                     },
+                    duration: Duration(milliseconds: 200),
                     child: index == highlightMessageIndex
                         ? HighlightComponent(
                             component: MessageTile<ChannelMessagesCubit>(
