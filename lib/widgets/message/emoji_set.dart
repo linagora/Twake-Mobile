@@ -19,13 +19,13 @@ class EmojiLine extends StatelessWidget {
     '👋',
   ];
 
-  static final fontSize = 27.0;
+  static final fontSize = 44.0;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20.0),
+        borderRadius: BorderRadius.circular(28.0),
         color: Get.isDarkMode
             ? Theme.of(context).primaryColor.withOpacity(0.7)
             : Theme.of(context).cardColor,
@@ -35,11 +35,9 @@ class EmojiLine extends StatelessWidget {
         vertical: Dim.heightMultiplier,
         horizontal: 16.0, //Dim.wm2,
       ),
-      constraints: BoxConstraints(maxHeight: Dim.hm7),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        // mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.center,
+      constraints: BoxConstraints(maxHeight: Dim.hm10),
+      child: ListView(
+        scrollDirection: Axis.horizontal,
         children: [
           ...EmojiLine.EMOJISET.map((e) => Flexible(
                 child: GestureDetector(
@@ -47,12 +45,10 @@ class EmojiLine extends StatelessWidget {
                     onEmojiSelected(e);
                   },
                   child: Padding(
-                    padding: const EdgeInsets.only(right: 2.0),
-                    child: FittedBox(
-                      child: Text(
-                        e,
-                        style: TextStyle(fontSize: EmojiLine.fontSize),
-                      ),
+                    padding: const EdgeInsets.only(right: 20),
+                    child: Text(
+                      e,
+                      style: TextStyle(fontSize: EmojiLine.fontSize),
                     ),
                   ),
                 ),

@@ -27,7 +27,7 @@ class DropDownButton extends StatelessWidget {
     this.isTop = false,
     this.isSecondBottom = false,
     this.backgroundColor,
-    this.textColor,
+    this.textColor = Colors.black,
     this.iconColor,
     Key? key,
   }) : super(key: key);
@@ -37,6 +37,7 @@ class DropDownButton extends StatelessWidget {
     return Column(children: [
       if (isBottom) ...[
         Container(
+          color: Theme.of(context).colorScheme.secondary,
           height: DROPDOWN_TOP_LAST_ITEM_PADDING_HEIGHT,
           width: DropDownButton.DROPDOWN_WIDTH,
         )
@@ -47,8 +48,8 @@ class DropDownButton extends StatelessWidget {
           decoration: BoxDecoration(
               color: backgroundColor ??
                   (Get.isDarkMode
-            ? Theme.of(context).primaryColor.withOpacity(0.7)
-            : Theme.of(context).cardColor),
+                      ? Theme.of(context).primaryColor.withOpacity(0.7)
+                      : Theme.of(context).cardColor),
               borderRadius: isTop
                   ? const BorderRadius.only(
                       topLeft: Radius.circular(10.0),
@@ -72,10 +73,10 @@ class DropDownButton extends StatelessWidget {
                 children: [
                   Text(
                     text,
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyMedium
-                        ?.copyWith(color: textColor),
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: textColor,
+                          fontSize: 17,
+                        ),
                   )
                 ],
               ),
@@ -85,8 +86,8 @@ class DropDownButton extends StatelessWidget {
               children: [
                 Image.asset(
                   imagePath,
-                  height: 18,
-                  width: 18,
+                  height: 20,
+                  width: 20,
                   color: Get.isDarkMode ? Colors.white : null,
                 )
               ],
