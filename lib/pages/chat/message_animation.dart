@@ -127,7 +127,6 @@ class LongPressMenuBar<T extends BaseMessagesCubit> extends StatelessWidget {
         if (message.subtype != MessageSubtype.deleted && !message.inThread)
           DropDownButton(
             text: AppLocalizations.of(context)!.reply,
-            backgroundColor: Color(0xFFEDEDED).withOpacity(0.8),
             imagePath: imageComment,
             isTop: true,
             onClick: () async {
@@ -142,7 +141,6 @@ class LongPressMenuBar<T extends BaseMessagesCubit> extends StatelessWidget {
           ),
         if (message.isOwnerMessage)
           DropDownButton(
-            backgroundColor: Color(0xFFEDEDED).withOpacity(0.8),
             isTop: message.inThread,
             text: AppLocalizations.of(context)!.edit,
             imagePath: imageEdit,
@@ -153,7 +151,6 @@ class LongPressMenuBar<T extends BaseMessagesCubit> extends StatelessWidget {
             },
           ),
         DropDownButton(
-          backgroundColor: Color(0xFFEDEDED).withOpacity(0.8),
           text: AppLocalizations.of(context)!.copy,
           imagePath: imageCopy,
           onClick: () async {
@@ -169,7 +166,6 @@ class LongPressMenuBar<T extends BaseMessagesCubit> extends StatelessWidget {
         ),
         if (message.pinnedInfo == null)
           DropDownButton(
-            backgroundColor: Color(0xFFEDEDED).withOpacity(0.8),
             text: AppLocalizations.of(context)!.pinMesssage,
             isBottom: !message.isOwnerMessage || message.responsesCount != 0,
             imagePath: imagePinAction,
@@ -183,7 +179,6 @@ class LongPressMenuBar<T extends BaseMessagesCubit> extends StatelessWidget {
           ),
         if (message.pinnedInfo != null)
           DropDownButton(
-            backgroundColor: Color(0xFFEDEDED).withOpacity(0.8),
             text: AppLocalizations.of(context)!.unpinMesssage,
             isBottom: !message.isOwnerMessage || message.responsesCount != 0,
             imagePath: imageUnpinAction,
@@ -201,7 +196,6 @@ class LongPressMenuBar<T extends BaseMessagesCubit> extends StatelessWidget {
           ),
         if (message.isOwnerMessage && message.responsesCount == 0)
           DropDownButton(
-            backgroundColor: Color(0xFFEDEDED).withOpacity(0.8),
             isBottom: true,
             text: AppLocalizations.of(context)!.delete,
             imagePath: imageDeleteAction,
