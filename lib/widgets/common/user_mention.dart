@@ -24,7 +24,7 @@ class UserMention extends StatelessWidget {
         ? FutureBuilder(
             future: Get.find<AccountCubit>().fetchStateless(userId: userId!),
             builder: (ctx, snapshot) {
-              if (snapshot.connectionState == ConnectionState.done) {
+              if (snapshot.connectionState == ConnectionState.done && snapshot.data is Account) {
                 final account = (snapshot.data as Account);
                 mcache.cache[userId!] = account.fullName;
                 return Text(

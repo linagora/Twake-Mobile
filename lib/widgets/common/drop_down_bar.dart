@@ -17,7 +17,7 @@ class DropDownButton extends StatelessWidget {
   static const double DROPDOWN_PADDING_TOP = 10;
   static const double DROPDOWN_PADDING_LEFT = 11;
   static const double DROPDOWN_TOP_LAST_ITEM_PADDING_HEIGHT = 8;
-  static const double DROPDOWN_SEPARATOR_HEIGHT = 1;
+  static const double DROPDOWN_SEPARATOR_HEIGHT = 0.5;
 
   const DropDownButton({
     required this.onClick,
@@ -37,7 +37,7 @@ class DropDownButton extends StatelessWidget {
     return Column(children: [
       if (isBottom) ...[
         Container(
-          color: Theme.of(context).colorScheme.secondary,
+          color: Theme.of(context).colorScheme.tertiaryContainer.withOpacity(0.75),
           height: DROPDOWN_TOP_LAST_ITEM_PADDING_HEIGHT,
           width: DropDownButton.DROPDOWN_WIDTH,
         )
@@ -68,29 +68,19 @@ class DropDownButton extends StatelessWidget {
               DROPDOWN_PADDING_TOP),
           child: Row(children: [
             Expanded(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Text(
-                    text,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: textColor,
-                          fontSize: 17,
-                        ),
-                  )
-                ],
+              child: Text(
+                text,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: textColor,
+                  fontSize: 17,
+                ),
               ),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Image.asset(
-                  imagePath,
-                  height: 20,
-                  width: 20,
-                  color: Get.isDarkMode ? Colors.white : null,
-                )
-              ],
+            Image.asset(
+              imagePath,
+              height: 20,
+              width: 20,
+              color: Get.isDarkMode ? Colors.white : null,
             ),
           ]),
         ),
@@ -98,7 +88,7 @@ class DropDownButton extends StatelessWidget {
       Container(
           color: isBottom || isSecondBottom
               ? null
-              : Theme.of(context).colorScheme.secondary,
+              : Theme.of(context).colorScheme.tertiaryContainer.withOpacity(0.75),
           height: DROPDOWN_SEPARATOR_HEIGHT,
           width: DROPDOWN_WIDTH),
     ]);

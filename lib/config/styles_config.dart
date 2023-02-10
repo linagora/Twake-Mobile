@@ -50,6 +50,7 @@ class StylesConfig {
     onPrimary: Colors.white,
     onSecondary: Colors.white,
     onSurface: Color(0xFFDEEEFF),
+    tertiaryContainer: Color(0xFF141414),
     onBackground: Colors.black,
     onError: Colors.white,
     brightness: Brightness.light,
@@ -71,22 +72,22 @@ class StylesConfig {
   );
 
   static final TextTheme lightTextTheme = TextTheme(
-    headline1: _lightHeadline1,
-    headline2: _lightHeadline2,
-    headline3: _lightHeadline3,
-    headline4: _lightHeadline4,
-    headline5: _lightHeadline5,
-    bodyText1: _lightBodyText1,
-    subtitle1: _lightSubtitle1,
+    displayLarge: _lightHeadline1,
+    displayMedium: _lightHeadline2,
+    displaySmall: _lightHeadline3,
+    headlineMedium: _lightHeadline4,
+    headlineSmall: _lightHeadline5,
+    bodyLarge: _lightBodyText1,
+    titleMedium: _lightSubtitle1,
   );
   static final TextTheme darkTextTheme = TextTheme(
-    headline1: _darkHeadline1,
-    headline2: _darkHeadline2,
-    headline3: _darkHeadline3,
-    headline4: _darkHeadline4,
-    headline5: _darkHeadline5,
-    bodyText1: _darkbodyText1,
-    subtitle1: _darksubtitle1,
+    displayLarge: _darkHeadline1,
+    displayMedium: _darkHeadline2,
+    displaySmall: _darkHeadline3,
+    headlineMedium: _darkHeadline4,
+    headlineSmall: _darkHeadline5,
+    bodyLarge: _darkbodyText1,
+    titleMedium: _darksubtitle1,
   );
 
   static final TextStyle _darkHeadline1 = TextStyle(

@@ -45,7 +45,7 @@ class EmojiLine extends StatelessWidget {
                     onEmojiSelected(e);
                   },
                   child: Padding(
-                    padding: const EdgeInsets.only(right: 20),
+                    padding: const EdgeInsets.only(right: 24),
                     child: Text(
                       e,
                       style: TextStyle(fontSize: EmojiLine.fontSize),
