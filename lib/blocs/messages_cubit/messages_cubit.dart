@@ -340,6 +340,10 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
 
     emit(MessageSendInProgress(messages: state.messages, hash: state.hash));
 
+    Future.delayed(Duration(milliseconds: 500), () {
+      emit(JumpToLastMessage(messages: state.messages, hash: state.hash));
+    });
+
     await for (message in sendStream) {
       // user might have changed screen, so make sure we are still in
       // messages view screen, and the state is MessagesLoadSuccess

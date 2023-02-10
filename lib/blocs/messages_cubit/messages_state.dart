@@ -12,6 +12,15 @@ class MessagesInitial extends MessagesState {
   List<Object?> get props => [];
 }
 
+class JumpToLastMessage extends MessagesLoadSuccess {
+  const JumpToLastMessage({
+    required this.messages,
+    required this.hash,
+  }) : super(messages: messages, hash: hash);
+  final List<Message> messages;
+  final int hash; // sum of hash of all messages in the list
+}
+
 class MessagesLoadSuccess extends MessagesState {
   final List<Message> messages;
   final int hash; // sum of hash of all messages in the list

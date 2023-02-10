@@ -130,6 +130,18 @@ class _ChatViewState extends State<_ChatView> {
             }
           },
         ),
+        BlocListener<ChannelMessagesCubit, MessagesState>(
+          bloc: Get.find<ChannelMessagesCubit>(),
+          listener: (context, state) {
+            if (state is JumpToLastMessage) {
+              itemScrollController.scrollTo(
+                  index: 0,
+                  alignment: 0.2,
+                  automaticAlignment: false,
+                  duration: Duration(milliseconds: 500));
+            }
+          },
+        ),
       ],
       child: StickyGroupedListView<Message, DateTime>(
         initialScrollIndex: 0,
