@@ -51,13 +51,12 @@ class BounceState extends State<Bounce> with SingleTickerProviderStateMixin {
   Widget build(BuildContext context) {
     _scale = 1 - _animate.value;
     return GestureDetector(
-        onPanCancel: () => _timer?.cancel(),
-        onPanDown: (_) {
+        onTapCancel: () => _timer?.cancel(),
+        onTapUp: (_) => _timer?.cancel(),
+        onTapDown: (_) {
           _timer = Timer(
             Duration(milliseconds: 400),
-            () {
-              _onLongPress();
-            },
+            _onLongPress,
           );
         },
         child: Transform.scale(

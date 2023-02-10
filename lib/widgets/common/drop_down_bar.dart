@@ -37,7 +37,7 @@ class DropDownButton extends StatelessWidget {
     return Column(children: [
       if (isBottom) ...[
         Container(
-          color: Theme.of(context).colorScheme.tertiaryContainer.withOpacity(0.75),
+          color: Theme.of(context).colorScheme.tertiaryContainer.withOpacity(0.25),
           height: DROPDOWN_TOP_LAST_ITEM_PADDING_HEIGHT,
           width: DropDownButton.DROPDOWN_WIDTH,
         )
@@ -88,7 +88,7 @@ class DropDownButton extends StatelessWidget {
       Container(
           color: isBottom || isSecondBottom
               ? null
-              : Theme.of(context).colorScheme.tertiaryContainer.withOpacity(0.75),
+              : Theme.of(context).colorScheme.tertiaryContainer.withOpacity(0.25),
           height: DROPDOWN_SEPARATOR_HEIGHT,
           width: DROPDOWN_WIDTH),
     ]);
