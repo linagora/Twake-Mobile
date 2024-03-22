@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/di/add_channel_binding.dart';
 import 'package:twake/di/add_member_binding.dart';
+import 'package:twake/di/app_binding.dart';
 import 'package:twake/di/channel_file_binding.dart';
 import 'package:twake/di/channel_setting_binding.dart';
 import 'package:twake/di/edit_channel_binding.dart';
@@ -43,6 +44,7 @@ final routePages = [
   GetPage(
     name: RoutePaths.initial,
     page: () => InitialPage(),
+    binding: AppBinding(),
     children: [
       GetPage(
           name: RoutePaths.channelMessages.name,

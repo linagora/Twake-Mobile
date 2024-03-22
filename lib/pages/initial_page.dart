@@ -1,23 +1,19 @@
 import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get/get.dart';
 import 'package:logger/logger.dart';
 import 'package:short_uuids/short_uuids.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:twake/blocs/authentication_cubit/authentication_cubit.dart';
 import 'package:twake/blocs/authentication_cubit/sync_data_state.dart';
-import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
-import 'package:twake/blocs/companies_cubit/companies_cubit.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
-import 'package:twake/blocs/workspaces_cubit/workspaces_cubit.dart';
 import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
-import 'package:twake/models/deeplink/join/workspace_join_response.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/models/twakelink/twake_link_joining.dart';
 import 'package:twake/pages/companies/no_company_widget.dart';
@@ -33,8 +29,6 @@ import 'package:twake/utils/receive_sharing_file_manager.dart';
 import 'package:twake/utils/receive_sharing_text_manager.dart';
 import 'package:uni_links/uni_links.dart';
 
-import 'home/home_widget.dart';
-
 class InitialPage extends StatefulWidget {
   @override
   _InitialPageState createState() => _InitialPageState();
@@ -44,6 +38,7 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
   StreamSubscription? _magicLinkStreamSub;
   late ReceiveSharingFileManager _receiveSharingFileManager;
   late ReceiveSharingTextManager _receiveSharingTextManager;
+  final NavigatorService _navigatorService = Get.find<NavigatorService>();
 
   @override
   void initState() {
@@ -271,9 +266,6 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
                     return SyncingDataScreen(state.progress.toDouble());
                   } else if (state is PostAuthenticationSyncFailed) {
                     return SyncDataFailed();
-                  } else if (state is PostAuthenticationSyncSuccess ||
-                      state is AuthenticationSuccess) {
-                    return _authenticationSucceedWidget(state);
                   } else if (state is JoiningMagicLinkState) {
                     _popWhenOpenMagicLinkFromChat();
                     return JoinWorkSpaceMagicLinkPage(
@@ -295,26 +287,6 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
     );
   }
 
-  Widget _authenticationSucceedWidget(state) {
-    var magicLinkJoinResponse;
-    TwakeLinkJoining? twakeLinkJoining;
-    if (state is PostAuthenticationSyncSuccess) {
-      magicLinkJoinResponse = state.magicLinkJoinResponse;
-    } else if (state is AuthenticationSuccess) {
-      magicLinkJoinResponse = state.magicLinkJoinResponse;
-      twakeLinkJoining = state.twakeLinkJoining;
-    }
-    if (magicLinkJoinResponse == null) {
-      if (twakeLinkJoining != null) {
-        _goToChannelWithTwakeLink(twakeLinkJoining);
-      }
-      return HomeWidget();
-    } else {
-      _selectWorkspaceAfterJoin(magicLinkJoinResponse);
-      return HomeWidget(magicLinkJoinResponse: magicLinkJoinResponse);
-    }
-  }
-
   // Note: We're trying to allow user to use app as much as possible,
   // only display NoCompanyWidget when SyncFailedSource is CompaniesApi.
   // And of course, we can handle more error if there is changes in the future.
@@ -326,42 +298,6 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
       magicLinkJoinResponse = state.magicLinkJoinResponse;
     }
     return NoCompanyWidget(magicLinkJoinResponse: magicLinkJoinResponse);
-  }
-
-  void _selectWorkspaceAfterJoin(
-      WorkspaceJoinResponse? workspaceJoinResponse) async {
-    try {
-      if (workspaceJoinResponse?.company.id != null) {
-        // fetch and select company
-        final result = await Get.find<CompaniesCubit>().fetch();
-        if (!result) return;
-        Get.find<CompaniesCubit>()
-            .selectCompany(companyId: workspaceJoinResponse!.company.id!);
-
-        // fetch and select workspace
-        if (workspaceJoinResponse.workspace.id != null) {
-          await Get.find<WorkspacesCubit>()
-              .fetch(companyId: workspaceJoinResponse.company.id);
-          Get.find<WorkspacesCubit>().selectWorkspace(
-              workspaceId: workspaceJoinResponse.workspace.id!);
-          Get.find<CompaniesCubit>().selectWorkspace(
-              workspaceId: workspaceJoinResponse.workspace.id!);
-        }
-
-        // fetch channel and direct
-        await Get.find<ChannelsCubit>().fetch(
-          workspaceId: workspaceJoinResponse.workspace.id!,
-          companyId: workspaceJoinResponse.company.id!,
-        );
-        await Get.find<DirectsCubit>().fetch(
-          workspaceId: 'direct',
-          companyId: workspaceJoinResponse.company.id!,
-        );
-      }
-    } catch (e) {
-      Logger().e(
-          'Error occurred during select workspace after joining from Magic Link:\n$e');
-    }
   }
 
   void _popWhenOpenMagicLinkFromChat() async {
@@ -377,19 +313,6 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
       }
     } catch (e) {
       Logger().e('Error occurred during open Magic Link from chat screen:\n$e');
-    }
-  }
-
-  void _goToChannelWithTwakeLink(TwakeLinkJoining twakeLinkJoining) async {
-    try {
-      await NavigatorService.instance.navigateToChannelAfterSharedFile(
-        companyId: twakeLinkJoining.companyId,
-        workspaceId: twakeLinkJoining.workspaceId,
-        channelId: twakeLinkJoining.channelId,
-      );
-    } catch (e) {
-      Logger()
-          .e('Error occurred during navigation by opening a Twake Link:\n$e');
     }
   }
 }

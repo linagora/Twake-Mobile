@@ -25,6 +25,8 @@ dependencies:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
+  model:
+    path: model
   json_annotation: 4.4.0 # serialization/deserialization auto code generation
   dio: ^4.0.6
   intl: ^0.17.0

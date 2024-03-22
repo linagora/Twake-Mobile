@@ -2,13 +2,10 @@ import 'dart:async';
 
 import 'package:connectivity/connectivity.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:model/channel/channels_type.dart';
 import 'package:synchronized/synchronized.dart';
 import 'package:twake/models/base_model/base_model.dart';
 import 'package:twake/services/service_bundle.dart';
-
-import 'channels_type.dart';
-
-export 'channels_type.dart';
 
 part 'globals.g.dart';
 

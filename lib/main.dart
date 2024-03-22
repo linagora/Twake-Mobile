@@ -2,7 +2,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -13,6 +12,7 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:twake/config/styles_config.dart';
 import 'package:twake/di/home_binding.dart';
 import 'package:twake/di/main_bindings.dart';
+import 'package:twake/di/remote_binding.dart';
 import 'package:twake/repositories/language_repository.dart';
 import 'package:twake/repositories/theme_repository.dart';
 import 'package:twake/routing/route_pages.dart';
@@ -53,14 +53,18 @@ void main() async {
   });
 
   await MainBindings().dependencies();
-  await InitService.preAuthenticationInit();
+
+  final initService = Get.find<InitService>();
+  await initService.preloadGlobals();
+
+  RemoteBindings().dependencies();
 
   await dotenv.load(fileName: ".env");
   //TODO Do refactoring when UserProfile API will be ready, remove get_storage dep
   await GetStorage.init();
 
-  final language = await LanguageRepository().getLanguage();
-  final themeMode = await ThemeRepository().getInitTheme();
+  final language = await Get.find<LanguageRepository>().getLanguage();
+  final themeMode = await Get.find<ThemeRepository>().getInitTheme();
 
   if (PlatformDetection.isMobileSupported()) {
     await FlutterDownloader.initialize(debug: kDebugMode);
