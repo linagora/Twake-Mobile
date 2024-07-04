@@ -1,4 +1,23 @@
-# Twake-mobile
+
+![Frame 1321317563](https://github.com/linagora/Twake-Mobile/assets/146178981/36b5c732-f87d-45b6-ab89-af936819fa71)
+
+
+## :warning: Repository Deprecated
+
+This repository, Twake, is no longer actively maintained and has been officially deprecated.
+
+ :arrow_right: For current and future updates, please visit our new repository:
+🔗 <a href="https://github.com/linagora/twake-workplace"><strong>Twake-workplace</strong></a>
+
+We encourage all users to migrate to Twake-workplace for the latest features and ongoing support. Thank you for your continued support and contribution to the Twake community!  
+  
+
+---
+***
+___
+
+##  Archive README
+Twake-mobile
 
 This is a mobile version of [Twake app](https://github.com/TwakeApp/Twake),
 developed using Flutter framework.
