@@ -6,6 +6,7 @@ import 'package:twake/blocs/companies_cubit/companies_cubit.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/blocs/pinned_message_cubit/pinned_messsage_cubit.dart';
 import 'package:twake/blocs/workspaces_cubit/workspaces_cubit.dart';
+import 'package:twake/models/deeplink/join/workspace_join_response.dart';
 import 'package:twake/models/file/file.dart';
 import 'package:twake/models/file/message_file.dart';
 import 'package:twake/models/globals/globals.dart';

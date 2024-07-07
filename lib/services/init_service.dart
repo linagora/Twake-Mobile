@@ -14,11 +14,8 @@ import 'package:twake/utils/extensions.dart';
 import 'package:twake/utils/twake_exception.dart';
 
 class InitService {
-  static late final ApiService _apiService;
-  static late final StorageService _storageService;
-
-  static Future<void> preAuthenticationInit() async {
-    _storageService = StorageService(reset: true);
+  Future<void> preloadGlobals() async {
+    final _storageService = Get.find<StorageService>();
     await _storageService.init();
 
     const host = 'https://web.twake.app';
@@ -34,17 +31,14 @@ class InitService {
       globals.save();
     }
 
-    PushNotificationsService(reset: true);
-    _apiService = ApiService(reset: true);
-    SocketIOService(reset: true);
     if (globals.oidcAuthority == null) await globals.hostSet(host);
-
-    SynchronizationService(reset: true);
   }
 
   // should only be called once after successful authentication/login
   // yields numbers from 1 to 100 meaning percentage of completion
-  static Stream<SyncDataState> syncData() async* {
+  Stream<SyncDataState> syncData() async* {
+    final _apiService = Get.find<ApiService>();
+    final _storageService = Get.find<StorageService>();
     // 0. Fetch and save the user's id into Globals
     await _apiService
         .get(endpoint: sprintf(Endpoint.account, ['me']), key: 'resource')
